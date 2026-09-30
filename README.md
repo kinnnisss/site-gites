@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site de gîtes — démonstration
 
-## Getting Started
+Accueil en Next.js (App Router), TypeScript et Tailwind CSS. Tous les hébergements et le nom « La Parenthèse » sont fictifs. Aucune connexion Supabase, réservation, collecte de données ou fonctionnalité de paiement.
 
-First, run the development server:
+## Développement
+
+Avec Node.js 22 et les dépendances installées :
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir http://localhost:3000. Si nécessaire, activer Node avec `nvm use 22` avant cette commande.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Vérifications
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
+Vérifier dans le navigateur : affichage à 375 px puis sur ordinateur, ouverture et fermeture du menu mobile, liens vers les sections, navigation au clavier (Tab, Entrée, Échap dans le menu), lien d’évitement et absence de défilement horizontal.
 
-To learn more about Next.js, take a look at the following resources:
+## Contenu à remplacer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `data/demo.ts` : nom provisoire et données typées des gîtes fictifs.
+- `components/cottage-illustration.tsx` : illustrations vectorielles décoratives locales ; à remplacer par les photos validées.
+- `app/page.tsx` : textes éditoriaux et sections.
+- `app/globals.css` : couleurs, typographie locale et styles communs.
+- `app/layout.tsx` : langue et métadonnées ; indexation désactivée pour la démonstration.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Le cahier des charges `docs/CAHIER_DES_CHARGES.md` est actuellement vide. Les informations commerciales, les règles de séjour et le mode de réservation restent à valider avant toute intégration.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Si Turbopack échoue avec `binding to a port / Operation not permitted` dans un environnement restreint, la compilation peut aussi être vérifiée avec `npm run build -- --webpack`, sans changer la configuration du projet.
