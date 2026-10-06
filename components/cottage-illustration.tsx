@@ -1,8 +1,6 @@
-import type { DemoGite } from "@/data/demo";
-
 /** Illustration décorative vectorielle, sans photographie d’un bien réel. */
 export function CottageIllustration({ palette = "olive", className = "" }: {
-  palette?: DemoGite["palette"];
+  palette?: "olive" | "clay" | "sage";
   className?: string;
 }) {
   const colors = {
