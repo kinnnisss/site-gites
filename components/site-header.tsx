@@ -28,7 +28,10 @@ export function SiteHeader() {
         }
       }
       // La dernière section peut être trop courte pour atteindre le repère.
-      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+      if (
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 2
+      ) {
         current = navigation[navigation.length - 1].id;
       }
       setActiveSection(current);
@@ -90,7 +93,11 @@ export function SiteHeader() {
             <Link
               key={link.id}
               href={`/#${link.id}`}
-              aria-current={pathname === "/" && activeSection === link.id ? "location" : undefined}
+              aria-current={
+                pathname === "/" && activeSection === link.id
+                  ? "location"
+                  : undefined
+              }
               onClick={() => {
                 setOpen(false);
                 setActiveSection(link.id);
