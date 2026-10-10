@@ -1,37 +1,46 @@
 import { domain, photos } from "@/data/domain";
 import { DomainPhoto } from "@/components/domain-photo";
 import { FeatureList, SectionHeading } from "@/components/section-heading";
+import { Icon, type IconName } from "@/components/icon";
 
 export function Outdoors() {
+  const icons: IconName[] = ["leaf", "kitchen", "sun"];
   return (
     <section
       id="exterieurs"
       tabIndex={-1}
       aria-labelledby="exterieurs-title"
-      className="section-space border-y border-line bg-paper"
+      className="site-width section-space"
     >
-      <div className="site-width">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading id="exterieurs-title" eyebrow="Les extérieurs">
-            Faire place au grand air.
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div className="max-w-2xl">
+          <SectionHeading id="exterieurs-title" eyebrow="Vivre au dehors">
+            Un jardin de {domain.gardenArea.toLocaleString("fr-FR")} m²,
+            <br className="hidden sm:block" /> au rythme des vacances
           </SectionHeading>
-          <p className="max-w-sm text-sm leading-7 text-muted">
-            Du jardin à la piscine, de la terrasse aux terrains de jeux : les
-            espaces extérieurs prolongent la maison.
+          <p className="body-copy mt-5">
+            Profiter d’un repas sur la terrasse, se retrouver autour de la
+            piscine ou partager un moment de loisirs : les extérieurs prolongent
+            la maison.
           </p>
         </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <DomainPhoto photo={photos.garden} />
-          <DomainPhoto photo={photos.pool} />
-        </div>
-        <div className="mt-10 grid gap-8 md:grid-cols-3">
-          {domain.outdoors.map((group) => (
-            <article key={group.title} className="border-t border-line pt-6">
-              <h3 className="font-serif text-2xl">{group.title}</h3>
-              <FeatureList items={group.items} />
-            </article>
-          ))}
-        </div>
+        <a href="#galerie" className="button-secondary shrink-0">
+          <Icon name="camera" />
+          Découvrir les espaces
+        </a>
+      </div>
+      <div className="mt-9 grid gap-6 md:grid-cols-2">
+        <DomainPhoto photo={photos.garden} variant="landscape" />
+        <DomainPhoto photo={photos.pool} variant="landscape" />
+      </div>
+      <div className="mt-6 grid gap-5 md:grid-cols-3">
+        {domain.outdoors.map((group, index) => (
+          <article key={group.title} className="outdoor-card">
+            <Icon name={icons[index]} className="mb-5 text-gold" />
+            <h3 className="font-serif text-[27px]">{group.title}</h3>
+            <FeatureList items={group.items} />
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -43,23 +52,37 @@ export function Equestrian() {
       id="equestre"
       tabIndex={-1}
       aria-labelledby="equestre-title"
-      className="site-width section-space grid items-center gap-10 md:grid-cols-2 md:gap-16"
+      className="section-space bg-paper"
     >
-      <div>
-        <SectionHeading id="equestre-title" eyebrow="L’espace équestre">
-          Les installations du domaine
-        </SectionHeading>
-        <p className="mt-6 leading-8 text-muted">
-          Le domaine dispose également d’un espace équestre, avec les
-          installations suivantes.
-        </p>
-        <FeatureList items={domain.equestrian} />
-        <p className="mt-6 border-l-2 border-gold pl-4 text-sm leading-7 text-muted">
-          Les modalités d’utilisation et l’accueil éventuel de chevaux restent à
-          préciser par le propriétaire.
-        </p>
+      <div className="site-width editorial-grid">
+        <div>
+          <SectionHeading id="equestre-title" eyebrow="L’espace équestre">
+            Installations équestres
+            <br />
+            du domaine
+          </SectionHeading>
+          <p className="body-copy mt-5">
+            Le domaine dispose d’un espace équestre comprenant une écurie, des
+            boxes et des espaces extérieurs.
+          </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+            {domain.equestrian.map((item) => (
+              <li key={item} className="equestrian-item">
+                <Icon name="home" className="text-gold" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="notice mt-6">
+            <Icon name="shield" />
+            <span>
+              Les modalités d’utilisation et l’accueil éventuel de chevaux
+              restent à préciser par le propriétaire.
+            </span>
+          </p>
+        </div>
+        <DomainPhoto photo={photos.equestrian} />
       </div>
-      <DomainPhoto photo={photos.equestrian} />
     </section>
   );
 }

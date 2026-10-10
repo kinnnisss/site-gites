@@ -35,10 +35,33 @@ export const domain = {
   house,
   gardenArea,
   highlights: [
-    { value: `${number(house.area)} m²`, label: "Maison entièrement rénovée" },
-    { value: String(house.bedrooms), label: "Chambres" },
-    { value: String(house.bathrooms), label: "Salles de bain" },
-    { value: `${number(gardenArea)} m²`, label: "De jardin" },
+    {
+      value: `${number(house.area)} m²`,
+      label: "Maison entièrement rénovée",
+      title: "La maison",
+      description:
+        "Un intérieur rénové avec une grande pièce de vie et une cuisine équipée.",
+    },
+    {
+      value: String(house.bedrooms),
+      label: "Chambres",
+      title: "Les espaces de repos",
+      description: "Trois chambres composent la partie nuit de la maison.",
+    },
+    {
+      value: String(house.bathrooms),
+      label: "Salles de bain",
+      title: "Au quotidien",
+      description:
+        "Deux salles de bain et deux toilettes complètent les espaces intérieurs.",
+    },
+    {
+      value: `${number(gardenArea)} m²`,
+      label: "De jardin",
+      title: "Jardin & piscine",
+      description:
+        "Les extérieurs accueillent une piscine, une terrasse et des espaces de loisirs.",
+    },
   ],
   houseFeatures: [
     `${house.bedrooms} chambres`,
@@ -46,9 +69,31 @@ export const domain = {
     `${house.toilets} toilettes`,
     "Grande pièce de vie",
   ],
+  houseDetails: [
+    {
+      title: "Grande pièce de vie",
+      description: "Un espace commun au cœur de la maison.",
+    },
+    {
+      title: "Cuisine entièrement équipée",
+      description:
+        "Réfrigérateur, congélateur, lave-vaisselle, four et micro-ondes.",
+    },
+    {
+      title: `${house.bedrooms} chambres`,
+      description: "Les espaces de repos de la maison.",
+    },
+    {
+      title: `${house.bathrooms} salles de bain & ${house.toilets} toilettes`,
+      description: "Les équipements sanitaires de la maison.",
+    },
+  ],
   amenities: [
     {
       title: "Une cuisine entièrement équipée",
+      description:
+        "Les équipements pour préparer et partager vos repas sur place.",
+      note: "La cuisine réunit les appareils nécessaires à la préparation et à la conservation des repas.",
       items: [
         "Réfrigérateur",
         "Congélateur",
@@ -59,6 +104,9 @@ export const domain = {
     },
     {
       title: "Le confort au quotidien",
+      description:
+        "Des équipements pratiques pour le linge et le confort intérieur.",
+      note: "Des moustiquaires équipent toutes les fenêtres et portes-fenêtres.",
       items: [
         "Lave-linge",
         "Sèche-linge",

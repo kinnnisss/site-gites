@@ -96,3 +96,20 @@ Vérifier à 320, 375, 768, 1024 et 1440 px : absence de débordement, proportio
 - Lien d’évitement, métadonnées, pages légales, absence de coordonnées vides cliquables et absence d’erreur JavaScript : vérifiés.
 - Captures mobile et ordinateur inspectées. Aucun outil de test ajouté aux dépendances du projet.
 - Les véritables photos et contacts n’étant pas encore fournis, leur contenu final et leur destination restent à valider lors de l’intégration.
+
+## Évolution visuelle — maquette Stitch du 10 octobre 2026
+
+La présentation reprend la composition de la maquette fournie : header compact, titre en deux styles, arche, chiffres clés en cartes, blocs d’équipements, panneaux d’informations pratiques et contact bordeaux. Le menu actif et la navigation clavier sont conservés. Le menu se replie désormais sous 1280 px pour conserver des liens lisibles.
+
+- Newsreader (normal et italique) et Inter (variable) sont auto-hébergées via `next/font/local`, au format WOFF2 dans `app/fonts/`, avec leurs licences SIL OFL. Aucun appel à Google Fonts n’est effectué par le navigateur.
+- Les icônes sont des SVG locaux regroupés dans `components/icon.tsx`.
+- `DomainPhoto` propose quatre variantes visuelles : `hero`, `editorial`, `landscape`, `gallery`. Toutes continuent à utiliser les données `photos` et `gallery` dans `data/domain.ts`.
+- Les images externes et les affirmations non confirmées du modèle Stitch (histoire du lieu, architecture, literie, etc.) n’ont pas été reprises. Les photographies du domaine restent à fournir.
+
+Contrôles de cette évolution : ESLint, TypeScript et compilation Webpack réussis ; navigation, lien actif, clavier, logo et absence de débordement vérifiés dans Chromium à 320, 375, 640, 768, 1024, 1280, 1440 et 1920 px. Captures mobile et ordinateur inspectées. Aucun appel externe du navigateur pendant ces parcours. Le doré utilisé pour les textes est assombri (`#76592d`) pour améliorer le contraste sur les fonds clairs.
+
+### Présentation des mentions légales
+
+La page `/mentions-legales` reprend la seconde maquette Stitch : en-tête centré, cinq cartes numérotées, encadrés d’informations et liens de fin de page. Son composant est `components/legal-notice.tsx`, avec des styles isolés dans `components/legal-notice.module.css`. La page de confidentialité conserve sa présentation actuelle.
+
+Compléter les informations validées sur l’éditeur et l’hébergeur dans `data/legal.ts`. L’identité du domaine, son adresse et l’e-mail restent issus de `data/domain.ts`. Les valeurs absentes sont affichées comme « À renseigner ». La page demeure explicitement une version à compléter ; les garanties et coordonnées fictives de la maquette ne sont pas reprises.

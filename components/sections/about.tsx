@@ -7,25 +7,31 @@ export function About() {
       id="domaine"
       tabIndex={-1}
       aria-labelledby="domaine-title"
-      className="border-y border-line bg-paper py-16 md:py-20"
+      className="section-space bg-paper"
     >
       <div className="site-width">
-        <div className="grid gap-7 md:grid-cols-2 md:gap-16">
-          <SectionHeading id="domaine-title" eyebrow="Bienvenue chez nous">
-            Bienvenue au {domain.name}
+        <div className="max-w-[680px]">
+          <SectionHeading id="domaine-title" eyebrow="L’esprit du lieu">
+            Une parenthèse à la campagne,
+            <br className="hidden sm:block" /> entre maison et jardin
           </SectionHeading>
-          <p className="text-base leading-8 text-muted">{domain.description}</p>
+          <div className="gold-rule" />
+          <p className="body-copy">{domain.description}</p>
         </div>
-        <dl className="mt-12 grid grid-cols-2 gap-x-5 gap-y-8 border-t border-line pt-9 md:grid-cols-4">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {domain.highlights.map((item) => (
-            <div key={item.label} className="flex flex-col">
-              <dt className="order-2 mt-3 text-sm text-muted">{item.label}</dt>
-              <dd className="font-serif text-4xl text-accent sm:text-5xl">
-                {item.value}
-              </dd>
-            </div>
+            <article key={item.label} className="stat-card">
+              <p className="stat-number">{item.value}</p>
+              <p className="stat-label">{item.label}</p>
+              <div className="mt-7">
+                <h3 className="font-serif text-2xl">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  {item.description}
+                </p>
+              </div>
+            </article>
           ))}
-        </dl>
+        </div>
       </div>
     </section>
   );

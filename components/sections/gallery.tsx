@@ -9,28 +9,29 @@ export function Gallery() {
       id="galerie"
       tabIndex={-1}
       aria-labelledby="galerie-title"
-      className="border-y border-line bg-paper section-space"
+      className="site-width section-space"
     >
-      <div className="site-width">
-        <SectionHeading id="galerie-title" eyebrow="La galerie">
-          Le domaine en images
-        </SectionHeading>
-        {waitingForPhotos && (
-          <p className="mt-5 max-w-2xl text-sm leading-7 text-muted">
-            Les photographies du domaine seront bientôt disponibles. Ces
-            emplacements présentent les espaces à découvrir ; ils ne contiennent
-            aucune photographie de substitution.
-          </p>
-        )}
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {gallery.map((photo) => (
-            <DomainPhoto
-              key={photo.id}
-              photo={photo}
-              sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
-            />
-          ))}
-        </div>
+      <SectionHeading
+        id="galerie-title"
+        eyebrow="Regards sur le domaine"
+        centered
+      >
+        Galerie photographique
+      </SectionHeading>
+      <p className="section-intro">
+        {waitingForPhotos
+          ? "Les photographies du domaine seront bientôt disponibles. En attendant, découvrez les espaces qui seront présentés ici."
+          : "Découvrez les espaces de la maison et les extérieurs du domaine en images."}
+      </p>
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {gallery.map((photo) => (
+          <DomainPhoto
+            key={photo.id}
+            photo={photo}
+            variant="gallery"
+            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+          />
+        ))}
       </div>
     </section>
   );

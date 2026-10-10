@@ -4,18 +4,29 @@ import logo from "@/public/images/logo-domaine-lo-carmahon.jpeg";
 import { domain } from "@/data/domain";
 
 export function Brand() {
+  const [firstWord, ...rest] = domain.name.split(" ");
   return (
     <Link
       href="/#accueil"
       aria-label={`${domain.name}, accueil`}
-      className="block shrink-0 rounded-md"
+      className="brand"
     >
       <Image
         src={logo}
-        alt={domain.logoAlt}
-        sizes="(max-width: 640px) 144px, 184px"
-        className="h-auto w-36 object-contain sm:w-46"
+        alt=""
+        sizes="76px"
+        className="h-auto w-[76px] object-contain"
       />
+      <span>
+        <span className="block font-serif text-[21px] leading-[1.05]">
+          {firstWord}
+          <br />
+          {rest.join(" ")}
+        </span>
+        <span className="mt-1.5 block text-[8px] uppercase tracking-[0.18em] text-muted">
+          Saint-Aulaye · Dordogne
+        </span>
+      </span>
     </Link>
   );
 }

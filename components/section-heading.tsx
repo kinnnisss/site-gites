@@ -4,18 +4,17 @@ export function SectionHeading({
   id,
   eyebrow,
   children,
+  centered = false,
 }: {
   id: string;
   eyebrow: string;
   children: ReactNode;
+  centered?: boolean;
 }) {
   return (
-    <div>
+    <div className={centered ? "section-heading centered" : "section-heading"}>
       <p className="eyebrow">{eyebrow}</p>
-      <h2
-        id={id}
-        className="mt-4 font-serif text-3xl leading-tight sm:text-4xl lg:text-5xl"
-      >
+      <h2 id={id} className="section-title">
         {children}
       </h2>
     </div>
@@ -24,9 +23,9 @@ export function SectionHeading({
 
 export function FeatureList({ items }: { items: readonly string[] }) {
   return (
-    <ul className="mt-5 space-y-3">
+    <ul className="feature-list">
       {items.map((item) => (
-        <li key={item} className="flex gap-3 text-sm leading-6 text-muted">
+        <li key={item}>
           <span aria-hidden="true" className="text-gold">
             —
           </span>

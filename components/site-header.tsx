@@ -59,35 +59,27 @@ export function SiteHeader() {
 
   return (
     <header
-      className="border-b border-line bg-background"
+      className="site-header"
       onKeyDown={(event) => {
         if (event.key === "Escape" && open) closeMenu();
       }}
     >
-      <div className="site-width flex flex-wrap items-center justify-between gap-x-5 gap-y-3 py-4">
+      <div className="site-width header-inner">
         <Brand />
-        <p className="hidden text-xs tracking-[0.15em] text-muted sm:block">
-          UNE MAISON, UNE PARENTHÈSE EN DORDOGNE
-        </p>
-        <div className="hidden lg:block">
-          <Link href="/#contact" className="button-primary">
-            Nous contacter <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
         <button
           ref={toggle}
           type="button"
           aria-expanded={open}
           aria-controls="main-navigation"
           onClick={() => setOpen(!open)}
-          className="min-h-11 rounded-full border border-line px-5 text-sm lg:hidden"
+          className="min-h-11 rounded-full border border-line px-5 text-sm xl:hidden"
         >
           {open ? "Fermer ×" : "Menu ☰"}
         </button>
         <nav
           id="main-navigation"
           aria-label="Navigation principale"
-          className={`${open ? "flex" : "hidden"} w-full flex-col gap-1 border-t border-line pt-3 lg:flex lg:flex-row lg:justify-between lg:gap-2`}
+          className={`main-nav ${open ? "is-open" : ""}`}
         >
           {navigation.map((link) => (
             <Link
@@ -105,9 +97,9 @@ export function SiteHeader() {
                   .getElementById(link.id)
                   ?.focus({ preventScroll: true });
               }}
-              className="min-h-11 rounded-md px-2 py-3 text-sm text-foreground underline-offset-4 hover:text-accent hover:underline aria-[current=location]:bg-paper aria-[current=location]:text-accent aria-[current=location]:underline aria-[current=location]:decoration-2"
+              className={`nav-link ${link.id === "contact" ? "nav-contact" : ""}`}
             >
-              {link.label}
+              {link.id === "contact" ? "Nous contacter" : link.label}
             </Link>
           ))}
         </nav>

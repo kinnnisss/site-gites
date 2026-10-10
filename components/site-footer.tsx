@@ -1,37 +1,71 @@
 import Link from "next/link";
-import { domain } from "@/data/domain";
+import { domain, navigation } from "@/data/domain";
+import { Brand } from "@/components/brand";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-line py-9">
-      <div className="site-width flex flex-col justify-between gap-7 md:flex-row md:items-center">
-        <div>
-          <p className="font-serif text-2xl">{domain.name}</p>
-          <p className="mt-2 text-xs leading-6 text-muted">{domain.location}</p>
+    <footer className="site-footer">
+      <div className="site-width">
+        <div className="footer-grid">
+          <div>
+            <Brand />
+            <p className="mt-6 max-w-xs text-sm leading-7 text-muted">
+              Une maison entièrement rénovée, un jardin et une piscine pour une
+              parenthèse en Dordogne.
+            </p>
+            <p className="mt-4 font-serif text-lg italic text-gold">
+              {domain.tagline}
+            </p>
+          </div>
+          <nav aria-label="Découvrir le domaine">
+            <p className="eyebrow mb-4">Découvrir le domaine</p>
+            {navigation
+              .filter((link) =>
+                [
+                  "domaine",
+                  "maison",
+                  "equipements",
+                  "exterieurs",
+                  "galerie",
+                ].includes(link.id),
+              )
+              .map((link) => (
+                <Link
+                  className="footer-link"
+                  key={link.id}
+                  href={`/#${link.id}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+          </nav>
+          <nav aria-label="Informations et liens légaux">
+            <p className="eyebrow mb-4">Informations</p>
+            <Link className="footer-link" href="/#informations">
+              Informations pratiques
+            </Link>
+            <Link className="footer-link" href="/#contact">
+              Nous contacter
+            </Link>
+            <Link className="footer-link" href="/mentions-legales">
+              Mentions légales
+            </Link>
+            <Link className="footer-link" href="/confidentialite">
+              Politique de confidentialité
+            </Link>
+          </nav>
         </div>
-        <nav
-          aria-label="Navigation de pied de page"
-          className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted"
-        >
-          <Link
-            href="/mentions-legales"
-            className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
-          >
-            Mentions légales
-          </Link>
-          <Link
-            href="/confidentialite"
-            className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
-          >
-            Politique de confidentialité
-          </Link>
+        <div className="footer-bottom">
+          <span>
+            {domain.name} · {domain.location}
+          </span>
           <Link
             href="/#accueil"
-            className="inline-flex min-h-11 items-center text-accent underline-offset-4 hover:underline"
+            className="inline-flex min-h-11 items-center gap-3 hover:text-accent"
           >
-            Retour à l’accueil ↑
+            Retour en haut <span aria-hidden="true">↑</span>
           </Link>
-        </nav>
+        </div>
       </div>
     </footer>
   );
