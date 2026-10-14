@@ -1,5 +1,21 @@
 # Cahier des charges — Site internet de location de gîtes
 
+## Périmètre V1 validé — 6 octobre 2026
+
+La demande V1 remplace les étapes de démonstration et prévaut sur les fonctionnalités générales ci-dessous.
+
+- Site vitrine du **Domaine Lo Carmalhon**, un seul gîte à Saint-Aulaye-Puymangou.
+- Données réelles centralisées dans `data/domain.ts` ; aucune donnée fictive dans les offres.
+- Accueil, domaine, maison, équipements, extérieurs, installations équestres, galerie, informations pratiques, localisation et contact sur une page à ancres.
+- Logo officiel dans `public/images/logo-domaine-lo-carmalhon.jpeg` ; photos réelles en attente.
+- Pages de mentions légales et de confidentialité à compléter avant publication.
+- Aucun paiement, réservation, compte, formulaire d’envoi, Supabase, base de données ni administration pour cette V1.
+- Les contacts absents sont masqués ; les photos absentes utilisent des emplacements explicitement identifiés.
+- Les modalités équestres, la capacité officielle et les informations commerciales non fournies restent à confirmer.
+- L’indexation reste désactivée jusqu’à la validation de publication ; URL de production et contenus légaux à fournir.
+
+Les sections suivantes conservent la vision générale et les évolutions possibles du projet ; elles ne sont pas toutes à implémenter dans cette V1.
+
 Statut : document de travail.
 Les fonctionnalités générales sont définies. Les informations de
 l’entreprise et certaines règles métier seront complétées avec le client.
