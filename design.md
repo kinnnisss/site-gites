@@ -1,11 +1,17 @@
-# Domaine Lo Carmahon — Brief d’amélioration du design
+# Domaine Lo Carmalhon — Brief d’amélioration du design
 
 > Document à transmettre à une IA de design avec le logo officiel et, si possible, des captures du site actuel sur ordinateur et téléphone.
-> État du projet : 10 octobre 2026. Description établie à partir des fichiers du site. Les pistes d’amélioration ci-dessous sont des propositions à explorer, pas des changements déjà réalisés.
+> Brief initial du 10 octobre 2026, nom corrigé le 14 octobre. La description ci-dessous conserve l’état initial ; les changements réellement implémentés sont précisés dans la mise à jour suivante.
+
+## Mise à jour implémentée — 14 octobre 2026
+
+Le nom validé est **Domaine Lo Carmalhon**. L’accueil conserve sa palette crème et rouge profond et les polices locales **Newsreader / Inter** (qui avaient déjà remplacé Georgia / Arial). Les textes courants sont maintenant à 16 px. Le contact est prioritaire dans le hero ; l’en-tête reste visible au défilement, avec des ancres décalées et un menu mobile à deux colonnes sous 1280 px. Les chiffres clés forment une bande compacte et la galerie se présente sur deux colonnes sur téléphone, quatre dès 768 px.
+
+Toutes les photographies absentes, y compris le hero, utilisent un cadre neutre explicitement annoté « Photographie à venir » : l’ancienne illustration n’est plus affichée. Les légendes sont placées hors du cadre photo. Le remplacement par les photographies client reste centralisé dans `data/domain.ts`. Les états de chargement et d’erreur préservent les dimensions du cadre. Le périmètre V1 et les informations client confirmées ci-dessous restent applicables.
 
 ## 1. Mission pour l’IA de design
 
-Améliorer le design du site vitrine existant du **Domaine Lo Carmahon**, un gîte situé à Saint-Aulaye-Puymangou, en Dordogne, France.
+Améliorer le design du site vitrine existant du **Domaine Lo Carmalhon**, un gîte situé à Saint-Aulaye-Puymangou, en Dordogne, France.
 
 Le site possède déjà une direction visuelle satisfaisante : chaleureuse, sobre, contemporaine et aérée. Faire évoluer cette base pour lui donner davantage de personnalité, mieux valoriser les futures photographies et faciliter la lecture sur téléphone. Ne pas repartir d’un modèle générique ni reconstruire l’identité de zéro.
 
@@ -34,7 +40,7 @@ Ne pas dessiner de boutons « Réserver », de sélecteurs de dates, de prix par
 
 ## 3. Identité et tonalité à préserver
 
-- Nom : **Domaine Lo Carmahon**.
+- Nom : **Domaine Lo Carmalhon**.
 - Accroche actuelle : **« Une parenthèse de calme au cœur de la Dordogne »**.
 - Localisation affichée : **Saint-Aulaye-Puymangou · Dordogne**.
 - Sensations recherchées : calme, campagne, confort, vacances, authenticité et soin.
@@ -43,7 +49,7 @@ Ne pas dessiner de boutons « Réserver », de sélecteurs de dates, de prix par
 
 ### Logo officiel
 
-Fichier fourni dans le projet : `public/images/logo-domaine-lo-carmahon.jpeg`.
+Fichier fourni dans le projet : `public/images/logo-domaine-lo-carmalhon.jpeg`.
 
 Il représente un blason rouge et or accompagné du nom du domaine, sur fond blanc. Le conserver intégralement, dans ses proportions, avec une zone de respiration suffisante. Ne pas le redessiner, le déformer, le recolorer ou le recadrer pour en retirer des éléments.
 
@@ -188,7 +194,7 @@ Le logo est disponible. Toutes les sources des photographies du domaine sont enc
 
 Le hero utilise une illustration SVG de campagne, clairement accompagnée de la mention qu’elle ne représente pas le lieu réel. Les autres images sont remplacées par des emplacements neutres et explicitement identifiés comme « Photographie à venir ».
 
-Ne pas utiliser de photo de banque d’images ou d’image générée susceptible d’être prise pour le Domaine Lo Carmahon. Ne pas transformer l’illustration en preuve visuelle de l’architecture réelle de la maison.
+Ne pas utiliser de photo de banque d’images ou d’image générée susceptible d’être prise pour le Domaine Lo Carmalhon. Ne pas transformer l’illustration en preuve visuelle de l’architecture réelle de la maison.
 
 ### Deux états à concevoir
 
@@ -205,7 +211,7 @@ La galerie actuelle prévoit huit catégories : maison, chambres, pièces de vie
 
 | Emplacement dans le projet | Usage |
 | --- | --- |
-| `public/images/logo-domaine-lo-carmahon.jpeg` | Logo officiel à joindre au brief |
+| `public/images/logo-domaine-lo-carmalhon.jpeg` | Logo officiel à joindre au brief |
 | `public/images/hero/` | Vue principale |
 | `public/images/house/` | Maison et pièces intérieures |
 | `public/images/bedrooms/` | Chambres |
@@ -282,7 +288,7 @@ Une simple image du hero ne suffit pas : proposer une expérience cohérente sur
 
 ## 13. Texte prêt à joindre à l’envoi
 
-> Tu es designer web UX/UI. À partir de ce brief, du logo officiel et des captures jointes si elles sont disponibles, propose une amélioration du site existant du Domaine Lo Carmahon. Conserve son identité chaleureuse et contemporaine, ses tons crème et son accent rouge profond. Travaille particulièrement la hiérarchie, le rythme de la page, la place des futures photos, la navigation et la lecture mobile. Respecte les informations confirmées : un seul gîte, aucun tarif ou contact inventé, aucune réservation en ligne et aucune fausse photographie du domaine. Distingue le design actuel de tes propositions. Fournis une maquette complète ordinateur et mobile, les états d’interface et une mini-charte utilisable ensuite dans Next.js et Tailwind. Si tu n’as pas accès au site ou aux captures, indique que ton analyse de l’existant repose uniquement sur ce document.
+> Tu es designer web UX/UI. À partir de ce brief, du logo officiel et des captures jointes si elles sont disponibles, propose une amélioration du site existant du Domaine Lo Carmalhon. Conserve son identité chaleureuse et contemporaine, ses tons crème et son accent rouge profond. Travaille particulièrement la hiérarchie, le rythme de la page, la place des futures photos, la navigation et la lecture mobile. Respecte les informations confirmées : un seul gîte, aucun tarif ou contact inventé, aucune réservation en ligne et aucune fausse photographie du domaine. Distingue le design actuel de tes propositions. Fournis une maquette complète ordinateur et mobile, les états d’interface et une mini-charte utilisable ensuite dans Next.js et Tailwind. Si tu n’as pas accès au site ou aux captures, indique que ton analyse de l’existant repose uniquement sur ce document.
 
 ## 14. Éléments à transmettre avec ce document
 

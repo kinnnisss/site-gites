@@ -6,7 +6,7 @@ function Address() {
   return (
     <address className="not-italic">
       <span className="block font-serif text-2xl">{domain.address.street}</span>
-      <span className="mt-1 block text-sm leading-6 text-muted">
+      <span className="mt-2 block leading-7 text-muted">
         {domain.address.postalCode} {domain.address.town}
         <br />
         {domain.address.country}
@@ -41,7 +41,7 @@ export function PracticalInfo() {
               <Icon name="clock" />
             </span>
             <h3 className="card-title">Rythme & horaires</h3>
-            <p className="mt-3 text-sm leading-7 text-muted">
+            <p className="body-copy mt-3">
               Les horaires communiqués par le propriétaire pour votre arrivée et
               votre départ.
             </p>
@@ -53,26 +53,22 @@ export function PracticalInfo() {
                 <div key={label} className="schedule-row">
                   <Icon name="clock" className="text-gold" />
                   <div>
-                    <dt className="text-sm font-medium">{label}</dt>
-                    <dd className="mt-1 text-sm leading-6 text-muted">
+                    <dt className="font-medium">{label}</dt>
+                    <dd className="mt-1 leading-7 text-muted">
                       {value}
                     </dd>
                   </div>
                 </div>
               ))}
             </dl>
-            <p className="mt-8 text-sm italic leading-7 text-muted">
-              Pour toute précision sur votre séjour, les moyens de contact
-              seront affichés dès qu’ils seront disponibles.
-            </p>
           </div>
           <div id="localisation" className="editorial-card">
             <span className="icon-tile">
               <Icon name="pin" />
             </span>
             <h3 className="card-title">Localisation & accès</h3>
-            <p className="mt-3 text-sm leading-7 text-muted">
-              Le Domaine Lo Carmahon se situe à Saint-Aulaye-Puymangou, en
+            <p className="body-copy mt-3">
+              Le {domain.name} se situe à Saint-Aulaye-Puymangou, en
               Dordogne.
             </p>
             <div className="address-card">
@@ -137,9 +133,7 @@ export function Contact() {
         <div>
           <p className="eyebrow">Échanger avec nous</p>
           <h2 id="contact-title" className="contact-title">
-            Prendre contact
-            <br />
-            avec le domaine
+            Parlons de votre séjour
           </h2>
           {links.length > 0 ? (
             <ul className="mt-7 flex flex-wrap gap-4">
@@ -153,11 +147,13 @@ export function Contact() {
               ))}
             </ul>
           ) : (
-            <p className="mt-5 max-w-xl text-sm leading-7 text-white/90">
-              Les coordonnées du propriétaire seront prochainement disponibles
-              ici pour toute question sur le domaine ou un séjour. Merci de
-              votre patience.
-            </p>
+            <div className="contact-waiting">
+              <p className="font-medium">Coordonnées à venir</p>
+              <p className="mt-2 leading-7">
+                Les moyens de contact seront ajoutés ici dès qu’ils seront
+                disponibles, pour échanger sur le domaine et votre séjour.
+              </p>
+            </div>
           )}
           <p className="contact-note">
             <Icon name="shield" />
@@ -167,14 +163,14 @@ export function Contact() {
         <div className="contact-address">
           <p className="eyebrow">Nous retrouver</p>
           <p className="mt-3 font-serif text-2xl">{domain.name}</p>
-          <p className="mt-2 text-xs leading-6">
+          <p className="mt-3 leading-7">
             {domain.address.street}
             <br />
             {domain.address.postalCode} {domain.address.town}
           </p>
           <a
             href="#localisation"
-            className="mt-5 inline-flex min-h-11 items-center gap-3 text-xs underline underline-offset-4"
+            className="mt-5 inline-flex min-h-12 items-center gap-3 underline underline-offset-4"
           >
             Situer le domaine <span aria-hidden="true">↗</span>
           </a>

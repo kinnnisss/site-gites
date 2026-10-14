@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   // Prépublication : activer l’indexation une fois les contenus et mentions validés.
   robots: { index: false, follow: false },
   icons: {
-    icon: "/images/logo-domaine-lo-carmahon.jpeg",
-    apple: "/images/logo-domaine-lo-carmahon.jpeg",
+    icon: "/images/logo-domaine-lo-carmalhon.jpeg",
+    apple: "/images/logo-domaine-lo-carmalhon.jpeg",
   },
 };
 

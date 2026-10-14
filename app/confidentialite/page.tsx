@@ -4,7 +4,7 @@ import { LegalPage } from "@/components/legal-page";
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
   description:
-    "Politique de confidentialité du Domaine Lo Carmahon, à compléter avant publication.",
+    "Politique de confidentialité du Domaine Lo Carmalhon, à compléter avant publication.",
   openGraph: {
     title: "Politique de confidentialité",
     description: "Politique de confidentialité en cours de préparation.",

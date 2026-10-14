@@ -4,10 +4,10 @@
 
 La demande V1 remplace les étapes de démonstration et prévaut sur les fonctionnalités générales ci-dessous.
 
-- Site vitrine du **Domaine Lo Carmahon**, un seul gîte à Saint-Aulaye-Puymangou.
+- Site vitrine du **Domaine Lo Carmalhon**, un seul gîte à Saint-Aulaye-Puymangou.
 - Données réelles centralisées dans `data/domain.ts` ; aucune donnée fictive dans les offres.
 - Accueil, domaine, maison, équipements, extérieurs, installations équestres, galerie, informations pratiques, localisation et contact sur une page à ancres.
-- Logo officiel dans `public/images/logo-domaine-lo-carmahon.jpeg` ; photos réelles en attente.
+- Logo officiel dans `public/images/logo-domaine-lo-carmalhon.jpeg` ; photos réelles en attente.
 - Pages de mentions légales et de confidentialité à compléter avant publication.
 - Aucun paiement, réservation, compte, formulaire d’envoi, Supabase, base de données ni administration pour cette V1.
 - Les contacts absents sont masqués ; les photos absentes utilisent des emplacements explicitement identifiés.

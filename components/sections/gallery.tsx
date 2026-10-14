@@ -23,13 +23,13 @@ export function Gallery() {
           ? "Les photographies du domaine seront bientôt disponibles. En attendant, découvrez les espaces qui seront présentés ici."
           : "Découvrez les espaces de la maison et les extérieurs du domaine en images."}
       </p>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="gallery-grid">
         {gallery.map((photo) => (
           <DomainPhoto
             key={photo.id}
             photo={photo}
             variant="gallery"
-            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+            sizes="(max-width: 767px) calc((100vw - 56px) / 2), (max-width: 1199px) calc((100vw - 88px) / 4), 275px"
           />
         ))}
       </div>

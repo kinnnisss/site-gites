@@ -15,7 +15,7 @@ export type ContactDetails = {
 const house = { area: 100, bedrooms: 3, bathrooms: 2, toilets: 2 };
 const gardenArea = 10000;
 const number = (value: number): string => value.toLocaleString("fr-FR");
-const name = "Domaine Lo Carmahon";
+const name = "Domaine Lo Carmalhon";
 const town = "Saint-Aulaye-Puymangou";
 
 export const domain = {

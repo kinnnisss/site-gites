@@ -10,16 +10,32 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("accueil");
   const pathname = usePathname();
+  const header = useRef<HTMLElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const pendingSection = useRef<string | null>(null);
 
   useEffect(() => {
     if (pathname !== "/") return;
 
+    const focusFrame = window.requestAnimationFrame(() => {
+      if (pendingSection.current) {
+        focusSection(pendingSection.current);
+        pendingSection.current = null;
+      }
+    });
     let frame = 0;
     function updateActiveSection() {
       frame = 0;
-      // La section qui passe dans le haut de l’écran devient la section active.
-      const marker = Math.min(window.innerHeight * 0.25, 160);
+      // Le repère reste sous l’en-tête, même lorsque celui-ci est fixe au défilement.
+      const headerHeight = Math.min(
+        header.current?.getBoundingClientRect().height ?? 110,
+        110,
+      );
+      const firstSection = document.getElementById(navigation[0].id);
+      const anchorOffset = firstSection
+        ? Number.parseFloat(window.getComputedStyle(firstSection).scrollMarginTop) || 0
+        : 0;
+      const marker = Math.max(headerHeight + 24, anchorOffset + 2);
       let current: string = navigation[0].id;
       for (const link of navigation) {
         const section = document.getElementById(link.id);
@@ -45,6 +61,7 @@ export function SiteHeader() {
     window.addEventListener("resize", scheduleUpdate);
     window.addEventListener("hashchange", scheduleUpdate);
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
@@ -57,11 +74,26 @@ export function SiteHeader() {
     toggle.current?.focus();
   }
 
+  function focusSection(id: string) {
+    const section = document.getElementById(id);
+    section?.focus({ preventScroll: true });
+    section?.scrollIntoView();
+  }
+
   return (
     <header
+      ref={header}
       className="site-header"
       onKeyDown={(event) => {
-        if (event.key === "Escape" && open) closeMenu();
+        if (event.key === "Escape" && open) {
+          event.preventDefault();
+          closeMenu();
+        }
+      }}
+      onBlur={(event) => {
+        if (open && !event.currentTarget.contains(event.relatedTarget)) {
+          setOpen(false);
+        }
       }}
     >
       <div className="site-width header-inner">
@@ -71,10 +103,23 @@ export function SiteHeader() {
           type="button"
           aria-expanded={open}
           aria-controls="main-navigation"
-          onClick={() => setOpen(!open)}
-          className="min-h-11 rounded-full border border-line px-5 text-sm xl:hidden"
+          onClick={() => setOpen((isOpen) => !isOpen)}
+          className="header-menu-toggle"
         >
-          {open ? "Fermer ×" : "Menu ☰"}
+          <span>{open ? "Fermer" : "Menu"}</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d={open ? "M6 6l12 12M6 18L18 6" : "M4 6h16M4 12h16M4 18h16"} />
+          </svg>
         </button>
         <nav
           id="main-navigation"
@@ -85,17 +130,21 @@ export function SiteHeader() {
             <Link
               key={link.id}
               href={`/#${link.id}`}
+              scroll={false}
               aria-current={
                 pathname === "/" && activeSection === link.id
                   ? "location"
                   : undefined
               }
-              onClick={() => {
+              onNavigate={() => {
                 setOpen(false);
                 setActiveSection(link.id);
-                document
-                  .getElementById(link.id)
-                  ?.focus({ preventScroll: true });
+                if (pathname === "/") {
+                  // Attendre la fermeture du menu avant de positionner l’ancre.
+                  window.requestAnimationFrame(() => focusSection(link.id));
+                } else {
+                  pendingSection.current = link.id;
+                }
               }}
               className={`nav-link ${link.id === "contact" ? "nav-contact" : ""}`}
             >

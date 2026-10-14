@@ -26,8 +26,8 @@ export function House() {
             <div key={item.title} className="detail-row">
               <Icon name={icons[index]} className="text-gold" />
               <div>
-                <h3 className="text-sm font-medium">{item.title}</h3>
-                <p className="mt-1 text-xs leading-6 text-muted">
+                <h3 className="font-medium">{item.title}</h3>
+                <p className="detail-description">
                   {item.description}
                 </p>
               </div>
@@ -60,23 +60,19 @@ export function Amenities() {
           De la cuisine aux équipements de confort, retrouvez l’essentiel de la
           maison.
         </p>
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="amenities-grid">
           {domain.amenities.map((group, index) => (
-            <article key={group.title} className="editorial-card">
-              <span className="icon-tile">
-                <Icon name={index === 0 ? "kitchen" : "sun"} />
-              </span>
-              <h3 className="card-title">{group.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-muted">
+            <article key={group.title} className="editorial-card amenity-card">
+              <div className="card-heading">
+                <span className="icon-tile">
+                  <Icon name={index === 0 ? "kitchen" : "sun"} />
+                </span>
+                <h3 className="card-title">{group.title}</h3>
+              </div>
+              <p className="body-copy mt-4">
                 {group.description}
               </p>
               <FeatureList items={group.items} />
-              <div className="card-note">
-                <p className="eyebrow">
-                  {index === 0 ? "Côté cuisine" : "Côté confort"}
-                </p>
-                <p>{group.note}</p>
-              </div>
             </article>
           ))}
         </div>

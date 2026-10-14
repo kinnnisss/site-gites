@@ -29,7 +29,7 @@ export function Outdoors() {
           Découvrir les espaces
         </a>
       </div>
-      <div className="mt-9 grid gap-6 md:grid-cols-2">
+      <div className="outdoor-media">
         <DomainPhoto photo={photos.garden} variant="landscape" />
         <DomainPhoto photo={photos.pool} variant="landscape" />
       </div>
