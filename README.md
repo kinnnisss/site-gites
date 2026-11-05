@@ -24,14 +24,18 @@ Si l’environnement bloque les ports internes de Turbopack, vérifier aussi ave
 ## Organisation
 
 - `data/domain.ts` : identité, adresse, caractéristiques, équipements, horaires, contacts, photos, galerie et navigation. C’est le point d’entrée pour actualiser les informations client.
-- `app/page.tsx` : composition des sections, sans logique métier.
+- `app/(public)/page.tsx` : composition des sections, sans logique métier.
 - `components/sections/` : sections de la page, rendues côté serveur.
 - `components/site-header.tsx` : menu mobile, fermeture par Échap et accès clavier.
 - `components/domain-photo.tsx` : `next/image`, emplacements vides et erreurs de chargement.
 - `components/cottage-illustration.tsx` : ancienne illustration de démonstration, désormais inutilisée ; l’accueil emploie un placeholder neutre.
-- `app/globals.css` : couleurs, typographie et styles partagés.
-- `app/layout.tsx` : cadre commun, metadata et Open Graph.
-- `app/mentions-legales/` et `app/confidentialite/` : pages préparées, explicitement non définitives.
+- `app/globals.css` : socle Tailwind neutre et hauteur du document.
+- `app/layout.tsx` : structure HTML commune, sans cadre ni identité visuelle métier.
+- `app/(public)/layout.tsx` : polices, métadonnées, header, navigation et footer publics.
+- `app/(public)/public.css` : styles et variables de la vitrine, limités au cadre `.public-site`.
+- `app/(public)/mentions-legales/` et `app/(public)/confidentialite/` : pages préparées, explicitement non définitives.
+- `app/equipe/` : emplacement réservé, sans page accessible ni données privées.
+- `modules/etats-des-lieux/` : consignes pour la future intégration fidèle du HTML.
 
 Aucune base de données, authentification, réservation, paiement, collecte par formulaire ou intégration Supabase. Pas de dépendance supplémentaire pour la V1.
 
@@ -82,7 +86,34 @@ Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni ca
 
 ## Avant publication
 
-Compléter les contacts et documents légaux, valider les contenus avec le client et renseigner `domain.siteUrl`. L’indexation reste volontairement désactivée (`robots` dans `app/layout.tsx`) pendant cette phase ; la revoir avant publication, puis ajouter URL canonique, sitemap et image de partage réelle. Aucun domaine ni image Open Graph fictif n’est déclaré.
+Compléter les contacts et documents légaux, valider les contenus avec le client et renseigner `domain.siteUrl`. L’indexation reste volontairement désactivée (`robots` dans `app/(public)/layout.tsx`) pendant cette phase ; la revoir avant publication, puis ajouter URL canonique, sitemap et image de partage réelle. Aucun domaine ni image Open Graph fictif n’est déclaré.
+
+## Fondations de l’Espace Équipe — phase 1
+
+Le groupe `(public)` ne change pas les URL `/`, `/mentions-legales` et
+`/confidentialite`. Le cadre public conserve son contenu et ses métadonnées ;
+ses couleurs, polices et règles de présentation restent dans `.public-site`.
+Tailwind reste le socle commun : le futur formulaire devra aussi isoler ses
+styles des resets du framework pour reproduire exactement son HTML.
+
+`app/equipe/layout.tsx` réserve un cadre indépendant sans créer de page.
+Les URL d’équipe répondent donc 404. Ni authentification, ni base de données,
+ni formulaire ne sont implémentés. Les métadonnées `noindex` ne remplacent pas
+les futurs contrôles serveur et les autorisations RLS.
+
+Le fichier client est conservé sans altération dans
+`docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html`, hors de `public/`.
+Vérifier son intégrité avec :
+
+```bash
+sha256sum docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html
+# 9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0
+```
+
+Voir `modules/etats-des-lieux/README.md` pour les limites de la phase suivante.
+Après un déplacement de routes, si TypeScript cite des anciens chemins dans
+`.next/dev/types`, arrêter le serveur de développement et supprimer uniquement
+le cache généré `.next/dev`, puis relancer les contrôles.
 
 ## Contrôles manuels
 
