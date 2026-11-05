@@ -115,6 +115,15 @@ Après un déplacement de routes, si TypeScript cite des anciens chemins dans
 `.next/dev/types`, arrêter le serveur de développement et supprimer uniquement
 le cache généré `.next/dev`, puis relancer les contrôles.
 
+### Portage du formulaire — phase 2
+
+Le formulaire React/TypeScript existe maintenant dans `modules/etats-des-lieux`,
+sans import depuis les routes du site. Il reste inaccessible dans le déploiement
+tant que l’authentification et les autorisations serveur ne sont pas intégrées.
+Il conserve la référence HTML, son impression native et son payload JSON ; aucun
+stockage n’est raccordé. Voir `docs/ESPACE_EQUIPE_PHASE_2.md` et le banc d’essai
+local dans `tests/etats-des-lieux/README.md`.
+
 ## Contrôles manuels
 
 Vérifier à 320, 375, 768, 1024 et 1440 px : absence de débordement, proportions du logo, menu mobile, ancres, liens légaux et retour à l’accueil. Au clavier : lien « Aller au contenu », Tab, Entrée, Échap dans le menu et focus visible. Vérifier aussi les photos sur connexion lente et une URL photo invalide, puis les trois contacts dès qu’ils sont fournis. Le site respecte la préférence de réduction des mouvements.
