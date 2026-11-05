@@ -3,8 +3,10 @@
 Le formulaire React de phase 2 est utilisé par les routes privées de phase 4.
 L’accès reste fermé par défaut jusqu’à la recette réelle Auth/RLS de développement.
 La référence HTML et le contrat JSON v1 sont conservés. Voir
-`docs/ESPACE_EQUIPE_PHASE_4.md` pour l’état actuel, les migrations non appliquées,
-les tests et les opérations manuelles ; les sections suivantes décrivent le portage.
+`docs/ESPACE_EQUIPE_PHASE_4.md` pour le raccordement ;
+`docs/ESPACE_EQUIPE_HANDOFF.md` pour l’état actuel, la déclaration d’application
+manuelle des migrations en développement et la recette réelle encore à faire.
+Les sections suivantes décrivent le portage.
 
 ## Raccordement de phase 4
 

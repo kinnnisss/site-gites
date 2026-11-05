@@ -11,6 +11,7 @@ async function loadPureModule(path) {
 }
 const { can, isActiveMember, permissions } = await loadPureModule('../../lib/auth/policy.ts');
 const { readSupabaseConfig, recoveryOrigin } = await loadPureModule('../../lib/supabase/config.ts');
+const { inspectionFeatureEnabled } = await loadPureModule('../../lib/inspections/feature.ts');
 const id = '00000000-0000-4000-8000-000000000001';
 // These fixtures test only pure policy decisions, never an Auth server/session.
 for (const role of ['agent', 'admin']) {
@@ -78,4 +79,16 @@ test('API mutations reject missing or cross-site Origin and changed ports/scheme
   assert.equal(hasSameOrigin('https://untrusted.example','example.test','https:'),false);
   assert.equal(hasSameOrigin('http://example.test','example.test','https:'),false);
   assert.equal(hasSameOrigin('https://example.test:444','example.test','https:'),false);
+});
+test('inspection availability is closed by default and accepts only the exact opt-in', () => {
+  for (const flag of [undefined, '', 'false', 'TRUE', '1']) {
+    for (const target of [undefined, 'development', 'preview', 'production']) {
+      assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: flag, VERCEL_ENV: target }), false);
+    }
+  }
+  assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true' }), true);
+  assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true', VERCEL_ENV: 'preview' }), true);
+});
+test('the production lock wins over an explicit inspection opt-in', () => {
+  assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true', VERCEL_ENV: 'production' }), false);
 });

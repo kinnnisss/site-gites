@@ -1,5 +1,9 @@
 # Validation Auth de phase 3
 
+La phase 5 conserve la matrice et ajoute deux tests du drapeau : 27 tests de
+politique/configuration au total. Ils n’établissent aucune session réelle. La
+procédure complète de recette distante est dans `docs/ESPACE_EQUIPE_HANDOFF.md`.
+
 ```bash
 node --test tests/auth/policy.test.mjs
 # Avec le build final et un serveur Next local déjà lancé sur 127.0.0.1:3000 :

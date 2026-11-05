@@ -2,11 +2,12 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { requireTeamMember, TeamAccessError } from "@/lib/auth/authorization";
 import type { Permission } from "@/lib/auth/policy";
+import { inspectionFeatureEnabled } from "./feature";
 import { databaseError, DossierError, parseDossier, parsePayload, parseReceipt, validId, validRevision } from "@/modules/etats-des-lieux/persistence";
 
 /** Closed until the development Auth/RLS acceptance checklist has been completed. */
 export function inspectionsEnabled() {
-  return process.env.TEAM_INSPECTIONS_ENABLED === "true" && process.env.VERCEL_ENV !== "production";
+  return inspectionFeatureEnabled(process.env);
 }
 export async function requireInspectionMember(permission: Permission = "read_dossiers") {
   const access = await requireTeamMember(permission);

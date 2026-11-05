@@ -147,6 +147,20 @@ sans exécution distante. « Effacer » réinitialise uniquement le formulaire a
 L’export JSON v1 et l’impression native sont conservés. Configuration, résultats
 locaux, limites et étapes exactes de recette : `docs/ESPACE_EQUIPE_PHASE_4.md`.
 
+### Recette et préparation — phase 5
+
+Selon le propriétaire, les deux migrations ont depuis été appliquées et contrôlées
+manuellement sur Supabase de développement. Ne pas les rejouer. Les tests réels
+avec des comptes authentifiés restent à réaliser par le propriétaire ; les tests
+locaux et le build ne les remplacent pas. Le module et le verrou de production
+restent fermés.
+
+L’audit de phase 5 met à jour Next.js et ses dépendances affectées, renforce les
+tests de transport et du drapeau, et fournit une procédure autonome :
+`docs/ESPACE_EQUIPE_PHASE_5.md` et `docs/ESPACE_EQUIPE_HANDOFF.md`. Ce dernier décrit
+la recette réelle, les variables, Vercel, les conditions d’une publication future
+et le retour arrière. Aucune mise en production n’est effectuée par cette phase.
+
 ## Contrôles manuels
 
 Vérifier à 320, 375, 768, 1024 et 1440 px : absence de débordement, proportions du logo, menu mobile, ancres, liens légaux et retour à l’accueil. Au clavier : lien « Aller au contenu », Tab, Entrée, Échap dans le menu et focus visible. Vérifier aussi les photos sur connexion lente et une URL photo invalide, puis les trois contacts dès qu’ils sont fournis. Le site respecte la préférence de réduction des mouvements.

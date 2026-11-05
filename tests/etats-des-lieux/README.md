@@ -8,6 +8,18 @@ Voir `docs/ESPACE_EQUIPE_PHASE_4.md` pour les commandes, prérequis et limites.
 Project Reference de développement épinglé ; **il n’a pas été exécuté dans cette
 session**. Aucun test local ne constitue une validation de Supabase Cloud.
 
+La phase 5 ajoute quatre tests du lecteur JSON, sans remplacement d’Auth :
+
+```bash
+node tests/etats-des-lieux/request-body.test.mjs
+```
+
+Pour les pages publiques, utiliser le test reproductible
+`tests/public/non-regression.mjs` avec `PUBLIC_BASELINE_ROOT` pointant vers un
+checkout de phase 4 séparé et installé. Le handoff décrit les commandes exactes.
+Lancer les suites Next dev successivement, puis `npx next typegen`, TypeScript et
+le build sans routes temporaires. Les outils restent hors des dépendances de l’application.
+
 ```bash
 node tests/etats-des-lieux/fidelity.mjs
 ```

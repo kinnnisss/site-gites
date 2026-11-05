@@ -23,8 +23,12 @@ refuse l’accès ; aucune authentification fictive n’existe.
 
 Les dossiers restent fermés par défaut avec `TEAM_INSPECTIONS_ENABLED=false`,
 jusqu’à la recette réelle Auth/RLS sur Supabase de développement. Le code refuse
-aussi les dossiers lorsque `VERCEL_ENV=production`. Aucune migration distante
-n’a été appliquée. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour Auth et
+aussi les dossiers lorsque `VERCEL_ENV=production`. Le propriétaire indique avoir
+appliqué manuellement les deux migrations sur le projet de développement ; les
+tests authentifiés restent en attente. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour Auth et
 `docs/ESPACE_EQUIPE_PHASE_4.md` pour la migration préparée, le détail des permissions,
 les tests locaux et la recette manuelle restante. Aucune authentification de test
-ou route de démonstration n’est livrée.
+ou route de démonstration n’est livrée. L’état actuel et la procédure autonome de
+recette/publication future sont dans `docs/ESPACE_EQUIPE_PHASE_5.md` et
+`docs/ESPACE_EQUIPE_HANDOFF.md`. Ne pas ouvrir le module ni retirer le verrou de
+production avant les décisions et preuves qui y sont décrites.

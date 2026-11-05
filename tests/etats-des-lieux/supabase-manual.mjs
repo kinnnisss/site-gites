@@ -12,9 +12,13 @@ ensure(process.env.TEAM_TEST_EXPECTED_PROJECT_REF &&
   new URL(config.url).hostname === `${process.env.TEAM_TEST_EXPECTED_PROJECT_REF}.supabase.co`, 'Le projet ne correspond pas au projet de développement épinglé.');
 const names = ['ADMIN', 'AGENT_A', 'AGENT_B', 'INACTIVE', 'NO_MEMBER'];
 for (const name of names) ensure(process.env[`TEAM_TEST_${name}_EMAIL`] && process.env[`TEAM_TEST_${name}_PASSWORD`], 'Identifiants de recette manquants dans la configuration locale privée.');
-const client = () => createClient(config.url, config.publishableKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+const client = () => createClient(config.url, config.publishableKey, {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', signal: init?.signal ?? AbortSignal.timeout(15_000) }) },
+});
 const clients = Object.fromEntries(names.map(name => [name, client()]));
-const anonymous = client(); const id = randomUUID(); let created = false;
+const anonymous = client(); const id = randomUUID(); let creationAttempted = false, creationConfirmed = false;
+const subjects = {};
 let checks = 0;
 const check = (value, label) => { ensure(value, label); checks++; };
 const payload = createInitialPayload();
@@ -32,14 +36,17 @@ try {
     const result = await c.auth.signInWithPassword({ email: process.env[`TEAM_TEST_${name}_EMAIL`], password: process.env[`TEAM_TEST_${name}_PASSWORD`] });
     check(!result.error && result.data.user, `Connexion Auth de recette refusée : ${name}.`);
     const verified = await c.auth.getUser(); check(!verified.error && verified.data.user, `Identité Auth non vérifiée : ${name}.`);
+    subjects[name] = verified.data.user.id;
     const membership = await c.from('team_members').select('role,active').eq('user_id', verified.data.user.id);
     check(!membership.error && (name === 'INACTIVE' || name === 'NO_MEMBER'
       ? membership.data.length === 0 : membership.data.length === 1 && membership.data[0].active && membership.data[0].role === (name === 'ADMIN' ? 'admin' : 'agent')), `Préconditions de rôle incorrectes : ${name}.`);
   }
   const deniedRead = await read(anonymous); check(Boolean(deniedRead.error), 'Lecture anonyme autorisée.');
   check(Boolean((await save(anonymous, 0)).error), 'Écriture anonyme autorisée.');
+  check(new Set(Object.values(subjects)).size === names.length, 'Les cinq profils doivent utiliser des comptes distincts.');
+  creationAttempted = true;
   const first = await save(clients.AGENT_A, 0);
-  check(!first.error && first.data?.[0]?.revision === 1, 'Création Agent refusée.'); created = true;
+  check(!first.error && first.data?.[0]?.revision === 1, 'Création Agent refusée.'); creationConfirmed = true;
   const restored = await read(clients.AGENT_B);
   check(!restored.error && restored.data.length === 1, 'Lecture partagée refusée.');
   // jsonb object order is immaterial; the actual client restores original export order.
@@ -48,7 +55,7 @@ try {
   const changed = structuredClone(payload); changed.data.reference = 'PHASE4-TEST-B';
   check((await save(clients.AGENT_B, 1, changed)).data?.[0]?.revision === 2, 'Modification inter-agents refusée.');
   const metadata = (await read(clients.ADMIN)).data?.[0];
-  check(metadata?.created_by !== metadata?.updated_by && metadata?.revision === 2, 'Métadonnées incorrectes.');
+  check(metadata?.created_by === subjects.AGENT_A && metadata?.updated_by === subjects.AGENT_B && metadata?.revision === 2, 'Métadonnées incorrectes.');
   check((await save(clients.AGENT_A, 1)).error?.code === '40001', 'Révision obsolète acceptée.');
   const race = await Promise.all([save(clients.AGENT_A, 2), save(clients.AGENT_B, 2)]);
   check(race.filter(r => !r.error && r.data?.[0]?.revision === 3).length === 1 &&
@@ -67,7 +74,7 @@ try {
   check((await save(clients.ADMIN, 3)).data?.[0]?.revision === 4, 'Sauvegarde Administrateur refusée.');
   check((await remove(clients.ADMIN, 4, randomUUID())).error?.code === '22023', 'Confirmation incorrecte acceptée.');
   check((await remove(clients.ADMIN, 3)).error?.code === '40001', 'Suppression avec révision obsolète acceptée.');
-  const deleted = await remove(clients.ADMIN, 4); check(!deleted.error && deleted.data === id, 'Suppression Administrateur confirmée refusée.'); created = false;
+  const deleted = await remove(clients.ADMIN, 4); check(!deleted.error && deleted.data === id, 'Suppression Administrateur confirmée refusée.'); creationAttempted = false;
   check((await read(clients.AGENT_B)).data?.length === 0, 'Dossier encore présent après suppression.');
   for (const name of names) {
     check(!(await clients[name].auth.signOut({ scope: 'local' })).error, `Déconnexion refusée : ${name}.`);
@@ -77,10 +84,20 @@ try {
 } catch (error) {
   failed = true; console.error(error instanceof Error ? error.message : 'Échec de la recette distante.');
 } finally {
-  if (created) {
-    const current = (await read(clients.ADMIN)).data?.[0];
-    const result = current ? await remove(clients.ADMIN, current.revision) : null;
-    if (result?.error || !current) console.error(`Dossier synthétique à vérifier/nettoyer manuellement : ${id}`);
+  if (creationAttempted) {
+    try {
+      const current = await read(clients.ADMIN);
+      ensure(!current.error, 'État de la création non vérifiable.');
+      if (current.data?.length) {
+        const result = await remove(clients.ADMIN, current.data[0].revision);
+        ensure(!result.error && result.data === id, 'Nettoyage non confirmé.');
+      }
+      // A lost creation receipt may precede a delayed commit. Never hide its UUID.
+      if (!creationConfirmed) console.error(`Création non confirmée : vérifier ultérieurement le dossier synthétique ${id}.`);
+    } catch {
+      failed = true;
+      console.error(`Dossier synthétique à vérifier/nettoyer manuellement : ${id}`);
+    }
   }
   for (const c of Object.values(clients)) await c.auth.signOut({ scope: 'local' }).catch(() => {});
 }
