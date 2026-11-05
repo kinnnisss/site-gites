@@ -64,7 +64,15 @@ export function copyPayload(value: InspectionPayload): InspectionPayload {
       throw new Error("Format des procédures invalide.");
     }
   }
-  return structuredClone(value);
+  // jsonb reorders object keys. Restore the original export order on rehydration,
+  // preserving all strings and the position of every array element.
+  return {
+    version: 1,
+    data: { ...sample.data, ...value.data },
+    checks: { entree: [...value.checks.entree], sortie: [...value.checks.sortie] },
+    steps: { entree: [...value.steps.entree], sortie: [...value.steps.sortie], consignes: [...value.steps.consignes] },
+    accepted: value.accepted,
+  };
 }
 
 export type InspectionAction =

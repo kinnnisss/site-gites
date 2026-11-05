@@ -34,7 +34,10 @@ async function checks(origin, missingConfig) {
   assert.equal(recovery.status,307);
   assert.equal(new URL(recovery.headers.get('location'),origin).origin,origin);
   assert.equal(new URL(recovery.headers.get('location'),origin).pathname,'/equipe/connexion');count++;
-  for(const path of ['/equipe/inscription','/equipe/etats-des-lieux/nouveau','/phase2-local-test']) {
+  for(const path of ['/equipe/etats-des-lieux','/equipe/etats-des-lieux/nouveau','/equipe/etats-des-lieux/00000000-0000-4000-8000-000000000001']) {
+    assert.equal((await get(path)).status,307);count++;
+  }
+  for(const path of ['/equipe/inscription','/phase2-local-test']) {
     assert.equal((await get(path)).status,404);count++;
   }
   const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
@@ -60,7 +63,7 @@ async function checks(origin, missingConfig) {
     assert.deepEqual(errors,[]);
   } finally {await browser.close()}
 }
-await checks(base,false);
+await checks(base,!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 // Reuse the real build with configuration absent, not a fake Auth provider.
 const env={...process.env};delete env.NEXT_PUBLIC_SUPABASE_URL;delete env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;delete env.TEAM_APP_ORIGIN;
 const child=spawn(process.execPath,[resolve(root,'node_modules/next/dist/bin/next'),'start','--hostname','127.0.0.1','--port','3002'],{cwd:root,env,detached:true,stdio:'ignore'});

@@ -24,10 +24,12 @@ export type InspectionPayload = {
   accepted: boolean;
 };
 
-/** No implementation is supplied in phase 2; no storage is used by default. */
+/** Optional transport adapter; dossier metadata never enters the version-1 payload. */
 export type InspectionStorage = {
-  save: (payload: InspectionPayload) => Promise<void>;
+  save: (payload: InspectionPayload) => Promise<void | { id: string; revision: number; updated_at: string }>;
   load: () => Promise<InspectionPayload | null>;
+  acceptLoad?: () => void;
+  authorizeExport?: () => Promise<void>;
 };
 
 export type InspectionFormHandle = {

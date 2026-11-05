@@ -1,5 +1,13 @@
 # Comparaison locale de fidélité
 
+La phase 4 ajoute `persistence.test.mjs` (9 tests de payload/adaptateur),
+`rls-local.mjs` (PostgreSQL/PGlite local), `persistence-browser.mjs` (formulaire
+avec transport intercepté) et `http.mjs` (vrai serveur Next, accès anonymes).
+Voir `docs/ESPACE_EQUIPE_PHASE_4.md` pour les commandes, prérequis et limites.
+`supabase-manual.mjs` exige une autorisation explicite d’écritures de test sur un
+Project Reference de développement épinglé ; **il n’a pas été exécuté dans cette
+session**. Aucun test local ne constitue une validation de Supabase Cloud.
+
 ```bash
 node tests/etats-des-lieux/fidelity.mjs
 ```

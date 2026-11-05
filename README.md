@@ -34,10 +34,10 @@ Si l’environnement bloque les ports internes de Turbopack, vérifier aussi ave
 - `app/(public)/layout.tsx` : polices, métadonnées, header, navigation et footer publics.
 - `app/(public)/public.css` : styles et variables de la vitrine, limités au cadre `.public-site`.
 - `app/(public)/mentions-legales/` et `app/(public)/confidentialite/` : pages préparées, explicitement non définitives.
-- `app/equipe/` : routes Auth et pages vérifiant l’accès serveur ; aucun dossier ni formulaire exposé.
-- `modules/etats-des-lieux/` : consignes pour la future intégration fidèle du HTML.
+- `app/equipe/` : Auth, pages privées et API des dossiers ; accès aux dossiers fermé par défaut jusqu’à la recette réelle de développement.
+- `modules/etats-des-lieux/` : formulaire fidèle, payload v1 et adaptateur de persistance.
 
-Aucune base de données, authentification, réservation, paiement, collecte par formulaire ou intégration Supabase. Pas de dépendance supplémentaire pour la V1.
+La V1 vitrine initiale n’incluait ni base de données, ni authentification, réservation ou paiement. Les phases Équipe 3 et 4 ajoutent Auth et persistance privées de développement ; la vitrine conserve son périmètre initial.
 
 ## Logo et photographies
 
@@ -133,6 +133,19 @@ la configuration Auth/SMTP sont à examiner et exécuter manuellement, uniquemen
 sur le projet de développement. La recette réelle reste nécessaire avant de
 monter le formulaire. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour la configuration
 et les limites actuelles ; aucun service distant n’est modifié par l’installation.
+
+### Sauvegarde et gestion des dossiers — phase 4
+
+Le formulaire existant est raccordé à une couche serveur Supabase, avec révision
+atomique, RLS partagées entre actifs et suppression administrative confirmée.
+Les trois routes `/equipe/etats-des-lieux`, `/nouveau` et `/[id]` restent fermées
+par défaut : `TEAM_INSPECTIONS_ENABLED=false` tant que la recette Auth/RLS réelle
+n’est pas validée. Elles sont aussi refusées en Vercel Production.
+
+La migration SQL est fournie pour revue et application manuelle après autorisation,
+sans exécution distante. « Effacer » réinitialise uniquement le formulaire affiché.
+L’export JSON v1 et l’impression native sont conservés. Configuration, résultats
+locaux, limites et étapes exactes de recette : `docs/ESPACE_EQUIPE_PHASE_4.md`.
 
 ## Contrôles manuels
 

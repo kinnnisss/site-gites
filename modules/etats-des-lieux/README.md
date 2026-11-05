@@ -1,7 +1,25 @@
-# Module d’état des lieux — portage React, phase 2
+# Module d’état des lieux — formulaire et persistance
 
-Le formulaire React est implémenté dans ce module mais n’est importé par aucune
-route applicative. Aucun dossier n’est exposé et aucun stockage n’est connecté.
+Le formulaire React de phase 2 est utilisé par les routes privées de phase 4.
+L’accès reste fermé par défaut jusqu’à la recette réelle Auth/RLS de développement.
+La référence HTML et le contrat JSON v1 sont conservés. Voir
+`docs/ESPACE_EQUIPE_PHASE_4.md` pour l’état actuel, les migrations non appliquées,
+les tests et les opérations manuelles ; les sections suivantes décrivent le portage.
+
+## Raccordement de phase 4
+
+`dossier-editor.tsx` fournit `dossier-storage.ts` à `InspectionForm`. L’UUID, la
+révision et l’horodatage restent hors du payload. `persistence.ts` valide le
+transport et les reçus ; `state.ts` rétablit l’ordre original des clés après
+lecture JSONB. Aucune autosauvegarde ou persistance navigateur.
+
+Le rechargement ne valide sa nouvelle révision qu’après confirmation. Le bouton
+Effacer garde l’identité/révision du dossier ; seule la liste administrative
+permet sa suppression définitive confirmée. Les boutons d’export et d’impression
+revérifient la session. Les messages de stockage sont adaptés dans les emplacements
+existants lorsque l’adaptateur est fourni ; le mode sans stockage garde le rendu
+original pour le banc de fidélité. Les contrôles applicatifs et RLS sont séparés
+des simulations de transport utilisées uniquement dans les tests locaux.
 
 ## Référence immuable
 
@@ -22,7 +40,7 @@ vitrine. Les styles futurs devront être isolés, y compris des resets Tailwind.
 - `reference.ts` et `reference-logo.ts` : textes ordonnés et PNG exacts du HTML.
 - `inspection.module.css` : CSS de référence local et neutralisation ciblée de
   Tailwind Preflight, y compris les pseudo-éléments natifs des champs date.
-- `types.ts` : payload version 1 et interface de stockage sans implémentation.
+- `types.ts` : payload version 1 et interface de stockage optionnelle.
 - `state.ts` : état initial, validation de forme, copie et reducer pur.
 
 `initialPayload` initialise le dossier au montage ; pour changer de dossier,
@@ -40,8 +58,8 @@ mentions de maquette et les cinq boutons. Deux adaptations provisoires :
   stockage n’est connecté. » ; aucun faux chargement n’est effectué.
 
 L’interface optionnelle `InspectionStorage` prépare les opérations futures.
-Aucun adaptateur n’est fourni. Son raccordement devra réviser le libellé de
-sauvegarde pour décrire exactement le stockage choisi. « Effacer » confirme puis
+En phase 4, l’adaptateur Supabase raccordé révise le libellé de
+sauvegarde pour décrire le stockage partagé. « Effacer » confirme puis
 réinitialise uniquement la mémoire ; aucune suppression persistée n’existe.
 
 Les lignes de signature sont destinées au papier. Les mentions de photos et de

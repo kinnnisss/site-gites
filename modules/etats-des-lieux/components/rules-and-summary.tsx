@@ -35,10 +35,12 @@ type Actions = {
   reset: () => void;
 };
 
-export function SummaryAndPrint({ payload, feedback, actions }: {
+export function SummaryAndPrint({ payload, feedback, actions, pending = false, connected = false }: {
   payload: InspectionPayload;
   feedback: string | null;
   actions: Actions;
+  pending?: boolean;
+  connected?: boolean;
 }) {
   return (
     <section className={styles.section}>
@@ -53,13 +55,13 @@ export function SummaryAndPrint({ payload, feedback, actions }: {
         <div>Signature du voyageur : __________________________</div>
       </div>
       <p className={styles.disclaimer}>Pour l’utilisation officielle : accès privé, sauvegarde sécurisée, horodatage, photos et signatures à intégrer.</p>
-      <p id="feedback" className={styles.saveMessage} hidden={feedback === null}>{feedback}</p>
+      <p id="feedback" className={styles.saveMessage} role="status" aria-live="polite" hidden={feedback === null}>{feedback}</p>
       <div className={styles.actions}>
-        <button type="button" className={styles.primary} id="print" onClick={actions.print}>Imprimer / enregistrer en PDF</button>
-        <button type="button" className={styles.secondary} id="save" onClick={actions.save}>Sauvegarder sur cet appareil</button>
-        <button type="button" className={styles.secondary} id="load" onClick={actions.load}>Recharger le brouillon</button>
-        <button type="button" className={styles.secondary} id="json" onClick={actions.json}>Exporter JSON</button>
-        <button type="button" className={styles.tertiary} id="reset" onClick={actions.reset}>Effacer</button>
+        <button type="button" className={styles.primary} id="print" onClick={actions.print} disabled={pending}>Imprimer / enregistrer en PDF</button>
+        <button type="button" className={styles.secondary} id="save" onClick={actions.save} disabled={pending}>{connected ? "Sauvegarder le brouillon" : "Sauvegarder sur cet appareil"}</button>
+        <button type="button" className={styles.secondary} id="load" onClick={actions.load} disabled={pending}>Recharger le brouillon</button>
+        <button type="button" className={styles.secondary} id="json" onClick={actions.json} disabled={pending}>Exporter JSON</button>
+        <button type="button" className={styles.tertiary} id="reset" onClick={actions.reset} disabled={pending}>Effacer</button>
       </div>
     </section>
   );
