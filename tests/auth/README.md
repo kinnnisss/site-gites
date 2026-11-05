@@ -1,0 +1,25 @@
+# Validation Auth de phase 3
+
+```bash
+node --test tests/auth/policy.test.mjs
+# Avec le build final et un serveur Next local déjà lancé sur 127.0.0.1:3000 :
+node tests/auth/http.mjs
+```
+
+Le premier script vérifie des fonctions pures de permission/configuration, sans
+simuler un fournisseur d’authentification. Le second utilise le véritable
+serveur Next avec les SDK installés, sans fournir d’identifiants valides. Il
+teste uniquement les accès anonymes, la validation locale, les redirections,
+le contrôle d’origine et la fermeture des accès si la configuration est absente.
+Il lance aussi le même build sur 127.0.0.1:3002 sans les variables Supabase.
+
+Les tests navigateur utilisent Playwright et Chromium déjà disponibles dans
+l’environnement cloud, sans nouvelle dépendance de test. Aucun envoi SMTP,
+création/invitation de compte, mutation distante ou migration n’est effectué.
+Les requêtes PATCH anonymes échouent avant toute écriture.
+
+Les tests de connexion valide/invalide auprès du fournisseur, de refresh et
+d’expiration réels, de déconnexion d’une session réelle et de RLS effectif
+restent à réaliser après la configuration manuelle. Voir
+`docs/ESPACE_EQUIPE_PHASE_3.md`. Ne pas présenter les résultats locaux comme une
+validation de Supabase distant.

@@ -5,7 +5,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// Aucun accès aux dossiers : les pages attendent les contrôles serveur de phase 2.
+// Auth pages and sessions must never be prerendered/shared between requests.
+export const dynamic = "force-dynamic";
+
+// Cadre neutre ; chaque page/opération privée vérifie aussi son accès serveur.
 export default function TeamLayout({ children }: { children: ReactNode }) {
   return children;
 }

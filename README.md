@@ -34,7 +34,7 @@ Si l’environnement bloque les ports internes de Turbopack, vérifier aussi ave
 - `app/(public)/layout.tsx` : polices, métadonnées, header, navigation et footer publics.
 - `app/(public)/public.css` : styles et variables de la vitrine, limités au cadre `.public-site`.
 - `app/(public)/mentions-legales/` et `app/(public)/confidentialite/` : pages préparées, explicitement non définitives.
-- `app/equipe/` : emplacement réservé, sans page accessible ni données privées.
+- `app/equipe/` : routes Auth et pages vérifiant l’accès serveur ; aucun dossier ni formulaire exposé.
 - `modules/etats-des-lieux/` : consignes pour la future intégration fidèle du HTML.
 
 Aucune base de données, authentification, réservation, paiement, collecte par formulaire ou intégration Supabase. Pas de dépendance supplémentaire pour la V1.
@@ -123,6 +123,16 @@ tant que l’authentification et les autorisations serveur ne sont pas intégré
 Il conserve la référence HTML, son impression native et son payload JSON ; aucun
 stockage n’est raccordé. Voir `docs/ESPACE_EQUIPE_PHASE_2.md` et le banc d’essai
 local dans `tests/etats-des-lieux/README.md`.
+
+### Authentification et autorisations — phase 3
+
+L’intégration utilise Supabase Auth côté serveur, des cookies HttpOnly et une
+vérification de membre actif dans PostgreSQL. Il n’y a pas d’inscription publique
+dans l’application. La migration, l’initialisation du premier administrateur et
+la configuration Auth/SMTP sont à examiner et exécuter manuellement, uniquement
+sur le projet de développement. La recette réelle reste nécessaire avant de
+monter le formulaire. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour la configuration
+et les limites actuelles ; aucun service distant n’est modifié par l’installation.
 
 ## Contrôles manuels
 
