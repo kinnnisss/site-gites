@@ -24,16 +24,20 @@ Si l’environnement bloque les ports internes de Turbopack, vérifier aussi ave
 ## Organisation
 
 - `data/domain.ts` : identité, adresse, caractéristiques, équipements, horaires, contacts, photos, galerie et navigation. C’est le point d’entrée pour actualiser les informations client.
-- `app/page.tsx` : composition des sections, sans logique métier.
+- `app/(public)/page.tsx` : composition des sections, sans logique métier.
 - `components/sections/` : sections de la page, rendues côté serveur.
 - `components/site-header.tsx` : menu mobile, fermeture par Échap et accès clavier.
 - `components/domain-photo.tsx` : `next/image`, emplacements vides et erreurs de chargement.
 - `components/cottage-illustration.tsx` : ancienne illustration de démonstration, désormais inutilisée ; l’accueil emploie un placeholder neutre.
-- `app/globals.css` : couleurs, typographie et styles partagés.
-- `app/layout.tsx` : cadre commun, metadata et Open Graph.
-- `app/mentions-legales/` et `app/confidentialite/` : pages préparées, explicitement non définitives.
+- `app/globals.css` : socle Tailwind neutre et hauteur du document.
+- `app/layout.tsx` : structure HTML commune, sans cadre ni identité visuelle métier.
+- `app/(public)/layout.tsx` : polices, métadonnées, header, navigation et footer publics.
+- `app/(public)/public.css` : styles et variables de la vitrine, limités au cadre `.public-site`.
+- `app/(public)/mentions-legales/` et `app/(public)/confidentialite/` : pages préparées, explicitement non définitives.
+- `app/equipe/` : Auth, pages privées et API des dossiers ; accès aux dossiers fermé par défaut jusqu’à la recette réelle de développement.
+- `modules/etats-des-lieux/` : formulaire fidèle, payload v1 et adaptateur de persistance.
 
-Aucune base de données, authentification, réservation, paiement, collecte par formulaire ou intégration Supabase. Pas de dépendance supplémentaire pour la V1.
+La V1 vitrine initiale n’incluait ni base de données, ni authentification, réservation ou paiement. Les phases Équipe 3 et 4 ajoutent Auth et persistance privées de développement ; la vitrine conserve son périmètre initial.
 
 ## Logo et photographies
 
@@ -82,7 +86,84 @@ Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni ca
 
 ## Avant publication
 
-Compléter les contacts et documents légaux, valider les contenus avec le client et renseigner `domain.siteUrl`. L’indexation reste volontairement désactivée (`robots` dans `app/layout.tsx`) pendant cette phase ; la revoir avant publication, puis ajouter URL canonique, sitemap et image de partage réelle. Aucun domaine ni image Open Graph fictif n’est déclaré.
+Pour la livraison Vercel avec les états des lieux fermés et leur recette réelle
+reportée, suivre [le guide de déploiement contrôlé](docs/DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md).
+La PR reste en brouillon ; aucune fusion, promotion ou ouverture du module automatique.
+
+Compléter les contacts et documents légaux, valider les contenus avec le client et renseigner `domain.siteUrl`. L’indexation reste volontairement désactivée (`robots` dans `app/(public)/layout.tsx`) pendant cette phase ; la revoir avant publication, puis ajouter URL canonique, sitemap et image de partage réelle. Aucun domaine ni image Open Graph fictif n’est déclaré.
+
+## Fondations de l’Espace Équipe — phase 1
+
+Le groupe `(public)` ne change pas les URL `/`, `/mentions-legales` et
+`/confidentialite`. Le cadre public conserve son contenu et ses métadonnées ;
+ses couleurs, polices et règles de présentation restent dans `.public-site`.
+Tailwind reste le socle commun : le futur formulaire devra aussi isoler ses
+styles des resets du framework pour reproduire exactement son HTML.
+
+`app/equipe/layout.tsx` réserve un cadre indépendant sans créer de page.
+Les URL d’équipe répondent donc 404. Ni authentification, ni base de données,
+ni formulaire ne sont implémentés. Les métadonnées `noindex` ne remplacent pas
+les futurs contrôles serveur et les autorisations RLS.
+
+Le fichier client est conservé sans altération dans
+`docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html`, hors de `public/`.
+Vérifier son intégrité avec :
+
+```bash
+sha256sum docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html
+# 9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0
+```
+
+Voir `modules/etats-des-lieux/README.md` pour les limites de la phase suivante.
+Après un déplacement de routes, si TypeScript cite des anciens chemins dans
+`.next/dev/types`, arrêter le serveur de développement et supprimer uniquement
+le cache généré `.next/dev`, puis relancer les contrôles.
+
+### Portage du formulaire — phase 2
+
+Le formulaire React/TypeScript existe maintenant dans `modules/etats-des-lieux`,
+sans import depuis les routes du site. Il reste inaccessible dans le déploiement
+tant que l’authentification et les autorisations serveur ne sont pas intégrées.
+Il conserve la référence HTML, son impression native et son payload JSON ; aucun
+stockage n’est raccordé. Voir `docs/ESPACE_EQUIPE_PHASE_2.md` et le banc d’essai
+local dans `tests/etats-des-lieux/README.md`.
+
+### Authentification et autorisations — phase 3
+
+L’intégration utilise Supabase Auth côté serveur, des cookies HttpOnly et une
+vérification de membre actif dans PostgreSQL. Il n’y a pas d’inscription publique
+dans l’application. La migration, l’initialisation du premier administrateur et
+la configuration Auth/SMTP sont à examiner et exécuter manuellement, uniquement
+sur le projet de développement. La recette réelle reste nécessaire avant de
+monter le formulaire. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour la configuration
+et les limites actuelles ; aucun service distant n’est modifié par l’installation.
+
+### Sauvegarde et gestion des dossiers — phase 4
+
+Le formulaire existant est raccordé à une couche serveur Supabase, avec révision
+atomique, RLS partagées entre actifs et suppression administrative confirmée.
+Les trois routes `/equipe/etats-des-lieux`, `/nouveau` et `/[id]` restent fermées
+par défaut : `TEAM_INSPECTIONS_ENABLED=false` tant que la recette Auth/RLS réelle
+n’est pas validée. Elles sont aussi refusées en Vercel Production.
+
+La migration SQL est fournie pour revue et application manuelle après autorisation,
+sans exécution distante. « Effacer » réinitialise uniquement le formulaire affiché.
+L’export JSON v1 et l’impression native sont conservés. Configuration, résultats
+locaux, limites et étapes exactes de recette : `docs/ESPACE_EQUIPE_PHASE_4.md`.
+
+### Recette et préparation — phase 5
+
+Selon le propriétaire, les deux migrations ont depuis été appliquées et contrôlées
+manuellement sur Supabase de développement. Ne pas les rejouer. Les tests réels
+avec des comptes authentifiés restent à réaliser par le propriétaire ; les tests
+locaux et le build ne les remplacent pas. Le module et le verrou de production
+restent fermés.
+
+L’audit de phase 5 met à jour Next.js et ses dépendances affectées, renforce les
+tests de transport et du drapeau, et fournit une procédure autonome :
+`docs/ESPACE_EQUIPE_PHASE_5.md` et `docs/ESPACE_EQUIPE_HANDOFF.md`. Ce dernier décrit
+la recette réelle, les variables, Vercel, les conditions d’une publication future
+et le retour arrière. Aucune mise en production n’est effectuée par cette phase.
 
 ## Contrôles manuels
 
