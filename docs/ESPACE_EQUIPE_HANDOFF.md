@@ -1,5 +1,12 @@
 # Domaine Lo Carmalhon — document de reprise
 
+La préparation ultérieure de Vercel est décrite dans
+[DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md](DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md).
+À la demande du propriétaire, elle permet de préparer l’intégration et une PR
+pour la **vitrine avec le module fermé**, en reportant la recette réelle. Les
+exigences de ce handoff restent nécessaires à l’activation du module ; elles ne
+valent pas autorisation de fusion, de production ou d’ouverture.
+
 ## 1. État et références
 
 État au **5 novembre 2026** : code préparé pour la recette finale, module fermé,

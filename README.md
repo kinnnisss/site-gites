@@ -86,6 +86,10 @@ Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni ca
 
 ## Avant publication
 
+Pour la livraison Vercel avec les états des lieux fermés et leur recette réelle
+reportée, suivre [le guide de déploiement contrôlé](docs/DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md).
+La PR reste en brouillon ; aucune fusion, promotion ou ouverture du module automatique.
+
 Compléter les contacts et documents légaux, valider les contenus avec le client et renseigner `domain.siteUrl`. L’indexation reste volontairement désactivée (`robots` dans `app/(public)/layout.tsx`) pendant cette phase ; la revoir avant publication, puis ajouter URL canonique, sitemap et image de partage réelle. Aucun domaine ni image Open Graph fictif n’est déclaré.
 
 ## Fondations de l’Espace Équipe — phase 1
