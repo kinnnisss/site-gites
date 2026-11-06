@@ -52,7 +52,14 @@ try {
     and a.attnum>0 and not a.attisdropped order by c.relname,a.attnum`);
   const beforePrivileges = (await privileges()).rows, beforePolicies = (await policies()).rows;
   const beforeTablePrivileges = (await tablePrivileges()).rows;
+  const verificationSql = await readFile('supabase/manual/verify-inspection-pt409.sql', 'utf8');
+  const legacyVerification = (await db.exec(verificationSql))[0].rows;
+  assert.equal(legacyVerification.length, 3);
+  assert.ok(legacyVerification.every(r => r.function_exists && !r.body_matches_versioned_pt409 && !r.has_pt409 && r.has_legacy_40001)); checks++;
   await db.exec(await readFile('supabase/migrations/20261106000100_inspection_business_conflicts.sql', 'utf8'));
+  const fixedVerification = (await db.exec(verificationSql))[0].rows;
+  assert.equal(fixedVerification.length, 3);
+  assert.ok(fixedVerification.every(r => r.function_exists && r.body_matches_versioned_pt409 && r.has_pt409 && !r.has_legacy_40001 && !r.security_definer)); checks++;
   assert.deepEqual((await db.query('select * from public.inspection_dossiers')).rows, beforeUpgrade); checks++;
   assert.deepEqual((await privileges()).rows, beforePrivileges); checks++;
   assert.deepEqual((await policies()).rows, beforePolicies); checks++;

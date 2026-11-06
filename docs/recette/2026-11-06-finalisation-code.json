@@ -1,0 +1,205 @@
+{
+  "recorded_at": "2026-11-06T15:03:47.543Z",
+  "branch": "fix/recette-espace-equipe",
+  "source_base_commit": "a5320058e5b19c3eb660ec318b01d8265c5f5aba",
+  "origin_main_commit_read_only": "9035a2e0ed3ae641216d8045b10cccd400f97107",
+  "configuration": {
+    "at": "2026-11-06T14:47:44.536Z",
+    "mode": "read-only-configuration-check",
+    "project_ref": "jijjjgsfdbrkvqvhyjwr",
+    "project_match": true,
+    "variables": [
+      {
+        "name": "NEXT_PUBLIC_SUPABASE_URL",
+        "present": true
+      },
+      {
+        "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_EXPECTED_PROJECT_REF",
+        "present": true
+      }
+    ],
+    "publishable_key": true,
+    "production_context": false,
+    "remote_sql_access_available": false,
+    "remote_function_definitions_verified": false,
+    "migration_applied_by_owner": "reported_by_owner_not_independently_verified",
+    "html_sha256": "9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0"
+  },
+  "supabase_read_only_probes": {
+    "health_http": 200,
+    "settings_http": 200,
+    "public_signup_disabled": true,
+    "anonymous_team_members_http": 401
+  },
+  "real_next_auth": {
+    "at": "2026-11-06T15:01:20.736Z",
+    "mode": "real-next-auth-only",
+    "project_ref": "jijjjgsfdbrkvqvhyjwr",
+    "profiles": [
+      {
+        "profile": "ADMIN",
+        "passed": true,
+        "login_elapsed_ms": 2688.7,
+        "session_status": 200,
+        "role": "admin",
+        "cookie_attribute_observations": [
+          {
+            "httpOnly": true,
+            "secure": true,
+            "sameSite": "Lax",
+            "path": "/equipe"
+          }
+        ],
+        "cookies": {
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "Lax",
+          "path": "/equipe",
+          "values_recorded": false
+        },
+        "existing_session_redirect": "/equipe",
+        "redirect_elapsed_ms": 2966.9,
+        "after_logout_or_refusal": 401
+      },
+      {
+        "profile": "AGENT_A",
+        "passed": true,
+        "login_elapsed_ms": 1943.4,
+        "session_status": 200,
+        "role": "agent",
+        "cookie_attribute_observations": [
+          {
+            "httpOnly": true,
+            "secure": true,
+            "sameSite": "Lax",
+            "path": "/equipe"
+          }
+        ],
+        "cookies": {
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "Lax",
+          "path": "/equipe",
+          "values_recorded": false
+        },
+        "existing_session_redirect": "/equipe",
+        "redirect_elapsed_ms": 2321.9,
+        "after_logout_or_refusal": 401
+      },
+      {
+        "profile": "AGENT_B",
+        "passed": true,
+        "login_elapsed_ms": 1606.9,
+        "session_status": 200,
+        "role": "agent",
+        "cookie_attribute_observations": [
+          {
+            "httpOnly": true,
+            "secure": true,
+            "sameSite": "Lax",
+            "path": "/equipe"
+          }
+        ],
+        "cookies": {
+          "httpOnly": true,
+          "secure": true,
+          "sameSite": "Lax",
+          "path": "/equipe",
+          "values_recorded": false
+        },
+        "existing_session_redirect": "/equipe",
+        "redirect_elapsed_ms": 2244.5,
+        "after_logout_or_refusal": 401
+      },
+      {
+        "profile": "INACTIVE",
+        "passed": true,
+        "refusal_elapsed_ms": 1338.4,
+        "login": "refused_as_expected",
+        "after_logout_or_refusal": 401
+      },
+      {
+        "profile": "NO_MEMBER",
+        "passed": true,
+        "refusal_elapsed_ms": 1353.5,
+        "login": "refused_as_expected",
+        "after_logout_or_refusal": 401
+      }
+    ],
+    "business_mutations": 0,
+    "failures": [],
+    "success": true
+  },
+  "local_validation": {
+    "node": "22.23.4",
+    "next": "16.4.5",
+    "lint": "passed",
+    "typegen": "passed",
+    "typescript": "passed",
+    "turbopack_build": "passed",
+    "pure_tests": {
+      "auth_policy": 27,
+      "persistence": 10,
+      "request_body": 4,
+      "development_target": 3
+    },
+    "postgres_pglite_checks": 54,
+    "postgres_verification_script": {
+      "detects_legacy_sql": true,
+      "accepts_versioned_pt409": true,
+      "remote_execution": false
+    },
+    "http_auth_checks": 29,
+    "http_inspection_checks": 17,
+    "public": {
+      "baselineRoot": "/workspace/site-gites-main-baseline",
+      "pixelPairs": 6,
+      "contentMetadataLinks": "identical",
+      "responsiveChecks": 9,
+      "keyboardMenuAnchors": "passed",
+      "pageErrors": [],
+      "intentionalExclusion": ".site-footer .footer-team-access only; actual screenshots also retained",
+      "footerChecks": {
+        "pagesAndWidths": 6,
+        "keyboardAndLoginNavigation": "passed",
+        "normalContrast": 5.171745043908086,
+        "hoverContrast": 5.447607395899611
+      }
+    },
+    "form_reference": {
+      "widths": [
+        320,
+        375,
+        500,
+        501,
+        780,
+        781,
+        1080,
+        1440
+      ],
+      "visualPairs": 32,
+      "printPairs": 2,
+      "functional": "passed",
+      "referenceSHA256": "9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0",
+      "exact_pixel_pairs_total": 46
+    },
+    "browser_persistence": {
+      "passed": true,
+      "transport": "intercepted",
+      "supabase_business_storage_verified": false
+    }
+  },
+  "remote_sql_definitions_verified": false,
+  "remote_pt409_http_test_performed": false,
+  "cloud_business_mutations": 0,
+  "vercel_preview": {
+    "configured_by_agent": false,
+    "url": null,
+    "inspection_feature_enabled_by_agent": false
+  },
+  "production_modified": false
+}

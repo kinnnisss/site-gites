@@ -1,114 +1,61 @@
-# Accès Équipe — blocage et conditions de reprise
+# Accès Équipe — intégration du footer et Preview
 
-## État au 6 novembre 2026
+## État actuel
 
-**Aucun lien ajouté au footer.** La recette Cloud des conflits et les parcours
-Next.js avec stockage réel doivent réussir avant de commencer cette intégration.
-Le propriétaire confirme que la migration PT409 préparée n’est pas encore
-appliquée. Les connexions des cinq comptes fictifs, leurs rôles, les refus de
-lecture anonymes et l’absence des trois anciens UUID synthétiques sont revérifiés ;
-ils ne suffisent pas à valider la recette complète.
+La nouvelle mission autorise la finalisation du code et l’ajout du lien sans
+relancer toute la campagne Cloud. Elle remplace la précédente suspension de
+l’intégration. Le propriétaire déclare avoir appliqué manuellement la correction
+PT409 ; les fonctions distantes restent à vérifier indépendamment.
 
-Le [rapport final](ESPACE_EQUIPE_RECETTE_FINALE.md) contient les résultats, durées,
-preuves et limites. Le [diagnostic PostgREST 14.18](ANALYSE_JOURNAUX_POSTGREST_14_18.md)
-explique les réessais SQL et l’absence de réponse HTTP avant timeout.
+Le footer comporte désormais « Vous gérez le domaine ? » et
+« Accès à l'Espace Équipe », via next/link vers /equipe/connexion, dans la partie
+basse existante. Palette, typographies, liens publics, navigation principale et
+Hero sont conservés. La zone se replie sur téléphone et reprend hover/focus.
 
-## Action manuelle préalable sur Supabase de développement
+La page de connexion vérifie une session existante avec requireTeamMember :
+identité Supabase, fiche active et permissions serveur. Un membre autorisé est
+redirigé vers /equipe. Aucun rôle navigateur ou paramètre d’URL ne donne accès.
+Le même formulaire reste utilisé pour Admin et Agent ; aucune inscription publique.
 
-1. Dans le SQL Editor du seul projet **`jijjjgsfdbrkvqvhyjwr`**, examiner les
-   définitions existantes avec
-   [phase5-conflict-diagnostic.sql](../supabase/manual/phase5-conflict-diagnostic.sql),
-   strictement en lecture seule. Comparer les trois fonctions avec leurs versions
-   historiques ; interrompre si des modifications distantes non expliquées existent.
-   Ne pas transmettre d’en-têtes, de jetons ni de requêtes SQL contenant des secrets.
-2. Après décision explicite du propriétaire, appliquer uniquement
-   [20261106000100_inspection_business_conflicts.sql](../supabase/migrations/20261106000100_inspection_business_conflicts.sql).
-   SHA-256 : `3d83a18f828c2785ab871ae323d1552b9384e03b88cc9352ea70fd1bda008af8`.
-   Cette nouvelle migration remplace les trois codes métier `40001` par `PT409`,
-   sans changer les conditions atomiques de révision, les données, ACL ou RLS.
-   Ne pas modifier les migrations déjà appliquées, rejouer leur contenu, lancer
-   `supabase db push`, créer un compte ou fournir une clé privilégiée à l’agent.
-3. Relire les définitions et consigner l’application de cette seule migration.
-   Confirmer son application dans le chat pour reprendre les écritures synthétiques
-   déjà autorisées. Aucun réglage Vercel n’est nécessaire pour cette opération.
+Le formulaire d’état des lieux et la référence HTML ne changent pas. La nouvelle
+règle CSS est limitée au footer public ; elle ne s’applique pas à l’Espace Équipe.
+Aucune dépendance, fonction SQL distante, politique, permission ou compte modifié.
 
-L’agent n’a exécuté aucune migration distante. La présence du fichier dans Git
-ou un résultat PostgreSQL local ne prouve pas son application Cloud.
+## Vérification et recette
 
-## Ordre des validations avant le footer
+Le rapport [FINALISATION_ESPACE_EQUIPE.md](FINALISATION_ESPACE_EQUIPE.md) décrit les
+fichiers, preuves, limites d’accès et réglages Preview. Le
+[rapport de recette](ESPACE_EQUIPE_RECETTE_FINALE.md) sépare les tests réellement
+réussis des scénarios Cloud encore non validés.
 
-1. Depuis `fix/recette-espace-equipe`, vérifier à nouveau la cible privée de
-   développement puis lancer sous Node 22 :
+La comparaison publique accepte uniquement la nouvelle zone
+.site-footer .footer-team-access : elle conserve les captures réelles, retire ce
+seul ajout pour la comparaison stricte avec main, puis contrôle le focus clavier,
+le contraste et la navigation vers la connexion sur la vraie page.
 
-   ```bash
-   NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/conflict-cloud.mjs --allow-development-writes
-   ```
+Avant de mettre TEAM_INSPECTIONS_ENABLED=true dans la seule Preview de recette,
+utiliser [verify-inspection-pt409.sql](../supabase/manual/verify-inspection-pt409.sql)
+en lecture seule dans le SQL Editor du projet jijjjgsfdbrkvqvhyjwr. Ne pas rejouer
+la migration déclarée appliquée. Les trois corps attendus doivent être conformes,
+avec PT409 présent et 40001 absent des branches métier. Une divergence exige une
+inspection ; le script ne modifie rien.
 
-   Utiliser le mode normal qui attend **PT409**, sans `--legacy-40001`. Le test
-   crée un seul UUID synthétique journalisé, sauvegarde A puis B, vérifie le
-   conflit obsolète par SDK et cURL, le payload B complet, la création répétée,
-   la concurrence (un succès, un conflit) et le payload gagnant. Nettoyage limité
-   à cet UUID par l’Admin fictif puis lectures d’absence immédiate, à +5 et +30 s.
-   Conserver durées, HTTP et SQLSTATE ; un timeout sans HTTP reste un échec de
-   transport. Arrêter au premier blocage, sans relance en boucle.
-2. Après réussite des conflits, exécuter :
+Les tests manuels réels (dossiers synthétiques uniquement) sont dans
+[GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md](GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md).
+Une connexion réussie ou un test local ne valide pas les conflits PostgREST Cloud,
+la conservation réelle des dossiers ou le renouvellement après expiration.
 
-   ```bash
-   NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/supabase-manual.mjs --allow-development-writes
-   ```
+## Publication
 
-   Vérifier les vrais JWT/RLS des cinq comptes : lecture partagée, auteurs,
-   payload exact, refus anonymes/inactifs/sans fiche, suppression Agent refusée,
-   DELETE brut sans effet et suppression Admin confirmée. Le script ne modifie
-   aucun compte ou rôle. Conserver le reçu et la preuve de nettoyage de son UUID.
-3. Seulement après validation Auth/RLS, activer temporairement le module dans
-   un serveur Next local isolé, sans falsifier `VERCEL_ENV`. Avec des contextes
-   navigateur distincts, vérifier création, lecture/modification inter-agents,
-   conflit HTTP 409 et conservation des saisies, rechargement annulé/accepté,
-   double clic, export JSON, impression, Effacer sans écriture et suppression
-   administrative confirmée. Mesurer les réponses réelles et nettoyer uniquement
-   les UUID synthétiques créés par ces tests.
-4. Vérifier aussi les cinq parcours de connexion et refus via Next, la déconnexion,
-   les cookies `/equipe` HttpOnly/SameSite/Secure selon le contexte, et le
-   renouvellement réel de session. Distinguer le refresh SDK du renouvellement
-   et de la transmission des cookies par Next. Pas de récupération par e-mail
-   ni modification de compte pour contourner ces vérifications. Les tests de
-   gestion/désactivation d’un membre demandent une autorisation distincte.
-5. Corriger seulement les erreurs démontrées et rejouer les contrôles affectés :
-   lint, typegen, TypeScript, build, PostgreSQL/PostgREST locaux, HTTP, fidélité du
-   formulaire et non-régression publique. Documenter les tests non exécutés.
+Le code reste uniquement sur fix/recette-espace-equipe, avec PR en brouillon tant
+que les tests personnels et les conditions de production ne sont pas validés.
+Aucun paramètre ou déploiement Vercel Production effectué. La Preview doit utiliser
+les seules variables de développement, limitées à cette branche, sans mots de
+passe de recette ni clé privilégiée.
 
-## Intégration future, uniquement après réussite documentée
-
-Dans `components/site-footer.tsx`, conserver la structure et ajouter une zone
-discrète près des informations, avec la palette et le style de liens existants :
-
-- « Vous gérez le domaine ? »
-- « Accès à l'Espace Équipe », via `next/link` vers `/equipe/connexion`.
-- Facultatif : « Accès réservé au personnel autorisé. »
-
-Vérifier ordinateur/mobile, absence de débordement, clavier, focus, hover,
-contraste et destination exacte. Comparer les trois pages publiques avec `main`
-en identifiant le seul changement intentionnel du footer. Conserver exactement
-le formulaire et son rendu d’impression. Vérifier le parcours d’une session déjà
-valide et adapter la connexion seulement si nécessaire, en réutilisant les
-contrôles serveur de membre actif ; un rôle fourni par le navigateur ne suffit pas.
-
-Cette section décrit des travaux futurs : aucun JSX, CSS, page de connexion ou
-layout n’est modifié dans cette reprise bloquée.
-
-## Conditions indépendantes avant production
-
-Garder les changements sur `fix/recette-espace-equipe`, non fusionnés. Le lien
-ne doit pas être publié tant que l’accès Auth de production n’est pas utilisable
-et validé. Préparer séparément, sous autorisation du propriétaire : projet
-Supabase de production distinct, migrations revues, premier administrateur,
-origine HTTPS et URLs Auth exactes, cookies/cache, récupération/SMTP, sauvegardes,
-politique de conservation et validation client. La base de développement reste
-réservée aux données synthétiques.
-
-Le verrou `VERCEL_ENV=production` et le drapeau fermé sont conservés. Leur
-évolution et l’ouverture officielle nécessitent une modification distincte revue
-et autorisée. Publier le lien en même temps que l’accès officiellement validé,
-avec une procédure de retour arrière ; une PR ou un build réussi n’autorise
-ni fusion, ni activation, ni déploiement.
+Le verrou VERCEL_ENV=production et le drapeau fermé par défaut sont conservés.
+Le lien ne doit pas être fusionné/publié sur la vitrine de production avant un
+accès Auth de production utilisable et validé, une base distincte et les autres
+prérequis du handoff. Préparer séparément l’évolution du verrou et l’ouverture
+officielle, sous autorisation explicite. Ne jamais utiliser la base de
+développement pour les données de voyageurs.

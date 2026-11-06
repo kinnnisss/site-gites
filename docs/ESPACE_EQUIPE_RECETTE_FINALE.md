@@ -1,8 +1,8 @@
-# Espace Équipe — reprise de la recette réelle, 6 novembre 2026
+# Espace Équipe — recette et finalisation, 6 novembre 2026
 
 ## Décision actuelle
 
-**Le conflit n’est pas déclaré résolu sur Supabase Cloud. Le propriétaire confirme lors de cette reprise que la nouvelle migration de développement n’est pas encore appliquée. La recette complète reste bloquée à cette étape ; le lien public dans le footer n’est pas ajouté. Le module reste fermé en production.**
+**Footer et navigation de session finalisés sur la branche de correction. Le propriétaire déclare désormais la correction PT409 appliquée manuellement. Ses définitions SQL et son HTTP 409 restent non vérifiés indépendamment sur Cloud. La recette complète et la Preview restent à valider ; le module et les protections de production demeurent fermés.**
 
 Le défaut SQL identifié est l’utilisation de `40001`, code de sérialisation réessayable, pour un conflit métier permanent. PostgREST 13/Hasql recommence alors la transaction avec les mêmes paramètres. Une création ainsi bloquée peut recréer un dossier après suppression. Le mécanisme et le correctif `PT409` sont démontrés avec un véritable PostgreSQL/PostgREST local, sans simulation de serveur HTTP.
 
@@ -10,7 +10,80 @@ Le propriétaire a depuis communiqué la version **PostgREST 14.18** et une capt
 
 L’ancien rapport reste consultable [au commit 4ab8615](https://github.com/kinnnisss/site-gites/blob/4ab8615e35c798ad5f85e94f4a8474b44db3df5a/docs/ESPACE_EQUIPE_RECETTE_FINALE.md).
 
-## Reprise de finalisation — vérifications du 6 novembre à 14:20–14:23 UTC
+## Finalisation du code et préparation Preview — dernière reprise
+
+La nouvelle mission autorise explicitement le footer et la préparation Preview,
+sans relancer la campagne Cloud complète. Elle remplace la précédente suspension
+de l’intégration. Départ local et distant récupéré : **`a5320058e5b19c3eb660ec318b01d8265c5f5aba`**.
+`origin/main` reste **`9035a2e0ed3ae641216d8045b10cccd400f97107`**, sans modification.
+La migration déclarée appliquée par le propriétaire n’a pas été rejouée.
+
+Le footer utilise `next/link` vers `/equipe/connexion`, avec les textes demandés
+et les styles existants. La connexion appelle `requireTeamMember` avant de
+rediriger une session autorisée vers `/equipe`. Aucune donnée métier publique,
+inscription ou rôle client ajouté ; Auth/RLS et contrôles serveur inchangés.
+
+| Contrôle exécuté dans cette finalisation | Résultat réel |
+| --- | --- |
+| Lint, `next typegen`, TypeScript | Réussis sous Node 22.23.4 |
+| Build | Turbopack Next 16.4.5 réussi ; pages publiques statiques, Équipe dynamique ; aucune route de test |
+| Tests purs | **27 + 10 + 4 + 3**, tous réussis, dont mapping PT409 → 409 et verrou de production |
+| PostgreSQL/PGlite | **54 contrôles** réussis, dont détection des anciens corps SQL et conformité des corps PT409 par le script de lecture seule |
+| Sauvegarde navigateur locale | Réussie : reçus, double clic, conflit, conservation, rechargement annulé/accepté, Effacer, impression et JSON ; **API interceptée** |
+| Fidélité HTML/React | **46/46** comparaisons exactes, interactions et export JSON ; 32 écrans, deux impressions et 12 pages A4 rastérisées |
+| Comparaison publique avec `main` | **6/6** paires exactes après retrait du seul bloc `.footer-team-access`, textes/liens/métadonnées identiques hors ajout ; neuf contrôles responsive |
+| Footer réel | Six captures avec ajout conservé ; mobile/ordinateur, clavier, focus et navigation vers la connexion réussis ; contraste normal **5,17:1**, hover observé **5,45:1** |
+| HTTP Auth/dossiers | **29 + 17** contrôles réussis sur `next start` local ; anonyme, rôle/cookie forgés, origine et exposition contrôlés |
+| Supabase en lecture seule | Santé Auth HTTP 200 ; réglages publics HTTP 200, inscriptions publiques désactivées ; sonde anonyme `team_members` HTTP 401 |
+| Auth réelle via Next local | **Cinq profils réussis**, voir tableau ci-dessous ; aucun dossier ou membre modifié |
+| Définitions SQL Cloud / HTTP PT409 réel | **Non vérifiés** : aucun accès SQL approprié ; aucun RPC métier Cloud lancé |
+| Vercel Preview | **Non configurée ni vérifiée** : aucun accès Vercel connecté/jeton disponible, URL inconnue |
+
+Tests ciblés via le véritable build Next, Supabase de développement et les seuls
+comptes fictifs, campagne **Auth uniquement** à partir de 15:01:20 UTC :
+
+| Profil | Connexion/autorisation | Durée du parcours | Retour sur la connexion avec session active |
+| --- | --- | ---: | --- |
+| ADMIN fictif | HTTP session 200, `admin` | **2 688,7 ms** | `/equipe`, **2 966,9 ms** |
+| AGENT_A | HTTP session 200, `agent` | **1 943,4 ms** | `/equipe`, **2 321,9 ms** |
+| AGENT_B | HTTP session 200, `agent` | **1 606,9 ms** | `/equipe`, **2 244,5 ms** |
+| INACTIVE | Message générique de refus, session ensuite 401 | **1 338,4 ms** | Pas d’accès privé |
+| NO_MEMBER | Message générique de refus, session ensuite 401 | **1 353,5 ms** | Pas d’accès privé |
+
+Les durées mesurent le parcours navigateur local, avec les appels Auth Cloud ;
+elles ne sont pas des durées SQL/RPC. Les trois sessions autorisées ont des
+cookies HttpOnly, Secure, SameSite=Lax, chemin `/equipe`, vérifiés sans valeurs
+journalisées. Après déconnexion/refus, API session 401 et cookies supprimés pour
+chaque contexte. Le test utilise Chromium sur loopback : il ne valide pas le
+TLS, le cache CDN ou la transmission de cookies d’un hébergement Vercel réel.
+Un premier passage du banc a nécessité de corriger son filtre de lecture des
+cookies Secure sur HTTP loopback ; l’Admin fictif de cet essai a été déconnecté.
+
+Le premier comparateur public a aussi nécessité de restaurer le défilement après
+capture du footer, afin de comparer le header fixe au même emplacement. Aucun
+écart n’est masqué hors du nouveau bloc ; le passage final est exact.
+
+[Preuve nettoyée de finalisation](recette/2026-11-06-finalisation-code.json),
+[capture mobile](recette/captures-finalisation/footer-mobile.png) et
+[capture ordinateur](recette/captures-finalisation/footer-ordinateur.png).
+Les comparaisons détaillées et exports de travail restent sous
+`/tmp/site-gites-finalisation/` ; les captures ci-dessus sont livrées dans Git.
+
+**Restent non exécutés dans cette reprise :** lecture des catalogues SQL Cloud,
+RPC de sauvegarde/conflit/concurrence et nettoyage d’un nouvel UUID Cloud,
+parcours Next avec dossiers réels, renouvellement après expiration, SMTP et
+déploiement Preview. Aucun compte, rôle, dossier préexistant, migration, RLS,
+permission ou paramètre distant modifié ; Administrateur principal et production
+inchangés. Le module est resté fermé dans le serveur Next local.
+
+Le [rapport de finalisation](FINALISATION_ESPACE_EQUIPE.md) donne les fichiers,
+réglages Preview spécifiques à la branche et conditions de publication. Le
+[guide manuel](GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md) donne les 14 parcours, les
+résultats attendus et le nettoyage. **La recette complète n’est pas déclarée
+réussie.** Les paragraphes suivants conservent les preuves historiques, datées
+avant la correction manuelle signalée par le propriétaire.
+
+## Historique — reprise du 6 novembre à 14:20–14:23 UTC, avant correction manuelle
 
 État distant relu : `fix/recette-espace-equipe` et le checkout local sont au
 commit **`6b8b7bce36209283309503eeda6ed8f4bdcbfd3e`** ; `main` reste au
@@ -89,7 +162,7 @@ Les cinq sujets sont distincts ; émetteur et sujet du JWT sont contrôlés en m
 
 | Scénario | Cloud avant correction, réellement exécuté | Après correction, local seulement | Cloud après correction |
 | --- | --- | --- | --- |
-| Sauvegarde normale | Création A : HTTP 200/révision 1, **265,5 ms** ; modification B : HTTP 200/révision 2, **225,6 ms** | Réussi, révision incrémentée | Non testé : migration non appliquée |
+| Sauvegarde normale | Création A : HTTP 200/révision 1, **265,5 ms** ; modification B : HTTP 200/révision 2, **225,6 ms** | Réussi, révision incrémentée | Non testé : application manuelle déclarée, à vérifier |
 | Révision obsolète | **Échec technique** : SDK sans HTTP ni SQLSTATE après **15 001,7 ms** ; cURL sans HTTP ni SQLSTATE, exit 28, **15 019,3 ms**. Relecture après échec SDK : payload B complet conservé, révision 2 | HTTP 409/PT409 en **2,0 ms**, contenu conservé | Non testé |
 | Concurrence réelle | Non exécutée, arrêt au blocage | Un HTTP 200/révision 3 en **4,8 ms**, un HTTP 409/PT409 en **13,5 ms**, payload gagnant conservé | Non testé |
 | Création répétée, même UUID | Non exécutée dans cette reprise après le blocage ; diagnostic antérieur : timeout 55 002 ms et dossier réapparu | Ancien code : recréation après suppression démontrée ; PT409 : conflit en **2,0 ms**, aucun doublon ni recréation tardive locale | Non testé |
@@ -103,7 +176,7 @@ Le diagnostic corrèle ces observations avec les journaux fournis par le propri�
 
 ## Correction minimale préparée
 
-- Nouvelle migration **non appliquée à distance** : `supabase/migrations/20261106000100_inspection_business_conflicts.sql`.
+- Nouvelle migration **non appliquée à distance par l’agent**, désormais déclarée appliquée manuellement par le propriétaire : `supabase/migrations/20261106000100_inspection_business_conflicts.sql`.
 - Les trois erreurs métier passent de `40001` à `PT409` dans save/delete et le trigger. Les trois corps sont sinon identiques, comparés au texte historique. Fonctions existantes exigées avant remplacement ; transaction SQL unique.
 - `modules/etats-des-lieux/persistence.ts` reconnaît PT409 → HTTP 409 et conserve les anciens codes pour la compatibilité. Aucun texte ou élément d’interface modifié.
 - Tests de mapping et de migration/privilèges ajoutés. Scripts Cloud et laboratoire PostgREST reproductibles livrés. Le script Cloud attend PT409 par défaut ; `--legacy-40001` sert à reproduire l’ancien comportement.
@@ -170,13 +243,25 @@ Captures de travail locales non pérennes : `/tmp/site-gites-phase2/run-17939699
 
 ## Tests non effectués et action indispensable
 
-La migration n’a pas été exécutée sur Supabase. Restent **non testés sur Cloud après correction** : les cinq scénarios du correctif, la suite RLS complète (écritures refusées des inactifs/sans fiche, payload invalide, suppression Agent, DELETE brut, confirmations, métadonnées/auteurs) et tous les parcours Next avec stockage réel.
+La migration n’a pas été exécutée sur Supabase par l’agent ; le propriétaire indique l’avoir appliquée manuellement. Restent **non testés sur Cloud après correction** : les cinq scénarios du correctif, la suite RLS complète (écritures refusées des inactifs/sans fiche, payload invalide, suppression Agent, DELETE brut, confirmations, métadonnées/auteurs) et tous les parcours Next avec stockage réel.
 
-Restent donc la création/sauvegarde par formulaire, réouverture, modification inter-agents, conflit entre navigateurs, conservation des saisies, rechargement accepté/annulé, Effacer sans écriture, impression/export autorisés, suppression Admin et refus avec JWT. Cookies et renouvellement/expiration réels ne sont pas validés dans cette reprise ; les cinq logouts SDK ont reçu HTTP 204.
+Restent donc sur stockage Cloud la création/sauvegarde par formulaire, réouverture,
+modification inter-agents, conflit entre navigateurs, conservation des saisies,
+rechargement accepté/annulé, Effacer sans écriture, impression/export autorisés,
+suppression Admin et refus avec JWT. Les attributs des cookies et la déconnexion
+via Next ont depuis été vérifiés dans la finalisation ci-dessus ; renouvellement
+après expiration réelle reste non validé. Les cinq logouts SDK historiques ont
+reçu HTTP 204.
 
 Aucune fiche n’a été modifiée ou désactivée ; la désactivation locale simulée n’est pas une validation distante. Gestion/élévation de membres et récupération de mot de passe/SMTP, usage unique et expiration des liens restent non validés et non autorisés ici. Aucun e-mail ni changement de compte effectué. Validation humaine, conservation/confidentialité, hébergement HTTPS et sauvegarde/restauration restent des prérequis indépendants de production.
 
-**Action du propriétaire :** comparer les définitions Cloud avec le script de lecture seule, puis autoriser et faire appliquer uniquement `20261106000100_inspection_business_conflicts.sql` dans le SQL Editor du projet de développement confirmé. Ne pas rejouer les anciennes migrations ni lancer `db push`. Aucune clé administrateur ne doit être transmise à l’agent. Confirmer l’application pour relancer les cinq tests Cloud, puis seulement la recette RLS et Next réelle. Le diagnostic fournit les commandes exactes.
+**Action du propriétaire :** vérifier en lecture seule les fonctions déjà corrigées
+avec `supabase/manual/verify-inspection-pt409.sql`, sans rejouer la migration,
+puis configurer la Preview spécifique à la branche et suivre le guide manuel.
+Aucune clé administrateur ne doit être transmise à l’agent. La dernière mission
+ne demande pas de relancer toute la campagne Cloud automatisée. Les commandes
+du diagnostic restent disponibles pour une recette ultérieure explicitement
+décidée ; elles ne sont pas exécutées dans cette finalisation.
 
 La livraison est sur `fix/recette-espace-equipe`, au commit contenant ce rapport.
 Aucune fusion ni intervention sur Vercel Production. L’API GitHub a de nouveau

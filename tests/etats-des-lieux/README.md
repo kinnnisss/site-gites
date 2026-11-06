@@ -1,5 +1,23 @@
 # Comparaison locale de fidélité
 
+La finalisation et la recette navigateur Preview sont décrites dans
+`docs/FINALISATION_ESPACE_EQUIPE.md` et `docs/GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md`.
+Le propriétaire déclare avoir appliqué manuellement PT409. Le script
+`supabase/manual/verify-inspection-pt409.sql` permet la vérification des trois
+corps de fonctions en lecture seule ; ne pas rejouer la migration automatiquement.
+Le banc local contrôle aussi ce script avant/après la migration locale.
+
+Pour comparer la vitrine avec `main` en isolant uniquement le nouvel accès footer :
+
+```bash
+PUBLIC_BASELINE_ROOT=/chemin/checkout-main node tests/public/non-regression.mjs --allow-team-footer
+```
+
+Les captures réelles du footer sont conservées ; seules les captures comparatives
+retirent le bloc `.site-footer .footer-team-access`. Textes, liens et pixels du
+reste de la page restent comparés sans tolérance. Le mode sans option continue
+de comparer les pages complètes sans exclusion.
+
 ## Diagnostic de conflit du 6 novembre 2026
 
 Le SQLSTATE `40001` est réessayé par Hasql dans PostgREST 13 : un conflit métier

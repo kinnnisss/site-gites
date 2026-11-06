@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { requireTeamMember } from "@/lib/auth/authorization";
 import { readSupabaseConfig } from "@/lib/supabase/config";
 import { AuthForm } from "../../auth-form";
 import styles from "../../team.module.css";
@@ -15,6 +17,12 @@ export default async function LoginPage({ searchParams }: {
   searchParams: Promise<{ etat?: string | string[] }>;
 }) {
   const configured = Boolean(readSupabaseConfig(process.env));
+  let authorized = false;
+  if (configured) {
+    try { await requireTeamMember(); authorized = true; }
+    catch { /* An absent, refused or unavailable session keeps the login form. */ }
+  }
+  if (authorized) redirect("/equipe");
   const { etat } = await searchParams;
   const message = !configured ? messages.indisponible
     : typeof etat === "string" && Object.hasOwn(messages, etat) ? messages[etat] : undefined;
