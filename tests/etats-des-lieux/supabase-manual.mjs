@@ -5,6 +5,7 @@ import { loadTs } from './load-typescript.mjs';
 import { matchesDevelopmentProject, allowedFixtureRequest } from './development-target.mjs';
 const { readSupabaseConfig } = loadTs('lib/supabase/config.ts');
 const { createInitialPayload } = loadTs('modules/etats-des-lieux/state.ts');
+const { REVISION_CONFLICT_SQLSTATE } = loadTs('modules/etats-des-lieux/persistence.ts');
 class CheckFailure extends Error {}
 const ensure = (value, label) => { if (!value) throw new CheckFailure(label); };
 ensure(process.argv.includes('--allow-development-writes'), 'Autorisation explicite requise : --allow-development-writes. Voir le rapport de phase 4.');
@@ -87,10 +88,10 @@ try {
   check((await save(clients.AGENT_B, 1, changed)).data?.[0]?.revision === 2, 'Modification inter-agents refusée.');
   const metadata = (await read(clients.ADMIN)).data?.[0];
   check(metadata?.created_by === subjects.AGENT_A && metadata?.updated_by === subjects.AGENT_B && metadata?.revision === 2, 'Métadonnées incorrectes.');
-  await expectError(save(clients.AGENT_A, 1), '40001', 'Révision obsolète non refusée avec le code attendu.');
+  await expectError(save(clients.AGENT_A, 1), REVISION_CONFLICT_SQLSTATE, 'Révision obsolète non refusée avec le code attendu.');
   const race = await Promise.all([save(clients.AGENT_A, 2), save(clients.AGENT_B, 2)]);
   check(race.filter(r => !r.error && r.data?.[0]?.revision === 3).length === 1 &&
-    race.filter(r => r.error?.code === '40001').length === 1, 'Concurrence atomique incorrecte.');
+    race.filter(r => r.error?.code === REVISION_CONFLICT_SQLSTATE).length === 1, 'Concurrence atomique incorrecte.');
   check((await save(clients.AGENT_A, 3, { ...payload, accepted: 'true' })).error?.code === '23514', 'Payload invalide accepté par PostgreSQL.');
   for (const name of ['INACTIVE', 'NO_MEMBER']) {
     const result = await read(clients[name]); check(!result.error && result.data.length === 0, `Lecture RLS autorisée : ${name}.`);
@@ -105,7 +106,7 @@ try {
   check((await read(clients.AGENT_B)).data?.[0]?.revision === 3, 'DELETE direct a altéré le dossier.');
   check((await save(clients.ADMIN, 3)).data?.[0]?.revision === 4, 'Sauvegarde Administrateur refusée.');
   check((await remove(clients.ADMIN, 4, randomUUID())).error?.code === '22023', 'Confirmation incorrecte acceptée.');
-  check((await remove(clients.ADMIN, 3)).error?.code === '40001', 'Suppression avec révision obsolète acceptée.');
+  check((await remove(clients.ADMIN, 3)).error?.code === REVISION_CONFLICT_SQLSTATE, 'Suppression avec révision obsolète acceptée.');
   const deleted = await remove(clients.ADMIN, 4); check(!deleted.error && deleted.data === id, 'Suppression Administrateur confirmée refusée.'); creationAttempted = false;
   check((await read(clients.AGENT_B)).data?.length === 0, 'Dossier encore présent après suppression.');
   for (const name of names) {

@@ -1,245 +1,126 @@
-# Espace Équipe — recette réelle du 6 novembre 2026
+# Espace Équipe — reprise de la recette réelle, 6 novembre 2026
 
-## Décision
+## Décision actuelle
 
-**Recette Cloud interrompue et non validée. Le module doit rester fermé en
-production.** Les connexions et des écritures réelles ont réussi, mais le test
-indispensable de révision obsolète n’a pas reçu la réponse attendue. La concurrence
-et les parcours Next.js avec persistance réelle ne sont donc pas déclarés réussis.
+**Le conflit n’est pas déclaré résolu sur Supabase Cloud. La recette complète reste bloquée par l’autorisation et l’application d’une nouvelle migration de développement. Le module reste fermé en production.**
 
-Le présent rapport actualise la situation auparavant bloquée par les variables
-absentes dans `ESPACE_EQUIPE_RECETTE_REELLE.md`. Les rapports historiques ne sont
-pas réécrits et leurs simulations ne sont pas comptées comme des succès Cloud.
+Le défaut SQL identifié est l’utilisation de `40001`, code de sérialisation réessayable, pour un conflit métier permanent. PostgREST 13/Hasql recommence alors la transaction avec les mêmes paramètres. Une création ainsi bloquée peut recréer un dossier après suppression. Le mécanisme et le correctif `PT409` sont démontrés avec un véritable PostgreSQL/PostgREST local, sans simulation de serveur HTTP.
 
-## Cible, branche et périmètre
+La version et les définitions SQL exactes du déploiement Cloud restent non lisibles avec les seuls accès disponibles. Les preuves Cloud reproduisent le timeout ; elles ne valident pas encore le correctif. Le [diagnostic détaillé](DIAGNOSTIC_CONFLIT_REVISION.md) donne les sources, la corrélation des journaux, les limites, la migration et les actions manuelles.
 
-- Dépôt : `kinnnisss/site-gites`.
-- Branche exclusive : `fix/recette-espace-equipe`, initialement propre.
-- Départ et dernier `origin/main` vérifiés après fetch :
-  `9035a2e0ed3ae641216d8045b10cccd400f97107`.
-- Project Reference de développement : `jijjjgsfdbrkvqvhyjwr`.
-- Les 13 variables privées sont présentes. La variable de référence contient le
-  hostname complet : sa normalisation stricte donne exactement le projet de
-  `NEXT_PUBLIC_SUPABASE_URL`. Aucune valeur d’identifiant ou de clé n’est reproduite.
-- Clé `sb_publishable_…` exclusivement ; JWT de membres réels, vérifiés par Auth.
-- Node 22.23.4, Next 16.4.5, SDK Supabase installés depuis le lockfile existant.
-- Accès derrière le proxy Cloud avec `NODE_USE_ENV_PROXY=1`, TLS maintenu.
+L’ancien rapport reste consultable [au commit 4ab8615](https://github.com/kinnnisss/site-gites/blob/4ab8615e35c798ad5f85e94f4a8474b44db3df5a/docs/ESPACE_EQUIPE_RECETTE_FINALE.md).
 
-Le propriétaire a explicitement autorisé les créations/modifications/suppressions
-des seuls UUID synthétiques générés pendant la recette. Aucun dossier préexistant
-n’a été modifié. Aucun compte Auth, fiche `team_members`, réglage Supabase,
-migration distante, politique RLS ou ressource Vercel n’a été modifié.
-L’Administrateur principal n’a été ni utilisé ni modifié.
+## Cible, profils et restrictions respectées
 
-## Profils et résultats réels Supabase Cloud
+- Dépôt : `kinnnisss/site-gites`, branche exclusive `fix/recette-espace-equipe`.
+- Base de reprise vérifiée : `4ab8615e35c798ad5f85e94f4a8474b44db3df5a`. `origin/main` vérifié en lecture seule : `9035a2e0ed3ae641216d8045b10cccd400f97107` ; aucune fusion.
+- Project Reference : **`jijjjgsfdbrkvqvhyjwr`**, développement, correspondance exacte avec l’URL configurée ; 13 variables privées présentes, sans affichage de leurs valeurs.
+- Clé publishable et JWT des seuls comptes fictifs ; aucune clé privilégiée ni accès DDL distant.
+- Node 22.23.4, Next 16.4.5, dépendances applicatives inchangées. Proxy et TLS conservés, `NODE_USE_ENV_PROXY=1` pour les requêtes Cloud.
+- Autorisation de reproduction et nettoyage des UUID synthétiques générés, **sans autorisation d’application de migration**.
+- Aucun compte Auth créé/supprimé/désactivé ni e-mail, mot de passe ou rôle de compte modifié ; seules les connexions/déconnexions fictives normales ont eu lieu. Aucune fiche `team_members`, paramètre Supabase, RLS distante, migration distante ou ressource Vercel modifié. Aucun e-mail envoyé, dossier préexistant modifié ou supprimé.
+- L’Administrateur principal n’a été ni utilisé ni modifié. L’Admin ci-dessous est exclusivement le compte fictif dédié.
 
-Les cinq connexions ont été exécutées dans le script manuel. `auth.getUser()`,
-l’adresse attendue (comparée sans être affichée), le sujet et l’émetteur du JWT
-ont été vérifiés. Les cinq sujets sont distincts. L’Admin fictif a lu uniquement
-les cinq fiches ciblées pour distinguer inactivité et absence de fiche.
-
-| Profil | Résultat Auth réel | Fiche vérifiée |
+| Profil | Auth Cloud réellement revérifié | Fiche et statut vérifiés |
 | --- | --- | --- |
-| ADMIN de test | Réussi | `admin`, `active=true` |
-| AGENT_A recréé | Réussi | `agent`, `active=true` |
-| AGENT_B | Réussi | `agent`, `active=true` |
-| INACTIVE | Réussi | `agent`, `active=false` ; fiche invisible dans sa propre session |
-| NO_MEMBER | Réussi | Aucune fiche, confirmé par l’Admin de test |
+| ADMIN fictif | Réussi, identité vérifiée | `admin`, actif |
+| AGENT_A recréé | Réussi, identité vérifiée | `agent`, actif |
+| AGENT_B | Réussi, identité vérifiée | `agent`, actif |
+| INACTIVE | Réussi, identité vérifiée | `agent`, inactif |
+| NO_MEMBER | Réussi, identité vérifiée | Aucune fiche |
 
-| Contrôle Cloud | État et preuve |
-| --- | --- |
-| Auth et identités des cinq profils | Réussi réellement, avant toute mutation |
-| Lecture des fiches par les actifs ; masquage pour inactif/sans fiche | Réussi réellement |
-| Refus anonyme de lecture et de création | Les assertions du script initial ont reçu des erreurs ; leur code n’était pas journalisé. Les contrôles préalables du chat avaient confirmé HTTP 401/SQLSTATE 42501 en lecture. Le script livré exige maintenant le code exact, pour exclure les erreurs de transport ; cette nouvelle assertion n’a pas été rejouée à distance après l’arrêt |
-| Création Agent A | Réussie, dossier synthétique à la révision 1 |
-| Lecture Agent B et payload intégral | Réussie : comparaison de tout le payload v1, avec chaînes vides, accents, espaces, retours à la ligne, dates locales et tableaux |
-| Modification Agent B | Réussie, révision 2 |
-| Auteurs serveur A/B et révision | Réussis, UUID comparés en mémoire sans les publier |
-| Sauvegarde avec révision 1 après passage à 2 | **Échouée techniquement : réponse attendue non reçue**, voir diagnostic ci-dessous |
-| Deux sauvegardes concurrentes | **Non testé**, arrêt avant ce scénario |
-| Payload invalide, écritures inactif/sans fiche, suppression Agent, DELETE brut, mauvaises confirmations | **Non testés dans cette recette Cloud**, arrêt avant ces scénarios |
-| Modification opérationnelle par l’Admin | Non testée ; ne pas la confondre avec le nettoyage |
-| Suppression par RPC Admin et nettoyage | Réussis pour les UUID connus, avec confirmation exacte et révision courante ; contrôle différé effectué |
-| Fermeture des sessions de test | `scope: local` demandé dans les blocs `finally`. HTTP 204 observé dans les diagnostics Admin/A. Le parcours final d’assertions des cinq déconnexions n’a pas été atteint |
+Les cinq sujets sont distincts ; émetteur et sujet du JWT sont contrôlés en mémoire. L’Admin a lu seulement les cinq membres ciblés. Les lectures anonymes de `team_members` et `inspection_dossiers` reçoivent **HTTP 401 / SQLSTATE 42501**. [Preuve Auth/RLS de précontrôle](recette/2026-11-06-auth-precontrole.json).
 
-## Incident de conflit et diagnostic
+## Résultats des cinq scénarios indispensables
 
-Commande autorisée réellement exécutée, sous Node 22 :
+| Scénario | Cloud avant correction, réellement exécuté | Après correction, local seulement | Cloud après correction |
+| --- | --- | --- | --- |
+| Sauvegarde normale | Création A : HTTP 200/révision 1, **265,5 ms** ; modification B : HTTP 200/révision 2, **225,6 ms** | Réussi, révision incrémentée | Non testé : migration non appliquée |
+| Révision obsolète | **Échec technique** : SDK sans HTTP ni SQLSTATE après **15 001,7 ms** ; cURL sans HTTP ni SQLSTATE, exit 28, **15 019,3 ms**. Relecture après échec SDK : payload B complet conservé, révision 2 | HTTP 409/PT409 en **2,0 ms**, contenu conservé | Non testé |
+| Concurrence réelle | Non exécutée, arrêt au blocage | Un HTTP 200/révision 3 en **4,8 ms**, un HTTP 409/PT409 en **13,5 ms**, payload gagnant conservé | Non testé |
+| Création répétée, même UUID | Non exécutée dans cette reprise après le blocage ; diagnostic antérieur : timeout 55 002 ms et dossier réapparu | Ancien code : recréation après suppression démontrée ; PT409 : conflit en **2,0 ms**, aucun doublon ni recréation tardive locale | Non testé |
+| Nettoyage | Admin : HTTP 200 en **234,9 ms**, reçu UUID conforme ; absence immédiate, à +5 s et +30 s | Réussi ; laboratoire jetable retiré | Non testé sur un dossier créé avec le nouveau SQL |
 
-```bash
-NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/supabase-manual.mjs --allow-development-writes
-```
+Les durées locales ne sont pas des mesures Cloud. `status=0` du SDK et `000` de cURL indiquent l’absence de réponse HTTP exploitable, pas un code HTTP envoyé par Supabase ou un conflit validé.
 
-1. Première exécution, **11:32:36–11:33:01 UTC** : arrivée au test de révision
-   obsolète, puis arrêt. Le libellé initial « Révision obsolète acceptée » était
-   trop affirmatif : il signifiait seulement que le code `40001` n’avait pas été
-   observé. Le bloc de nettoyage n’a signalé aucune erreur.
-2. Reproduction instrumentée, **11:34:18–11:34:42 UTC**, sur un nouvel UUID :
-   réponse SDK `status=0`, erreur sans SQLSTATE, alors que la relecture donne
-   toujours **révision 2**. Aucun écrasement n’a été constaté. Le nettoyage et
-   l’absence du dossier ont été confirmés.
-3. Diagnostic sur le seul UUID précédent déjà absent : un RPC de modification
-   conditionnelle, donc sans création possible, reçoit HTTP 500/`P0002` en
-   environ 375 ms. L’endpoint est joignable ; cela ne valide pas le conflit.
-4. Diagnostic brut sans le parseur PostgREST du SDK, sur un troisième dossier
-   synthétique : une création initiale réussit ; la tentative de recréation du
-   même UUID ne reçoit aucune réponse avant **55 002 ms** (`TimeoutError`). Le
-   défaut ne se limite donc pas au décodage d’erreur par le SDK. La durée de
-   55 secondes n’a été utilisée que pour cette mesure, sans changer l’application.
-5. Après un reçu de suppression correct, ce dernier UUID est encore visible.
-   Une création restée en cours puis validée tardivement est une hypothèse ;
-   la cause exacte n’a pas été établie. Le dossier a été supprimé de façon
-   ciblée une seconde fois, puis son absence vérifiée immédiatement, à +5 s
-   et au contrôle final ultérieur.
+La reproduction actuelle se déroule de **12:42:26 à 12:43:38 UTC**. Après le premier blocage, la seule tentative supplémentaire de forme mutative est la comparaison du même conflit par cURL, suivie du nettoyage. Aucun autre scénario métier d’écriture n’a progressé. Le brouillon navigateur n’a pas été testé sur Cloud.
 
-**La localisation du défaut reste indéterminée entre le chemin réseau, la
-passerelle/PostgREST et le traitement SQL distant.** Le résultat n’établit ni une
-acceptation de révision obsolète, ni un contournement RLS. Le SQL versionné lève
-`40001` sur conflit et le test PostgreSQL local passe ; cela ne prouve pas que
-la définition/configuration distante est identique ou que son erreur est
-correctement transportée. Aucune migration corrective n’est inventée ou appliquée
-sans cause démontrée. Le délai serveur de l’application n’a pas été augmenté
-pour transformer le blocage en réussite.
+Le diagnostic corrèle ces observations avec les journaux fournis par le propriétaire : DELETE HTTP 200 à **11:38:16.890**, puis `Revision conflict`/`40001` à **11:38:17.009**, et la date de recréation du résidu à **11:38:17.012477**. La chronologie est compatible avec le mécanisme reproduit ; elle ne constitue pas une trace distribuée complète sans request ID commun.
 
-Les autres écritures métier ont été suspendues. Seuls les diagnostics ciblés et
-le nettoyage des UUID générés ont suivi l’échec. Aucun parcours réel Next.js
-avec création de dossier n’a été lancé après cet incident.
+## Correction minimale préparée
 
-## Nettoyage et résidus
+- Nouvelle migration **non appliquée à distance** : `supabase/migrations/20261106000100_inspection_business_conflicts.sql`.
+- Les trois erreurs métier passent de `40001` à `PT409` dans save/delete et le trigger. Les trois corps sont sinon identiques, comparés au texte historique. Fonctions existantes exigées avant remplacement ; transaction SQL unique.
+- `modules/etats-des-lieux/persistence.ts` reconnaît PT409 → HTTP 409 et conserve les anciens codes pour la compatibilité. Aucun texte ou élément d’interface modifié.
+- Tests de mapping et de migration/privilèges ajoutés. Scripts Cloud et laboratoire PostgREST reproductibles livrés. Le script Cloud attend PT409 par défaut ; `--legacy-40001` sert à reproduire l’ancien comportement.
+- Introspection préparée dans `supabase/manual/phase5-conflict-diagnostic.sql`, strictement en lecture seule et non exécutée à distance.
 
-| Exécution | UUID synthétique | Contrôle final |
-| --- | --- | --- |
-| Reproduction instrumentée | `473fb7b4-b987-4291-b359-15e753ad5628` | 0 ligne |
-| Diagnostic brut | `cd51b563-94ac-412a-b93c-3fbd818ee779` | 0 ligne après nettoyage ciblé complémentaire |
-| Première exécution | UUID non émis par l’ancienne version du script | Nettoyage sans erreur signalée. Recherche finale en lecture seule par créateur Agent A, référence `PHASE4-TEST-B` et intervalle exact de création : 0 candidat |
+La migration conserve les données d’un dossier existant, propriétaires/ACL/modes des fonctions, droits de tables et colonnes, politiques et activation/forçage RLS. Les conditions UUID/révision restent atomiques. Aucun écrasement forcé ni augmentation des délais de l’application.
 
-**Aucun résidu détecté au contrôle final.** La première exécution ne dispose pas
-d’une preuve d’absence par UUID, puisque l’ancien journal ne l’avait pas conservé.
-Cette limite est explicite ; aucune suppression par référence ou par intervalle
-n’a été exécutée. La recherche finale est restée strictement en lecture seule.
-Une réponse HTTP interrompue ne garantit pas l’annulation d’une transaction
-distante : conserver les UUID et vérifier les commits tardifs avant toute reprise.
+**Risque à revoir :** changement du contrat d’erreur RPC de 40001 à PT409. Les clients/tests concernés doivent reconnaître PT409. Des définitions Cloud modifiées hors Git doivent être comparées avant remplacement ; aucune identité complète des définitions locales et distantes n’est affirmée.
 
-## Corrections livrées
+## Non-régression réellement réexécutée
 
-Uniquement des outils de recette et ce rapport ; aucun composant métier ou visuel,
-SQL de migration, dépendance, verrou de production ou fichier de référence modifié.
-
-- `tests/etats-des-lieux/development-target.mjs` : référence courte ou hostname
-  exact acceptés ; autre projet, destination ambiguë et redirection refusés.
-  Garde réseau limitant les mutations au seul UUID généré et aux sessions Auth
-  locales ; aucun endpoint de création de compte ou d’écriture de membre autorisé.
-- `development-target.test.mjs` : trois tests de non-régression couvrant le
-  format réel de configuration, les cibles incorrectes et les requêtes interdites.
-- `supabase-manual.mjs` : vérification renforcée de l’identité/projet et des cinq
-  rôles/statuts, détection de collision avant mutation, UUID journalisé avant les
-  tentatives, y compris anonymes, diagnostic contrôlé du conflit, erreur de
-  transport distincte d’un succès, erreurs brutes sensibles masquées, absence
-  vérifiée après nettoyage. Même une tentative anonyme censée échouer marque
-  désormais l’UUID pour nettoyage. Le DELETE brut sera suivi d’une relecture.
-
-Le dernier durcissement du garde réseau et du refus anonyme a été testé localement,
-**pas rejoué sur Cloud** : le blocage indispensable doit être résolu avant de
-reprendre la suite distante. Aucun correctif de l’application n’est prétendu
-validé de bout en bout.
-
-## Vérifications locales réellement exécutées
-
-| Vérification | Résultat et portée |
+| Contrôle | Résultat et portée |
 | --- | --- |
 | `npm run lint` | Réussi |
 | `npx next typegen` | Réussi |
 | `npx tsc --noEmit` | Réussi |
-| `npm run build` | Réussi avec Turbopack ; vitrine statique, équipe dynamique, aucune route de test livrée |
-| `node tests/auth/policy.test.mjs` | 27 tests réussis ; décisions pures, pas Auth Cloud |
-| `node tests/etats-des-lieux/persistence.test.mjs` | 9 tests réussis |
-| `node tests/etats-des-lieux/request-body.test.mjs` | 4 tests réussis |
-| `node tests/etats-des-lieux/development-target.test.mjs` | 3 tests réussis |
-| `rls-local.mjs` avec PGlite 0.5.15 | 48 contrôles PostgreSQL locaux réussis ; désactivation simulée localement incluse |
-| `fidelity.mjs` | 46/46 comparaisons exactes, interactions, JSON et impressions du banc local réussis |
-| `persistence-browser.mjs` | Réussi : sauvegarde, doubles clics, conflits, rechargement accepté/annulé, Effacer, export, impression, réseau et responsive ; **transport intercepté**, sans Supabase |
-| `tests/public/non-regression.mjs` | 6/6 paires identiques à `origin/main`, contenus/métadonnées, clavier, menu, ancres et responsive réussis |
-| `tests/auth/http.mjs` | 28 contrôles réussis sur le build Next réel **sans configuration Supabase** |
-| `tests/etats-des-lieux/http.mjs` | 17 contrôles réussis dans cette même configuration fermée |
+| `npm run build` | Réussi avec Turbopack ; aucune route d’essai livrée |
+| Auth/politique | **27 tests** réussis, fonctions pures |
+| Persistance/mapping | **10 tests** réussis |
+| Corps JSON | **4 tests** réussis |
+| Garde-fous de cible/requêtes | **3 tests** réussis |
+| PostgreSQL/PGlite | **52 contrôles** réussis, dont migration d’un dossier existant et conservation des privilèges ; fixture Auth locale |
+| PostgreSQL + PostgREST 13 Docker | **14 contrôles** réussis : boucle 40001, recréation tardive, PT409, concurrence, conservation ; aucun accès Supabase |
+| Comparaison formulaire/HTML | **46/46** comparaisons exactes ; interactions, JSON et impressions du banc de référence réussis |
+| Persistance navigateur locale | Réussie avec **transport intercepté** : sauvegarde, saisies en attente, conflit, rechargement, Effacer, JSON, impression, responsive et indisponibilité |
+| Vitrine comparée à `origin/main` | **6/6** paires exactes ; contenu/métadonnées, clavier, menu, ancres et responsive réussis |
+| HTTP Auth | **28 contrôles** réussis sur le build local fermé |
+| HTTP dossiers | **17 contrôles** réussis sur ce même build |
 
-Les commandes Node ont été exécutées directement pour conserver le détail des
-tests, plutôt que compter seulement les fichiers du lanceur `--test`. PGlite a
-été installé sous `/tmp/site-gites-test-tools`, sans dépendance applicative ajoutée.
-La vitrine a été comparée à un checkout détaché du même `origin/main`, sans
-modification de sa branche. Les routes temporaires des bancs ont été retirées
-avant le build final.
+Les contrôles HTTP utilisent le véritable build Next local **sans configuration Supabase**. Ils ne valident pas les JWT/RLS Cloud. Les routes temporaires ont été retirées avant typegen/TypeScript/build. Aucune dépendance applicative ajoutée ; outils Docker/PGlite hors du runtime déployé.
 
-Référence HTML inchangée, SHA-256 vérifié :
+## Fidélité et empreintes
+
+Référence et migrations historiques inchangées :
 
 ```text
-9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0
+HTML : 9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0
+team_members : 2a05486dde2538cdf419cc8df517c4adf3c086362448486fb5dee8c24409ac54
+inspection_dossiers : 823083738a76f965e40a2f4d8158b8f1a5bd435ef5504ba060ff8a6a94d90aad
+nouvelle migration : 3d83a18f828c2785ab871ae323d1552b9384e03b88cc9352ea70fd1bda008af8
 ```
 
-Artefacts locaux de cette session, non livrés dans Git et non pérennes :
+Aucun redesign, champ, texte de formulaire, photo, signature électronique, dashboard, réservation ou modification du site public.
 
-- `/tmp/site-gites-recette/` : journaux des suites et contrôle final de nettoyage.
-- `/tmp/site-gites-phase2/run-1793964914975/` : comparaison formulaire et A4.
-- `/tmp/site-gites-public/run-1793965218788/` : comparaison vitrine.
+## Nettoyage et preuves
 
-## Application Next.js réelle, simulations et scénarios non validés
+UUID de cette reprise : **`1a901e90-3974-4026-8cd9-676e96529bd2`**. Supprimé par l’Admin fictif, absent à **12:43:05.841**, **12:43:11.490** et **12:43:36.855 UTC**. Les anciens UUID `473fb7b4-b987-4291-b359-15e753ad5628` et `cd51b563-94ac-412a-b93c-3fbd818ee779` étaient absents au précontrôle.
 
-Les serveurs et navigateurs des suites locales utilisent le véritable build ou
-Next dev. Ils ne prouvent aucune sauvegarde réelle via les Route Handlers.
-Les connexions Next réalisées dans les vérifications préalables du chat ne
-remplacent pas la recette de persistance demandée ici.
+Un dernier contrôle strictement en lecture seule à **13:22 UTC** confirme 0 ligne
+pour les trois UUID, avec HTTP 200 en 642,3 / 584,7 / 613,4 ms. La session de
+l’Admin fictif a ensuite été fermée. Aucun nettoyage complémentaire nécessaire.
 
-**Non testés après le blocage Cloud :** connexion applicative des trois actifs,
-API de session avec JWT dans le navigateur, cookies HttpOnly/SameSite/Secure
-sur ce parcours, refus des profils avec JWT et falsification de rôle, création
-par formulaire, réouverture après nouvelle session, lecture inter-agents par
-l’interface, concurrence entre navigateurs, Effacer sans écriture réelle,
-impression/export autorisés sur dossier Cloud et suppression par l’interface Admin.
-Le drapeau `TEAM_INSPECTIONS_ENABLED=true` n’a pas été activé pour ces scénarios.
+La première campagne n’avait pas journalisé son UUID : sa recherche ciblée précédente donnait 0 candidat ; cette limite historique est conservée. Aucune suppression par référence, intervalle ou liste globale.
 
-Le renouvellement, l’expiration et la révocation réelle des refresh tokens ne
-sont pas validés. Les tests de politique et de désactivation locale restent des
-**simulations locales** ; aucune désactivation distante n’a eu lieu.
+Preuves nettoyées livrées :
 
-La gestion/élévation des fiches `team_members` n’a pas été tentée, conformément à
-l’interdiction de les modifier. La récupération de mot de passe/SMTP, l’usage
-unique des liens et leurs expirations restent **non testés** : aucun e-mail réel
-ni changement de mot de passe n’est autorisé. Aucun compte supplémentaire créé.
+- [Cloud avant correction et nettoyage](recette/2026-11-06-conflit-cloud-avant.json).
+- [Auth, rôles et refus anonymes réels](recette/2026-11-06-auth-precontrole.json).
+- [Laboratoire PostgREST local](recette/2026-11-06-postgrest13-local.json).
+- [Contrôle final des résidus](recette/2026-11-06-nettoyage-final.json).
 
-## Conditions de reprise et d’ouverture
+Captures de travail locales non pérennes : `/tmp/site-gites-phase2/run-1793969920118/` et `/tmp/site-gites-public/run-1793970327836/`.
 
-1. Examiner en lecture seule, dans le projet de développement, les journaux
-   réseau/REST/DB correspondant aux heures et UUID ci-dessus. Comparer les
-   définitions distantes des RPC/trigger et les réglages transactionnels avec
-   les migrations versionnées ; utiliser au besoin
-   `supabase/manual/phase4-security-review.sql` sous contrôle du propriétaire.
-   Ne pas réappliquer les migrations ni changer les RLS à l’aveugle.
-2. Établir la cause du timeout de conflit et du dossier visible après un reçu de
-   suppression. Si une correction SQL est démontrée nécessaire, préparer une
-   nouvelle migration versionnée et la faire appliquer séparément par le
-   propriétaire ; aucune autorisation d’application distante n’est incluse ici.
-3. Après résolution, revérifier les UUID connus, puis rejouer le script manuel
-   et réussir réellement révision obsolète, concurrence, payload invalide,
-   restrictions des profils et suppression confirmée, avec preuve de nettoyage.
-4. Seulement après ce succès, ouvrir le processus local de recette avec le
-   drapeau demandé, sans falsifier `VERCEL_ENV`, puis exécuter tous les parcours
-   navigateur réels et contrôles de sessions restants.
-5. Obtenir les autorisations distinctes pour les essais nécessitant comptes ou
-   e-mails, puis la validation humaine de la fidélité et des règles métier.
-6. Respecter toutes les conditions d’hébergement, base de production isolée,
-   sauvegarde/restauration, confidentialité et conservation du handoff avant
-   une décision distincte d’ouverture.
+## Tests non effectués et action indispensable
 
-Le verrou `VERCEL_ENV=production` reste intact, le module reste fermé et aucune
-fusion ou mise en production n’est autorisée par ce rapport. Une PR éventuelle
-est une livraison de corrections de recette, **pas une validation d’ouverture**.
+La migration n’a pas été exécutée sur Supabase. Restent **non testés sur Cloud après correction** : les cinq scénarios du correctif, la suite RLS complète (écritures refusées des inactifs/sans fiche, payload invalide, suppression Agent, DELETE brut, confirmations, métadonnées/auteurs) et tous les parcours Next avec stockage réel.
 
-## Livraison
+Restent donc la création/sauvegarde par formulaire, réouverture, modification inter-agents, conflit entre navigateurs, conservation des saisies, rechargement accepté/annulé, Effacer sans écriture, impression/export autorisés, suppression Admin et refus avec JWT. Cookies et renouvellement/expiration réels ne sont pas validés dans cette reprise ; les cinq logouts SDK ont reçu HTTP 204.
 
-Les corrections sont préparées sur `fix/recette-espace-equipe`. Le SHA de livraison
-est celui du commit contenant ce rapport (`git log -1`). La consultation des PR
-par `gh` a échoué avec `Post https://api.github.com/graphql: Forbidden` ; le domaine
-API n’est pas dans les destinations déclarées autorisées de l’environnement.
-Le texte de PR est préparé séparément, sans prétendre qu’une PR a été créée.
-La branche peut être examinée et une PR brouillon ouverte depuis l’interface
-GitHub, sans fusion automatique. Aucun contournement réseau ni changement de
-configuration Cloud n’a été effectué pour accéder à l’API.
+Aucune fiche n’a été modifiée ou désactivée ; la désactivation locale simulée n’est pas une validation distante. Gestion/élévation de membres et récupération de mot de passe/SMTP, usage unique et expiration des liens restent non validés et non autorisés ici. Aucun e-mail ni changement de compte effectué. Validation humaine, conservation/confidentialité, hébergement HTTPS et sauvegarde/restauration restent des prérequis indépendants de production.
+
+**Action du propriétaire :** comparer les définitions Cloud avec le script de lecture seule, puis autoriser et faire appliquer uniquement `20261106000100_inspection_business_conflicts.sql` dans le SQL Editor du projet de développement confirmé. Ne pas rejouer les anciennes migrations ni lancer `db push`. Aucune clé administrateur ne doit être transmise à l’agent. Confirmer l’application pour relancer les cinq tests Cloud, puis seulement la recette RLS et Next réelle. Le diagnostic fournit les commandes exactes.
+
+La livraison est sur `fix/recette-espace-equipe`, au commit contenant ce rapport. Aucune fusion ni intervention sur Vercel Production. Si l’API GitHub reste inaccessible, la comparaison de branche permet d’ouvrir manuellement une PR brouillon. Une migration préparée ou une PR ne vaut pas validation d’ouverture.

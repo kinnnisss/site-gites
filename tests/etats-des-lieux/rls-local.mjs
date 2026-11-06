@@ -38,6 +38,26 @@ try {
   for (const [id, role, active] of [[admin, 'admin', true], [agentA, 'agent', true], [agentB, 'agent', true], [inactive, 'agent', false]]) {
     await db.query('insert into public.team_members (user_id,role,active) values ($1,$2,$3)', [id, role, active]);
   }
+  // Upgrade an existing dossier, proving the migration preserves data and privileges.
+  await actor(agentA); await save(0);
+  const beforeUpgrade = (await db.query('select * from public.inspection_dossiers')).rows;
+  await db.exec('reset role');
+  const privileges = () => db.query(`select n.nspname,p.proname,p.proacl,p.proowner,p.prosecdef,p.provolatile,p.proconfig
+    from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+    where p.proname in ('stamp_inspection_dossier','save_inspection_dossier','delete_inspection_dossier') order by p.proname`);
+  const policies = () => db.query('select polname,polcmd,polroles,polqual::text,polwithcheck::text from pg_policy order by polname');
+  const tablePrivileges = () => db.query(`select c.relname,c.relacl,c.relrowsecurity,c.relforcerowsecurity,a.attname,a.attacl
+    from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_attribute a on a.attrelid=c.oid
+    where n.nspname='public' and c.relname in ('team_members','inspection_templates','inspection_dossiers')
+    and a.attnum>0 and not a.attisdropped order by c.relname,a.attnum`);
+  const beforePrivileges = (await privileges()).rows, beforePolicies = (await policies()).rows;
+  const beforeTablePrivileges = (await tablePrivileges()).rows;
+  await db.exec(await readFile('supabase/migrations/20261106000100_inspection_business_conflicts.sql', 'utf8'));
+  assert.deepEqual((await db.query('select * from public.inspection_dossiers')).rows, beforeUpgrade); checks++;
+  assert.deepEqual((await privileges()).rows, beforePrivileges); checks++;
+  assert.deepEqual((await policies()).rows, beforePolicies); checks++;
+  assert.deepEqual((await tablePrivileges()).rows, beforeTablePrivileges); checks++;
+  await actor(admin); await remove(1);
   // SQL and TypeScript must reject the same malformed payloads, preserving drafts.
   const invalid = [null, [], {}, { ...payload, extra: true }, { ...payload, version: 2 },
     { ...payload, data: { ...payload.data, guests: 6 } },
@@ -58,8 +78,8 @@ try {
   let row = (await db.query('select * from public.inspection_dossiers')).rows[0];
   assert.deepEqual(row.payload, payload); assert.equal(row.created_by, agentA); assert.equal(row.updated_by, agentA); checks++;
   const creation = row.created_at;
-  await denied(save(0), '40001'); // Duplicate retry must never create a second row.
-  await denied(db.query('update public.inspection_dossiers set payload=$1 where id=$2', [JSON.stringify(payload), dossierId]), '40001');
+  await denied(save(0), 'PT409'); // Duplicate retry must never create a second row.
+  await denied(db.query('update public.inspection_dossiers set payload=$1 where id=$2', [JSON.stringify(payload), dossierId]), 'PT409');
   await denied(db.query('update public.inspection_dossiers set created_by=$1 where id=$2', [admin, dossierId]));
   await denied(db.query('update public.inspection_templates set version=1'));
   assert.equal((await db.query('update public.team_members set role=\'admin\' where user_id=$1 returning user_id', [agentA])).rows.length, 0); checks++;
@@ -70,12 +90,12 @@ try {
   row = (await db.query('select * from public.inspection_dossiers')).rows[0];
   assert.equal(row.created_by, agentA); assert.equal(row.updated_by, agentB);
   assert.deepEqual(row.created_at, creation); assert.deepEqual(row.payload, changed); checks++;
-  await actor(agentA); await denied(save(1), '40001');
+  await actor(agentA); await denied(save(1), 'PT409');
   assert.deepEqual((await db.query('select payload from public.inspection_dossiers')).rows[0].payload, changed); checks++;
   // Two queued callers both starting with the same revision: exactly one succeeds.
   const race = await Promise.allSettled([save(2), save(2)]);
   assert.equal(race.filter(r => r.status === 'fulfilled').length, 1);
-  assert.equal(race.find(r => r.status === 'rejected').reason.code, '40001'); checks++;
+  assert.equal(race.find(r => r.status === 'rejected').reason.code, 'PT409'); checks++;
   await denied(remove(3));
   assert.equal((await db.query('delete from public.inspection_dossiers returning id')).rows.length, 0); checks++;
   for (const id of [inactive, outsider]) {
@@ -90,7 +110,7 @@ try {
   assert.equal((await db.query('delete from public.inspection_dossiers returning id')).rows.length, 0); checks++;
   await denied(save(3, { ...payload, accepted: 'true' }), '23514');
   assert.equal((await save(3)).rows[0].revision, 4); checks++;
-  await denied(remove(4, agentA), '22023'); await denied(remove(3), '40001');
+  await denied(remove(4, agentA), '22023'); await denied(remove(3), 'PT409');
   assert.equal((await remove(4)).rows[0].delete_inspection_dossier, dossierId); checks++;
   await denied(save(4), 'P0002');
   assert.equal((await db.query('select * from public.inspection_templates')).rows.length, 1); checks++;

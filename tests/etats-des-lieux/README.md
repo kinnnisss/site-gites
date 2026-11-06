@@ -1,5 +1,38 @@
 # Comparaison locale de fidélité
 
+## Diagnostic de conflit du 6 novembre 2026
+
+Le SQLSTATE `40001` est réessayé par Hasql dans PostgREST 13 : un conflit métier
+permanent peut donc boucler. Le correctif préparé utilise `PT409` (HTTP 409), sans
+changer les conditions de révision, droits ou données. Voir
+`docs/DIAGNOSTIC_CONFLIT_REVISION.md`. La nouvelle migration
+`20261106000100_inspection_business_conflicts.sql` nécessite une revue et une
+autorisation distincte avant toute application distante ; ne pas lancer `db push`.
+
+Reproduction protocolaire **locale**, Docker géré disponible, sans aucune variable
+Supabase transmise aux conteneurs (PostgreSQL 17 + PostgREST 13.0.7) :
+
+```bash
+node tests/etats-des-lieux/postgrest-conflict-local.mjs
+```
+
+Reproduction **Cloud**, uniquement après autorisation explicite des dossiers
+synthétiques et vérification des cinq comptes. Le script génère/journalise un
+seul UUID, compare SDK/cURL via le même proxy, s’arrête au blocage et vérifie
+le nettoyage immédiatement, à +5 s et +30 s. Aucun secret dans argv ou les preuves.
+
+```bash
+# Diagnostic historique AVANT correction SQL (échec attendu si la boucle persiste) :
+NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/conflict-cloud.mjs --allow-development-writes --legacy-40001
+# APRÈS application manuelle autorisée de la nouvelle migration en développement :
+NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/conflict-cloud.mjs --allow-development-writes
+# Puis seulement, recette RLS complète :
+NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/supabase-manual.mjs --allow-development-writes
+```
+
+Le passage local et la migration préparée ne valident pas le correctif sur Cloud.
+Une autorisation d’écritures de dossiers ne vaut pas autorisation de migration.
+
 La phase 4 ajoute `persistence.test.mjs` (9 tests de payload/adaptateur),
 `rls-local.mjs` (PostgreSQL/PGlite local), `persistence-browser.mjs` (formulaire
 avec transport intercepté) et `http.mjs` (vrai serveur Next, accès anonymes).

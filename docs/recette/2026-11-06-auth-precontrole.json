@@ -1,0 +1,124 @@
+{
+  "variables": [
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_URL",
+      "present": true
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_EXPECTED_PROJECT_REF",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_ADMIN_EMAIL",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_ADMIN_PASSWORD",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_AGENT_A_EMAIL",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_AGENT_A_PASSWORD",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_AGENT_B_EMAIL",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_AGENT_B_PASSWORD",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_INACTIVE_EMAIL",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_INACTIVE_PASSWORD",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_NO_MEMBER_EMAIL",
+      "present": true
+    },
+    {
+      "name": "TEAM_TEST_NO_MEMBER_PASSWORD",
+      "present": true
+    }
+  ],
+  "accounts": [
+    {
+      "account": "ADMIN",
+      "auth": true,
+      "identity_verified": true,
+      "own_membership_read_ok": true,
+      "own_membership_count": 1,
+      "role": "admin",
+      "active": true,
+      "expected_role_and_status": true
+    },
+    {
+      "account": "AGENT_A",
+      "auth": true,
+      "identity_verified": true,
+      "own_membership_read_ok": true,
+      "own_membership_count": 1,
+      "role": "agent",
+      "active": true,
+      "expected_role_and_status": true
+    },
+    {
+      "account": "AGENT_B",
+      "auth": true,
+      "identity_verified": true,
+      "own_membership_read_ok": true,
+      "own_membership_count": 1,
+      "role": "agent",
+      "active": true,
+      "expected_role_and_status": true
+    },
+    {
+      "account": "INACTIVE",
+      "auth": true,
+      "identity_verified": true,
+      "own_membership_read_ok": true,
+      "own_membership_count": 0,
+      "role": "agent",
+      "active": false,
+      "expected_role_and_status": true
+    },
+    {
+      "account": "NO_MEMBER",
+      "auth": true,
+      "identity_verified": true,
+      "own_membership_read_ok": true,
+      "own_membership_count": 0,
+      "role": null,
+      "active": null,
+      "expected_role_and_status": true
+    }
+  ],
+  "anonymous": [
+    {
+      "table": "team_members",
+      "status": 401,
+      "denied": true,
+      "code": "42501"
+    },
+    {
+      "table": "inspection_dossiers",
+      "status": 401,
+      "denied": true,
+      "code": "42501"
+    }
+  ],
+  "project_match": true,
+  "health_status": 200
+}
