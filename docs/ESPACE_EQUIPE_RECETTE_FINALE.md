@@ -2,7 +2,7 @@
 
 ## Décision actuelle
 
-**Le conflit n’est pas déclaré résolu sur Supabase Cloud. La recette complète reste bloquée par l’autorisation et l’application d’une nouvelle migration de développement. Le module reste fermé en production.**
+**Le conflit n’est pas déclaré résolu sur Supabase Cloud. Le propriétaire confirme lors de cette reprise que la nouvelle migration de développement n’est pas encore appliquée. La recette complète reste bloquée à cette étape ; le lien public dans le footer n’est pas ajouté. Le module reste fermé en production.**
 
 Le défaut SQL identifié est l’utilisation de `40001`, code de sérialisation réessayable, pour un conflit métier permanent. PostgREST 13/Hasql recommence alors la transaction avec les mêmes paramètres. Une création ainsi bloquée peut recréer un dossier après suppression. Le mécanisme et le correctif `PT409` sont démontrés avec un véritable PostgreSQL/PostgREST local, sans simulation de serveur HTTP.
 
@@ -10,10 +10,64 @@ Le propriétaire a depuis communiqué la version **PostgREST 14.18** et une capt
 
 L’ancien rapport reste consultable [au commit 4ab8615](https://github.com/kinnnisss/site-gites/blob/4ab8615e35c798ad5f85e94f4a8474b44db3df5a/docs/ESPACE_EQUIPE_RECETTE_FINALE.md).
 
+## Reprise de finalisation — vérifications du 6 novembre à 14:20–14:23 UTC
+
+État distant relu : `fix/recette-espace-equipe` et le checkout local sont au
+commit **`6b8b7bce36209283309503eeda6ed8f4bdcbfd3e`** ; `main` reste au
+commit **`9035a2e0ed3ae641216d8045b10cccd400f97107`**. Aucune reprise des
+anciens changements ni modification de `main`. Les consignes, le handoff, les
+scripts Supabase, les migrations, les Route Handlers et les guides installés
+Next 16.4.5 (Route Handlers, cookies, Proxy) ont été relus.
+
+Les seuls appels Cloud de cette reprise sont des connexions/déconnexions des
+comptes fictifs et des lectures ; aucun RPC de sauvegarde ou suppression appelé.
+
+| Vérification réelle de cette reprise | Résultat |
+| --- | --- |
+| Variables privées | **13/13 présentes**, valeurs non affichées |
+| Projet et clé | Correspondance avec `jijjjgsfdbrkvqvhyjwr`, clé publishable ; santé Auth HTTP 200 |
+| Identités des cinq profils | Auth et identité vérifiées pour les cinq comptes fictifs |
+| Rôles/statuts | Admin actif ; A et B agents actifs ; agent inactif ; sans fiche, conformes aux attentes |
+| Anonyme | Lectures `team_members` et `inspection_dossiers` refusées, **HTTP 401 / 42501** |
+| Ancien dossier `1a901e90-3974-4026-8cd9-676e96529bd2` | **0 ligne**, HTTP 200 en **729,7 ms** à 14:23:00.602 UTC |
+| Ancien dossier `473fb7b4-b987-4291-b359-15e753ad5628` | **0 ligne**, HTTP 200 en **271,2 ms** |
+| Ancien dossier `cd51b563-94ac-412a-b93c-3fbd818ee779` | **0 ligne**, HTTP 200 en **290,6 ms** |
+| Session Admin fictif du contrôle des résidus | Déconnexion locale confirmée, HTTP 204 en **637,5 ms** |
+
+Ces lectures mesurent la réponse complète. Aucune erreur SQL, de transport ou
+timeout observé dans ce contrôle des résidus. Les refus anonymes attendus ne
+valident pas les refus d’écriture ni l’ensemble des politiques RLS.
+[Preuve nettoyée de cette reprise](recette/2026-11-06-finalisation-lecture-seule.json).
+
+Le correctif applicatif et la migration sont livrés au commit **`7540891`** ;
+le complément PostgREST 14.18 au commit **`6b8b7bc`**. Aucune nouvelle correction
+de code n’est démontrée ou nécessaire à partir de ces seules lectures. Les
+empreintes de la référence HTML et des trois migrations ont été revérifiées et
+restent celles consignées ci-dessous.
+
+Le propriétaire a répondu **« Pas encore appliquée »** concernant
+`20261106000100_inspection_business_conflicts.sql`. L’état des définitions SQL
+distantes n’est pas introspectable avec les seules capacités de recette utilisées.
+Il serait inutile de relancer les mêmes conflits connus avant cette application :
+les cinq scénarios Cloud post-correctif, la suite RLS d’écriture et les parcours
+Next avec stockage réel restent **non exécutés**, sans résultat de réussite déduit
+des tests locaux. Le module n’a pas été activé, même localement, pour cette reprise.
+
+Conformément à l’ordre imposé, **partie A bloquée, partie B non commencée** :
+`components/site-footer.tsx`, son layout et les pages publiques restent inchangés.
+Les tests du nouveau lien ne sont pas exécutés puisqu’il n’existe pas.
+Les [conditions et étapes de reprise](INTEGRATION_ACCES_EQUIPE.md) précisent le
+passage obligatoire par Cloud/RLS/Next avant toute intégration du footer.
+
+Seuls ce rapport, ce document de reprise et la preuve JSON sont ajoutés/modifiés
+dans cette finalisation. Les résultats de non-régression ci-dessous sont ceux
+réellement obtenus lors des corrections antérieures ; ils n’ont pas été relancés
+sur cette modification documentaire, qui ne change ni application ni SQL.
+
 ## Cible, profils et restrictions respectées
 
 - Dépôt : `kinnnisss/site-gites`, branche exclusive `fix/recette-espace-equipe`.
-- Base de reprise vérifiée : `4ab8615e35c798ad5f85e94f4a8474b44db3df5a`. `origin/main` vérifié en lecture seule : `9035a2e0ed3ae641216d8045b10cccd400f97107` ; aucune fusion.
+- Base du diagnostic initial : `4ab8615e35c798ad5f85e94f4a8474b44db3df5a`. Base de cette finalisation : `6b8b7bce36209283309503eeda6ed8f4bdcbfd3e`. `origin/main` vérifié en lecture seule : `9035a2e0ed3ae641216d8045b10cccd400f97107` ; aucune fusion.
 - Project Reference : **`jijjjgsfdbrkvqvhyjwr`**, développement, correspondance exacte avec l’URL configurée ; 13 variables privées présentes, sans affichage de leurs valeurs.
 - Clé publishable et JWT des seuls comptes fictifs ; aucune clé privilégiée ni accès DDL distant.
 - Node 22.23.4, Next 16.4.5, dépendances applicatives inchangées. Proxy et TLS conservés, `NODE_USE_ENV_PROXY=1` pour les requêtes Cloud.
@@ -124,4 +178,10 @@ Aucune fiche n’a été modifiée ou désactivée ; la désactivation locale si
 
 **Action du propriétaire :** comparer les définitions Cloud avec le script de lecture seule, puis autoriser et faire appliquer uniquement `20261106000100_inspection_business_conflicts.sql` dans le SQL Editor du projet de développement confirmé. Ne pas rejouer les anciennes migrations ni lancer `db push`. Aucune clé administrateur ne doit être transmise à l’agent. Confirmer l’application pour relancer les cinq tests Cloud, puis seulement la recette RLS et Next réelle. Le diagnostic fournit les commandes exactes.
 
-La livraison est sur `fix/recette-espace-equipe`, au commit contenant ce rapport. Aucune fusion ni intervention sur Vercel Production. Si l’API GitHub reste inaccessible, la comparaison de branche permet d’ouvrir manuellement une PR brouillon. Une migration préparée ou une PR ne vaut pas validation d’ouverture.
+La livraison est sur `fix/recette-espace-equipe`, au commit contenant ce rapport.
+Aucune fusion ni intervention sur Vercel Production. L’API GitHub a de nouveau
+refusé la lecture des PR (`api.github.com/graphql: Forbidden`) lors de cette
+finalisation ; aucune PR brouillon créée ni existence de PR affirmée.
+La [comparaison de branche](https://github.com/kinnnisss/site-gites/compare/main...fix/recette-espace-equipe?expand=1)
+permet de préparer manuellement une PR en la conservant en brouillon, sans fusion.
+Une migration préparée ou une PR ne vaut pas validation d’ouverture.
