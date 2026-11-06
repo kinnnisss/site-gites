@@ -1,0 +1,308 @@
+{
+  "authorization": {
+    "source": "explicit_owner_confirmation_in_chat",
+    "project_designated_production": "jijjjgsfdbrkvqvhyjwr",
+    "former_development_use_ended": true,
+    "scope": "one synthetic dossier: create, save, reload, negative Agent delete, stale revision PT409, Admin cleanup and delayed absence",
+    "final_merge_or_deployment_authorized": false
+  },
+  "tested_commit": "729d746b8ed26fb9c167f6f619ba39cc180112d3",
+  "channel": "real_supabase_auth_and_postgrest_not_vercel_browser",
+  "report": {
+    "started_at": "2026-11-06T16:13:20.277Z",
+    "mode": "one-production-synthetic-dossier",
+    "synthetic_id": "f9645eb5-5e4b-4d86-b504-325f4988c7c4",
+    "metrics": [
+      {
+        "profile": "ADMIN",
+        "path": "/auth/v1/token",
+        "method": "POST",
+        "at": "2026-11-06T16:13:20.298Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 1411.9,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/auth/v1/user",
+        "method": "GET",
+        "at": "2026-11-06T16:13:21.712Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 671.9,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/team_members",
+        "method": "GET",
+        "at": "2026-11-06T16:13:22.386Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 575.7,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/auth/v1/token",
+        "method": "POST",
+        "at": "2026-11-06T16:13:22.964Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 760.5,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/auth/v1/user",
+        "method": "GET",
+        "at": "2026-11-06T16:13:23.725Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 233.3,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/rest/v1/team_members",
+        "method": "GET",
+        "at": "2026-11-06T16:13:23.960Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 266.1,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:24.227Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 253,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/rest/v1/rpc/save_inspection_dossier",
+        "method": "POST",
+        "at": "2026-11-06T16:13:24.483Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 627.7,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/rest/v1/rpc/save_inspection_dossier",
+        "method": "POST",
+        "at": "2026-11-06T16:13:25.112Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 239.7,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:25.354Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 263.6,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/rest/v1/rpc/delete_inspection_dossier",
+        "method": "POST",
+        "at": "2026-11-06T16:13:25.619Z",
+        "http": 403,
+        "sqlstate": "42501",
+        "elapsed_ms": 244.8,
+        "category": "sql-or-postgrest"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/rest/v1/rpc/save_inspection_dossier",
+        "method": "POST",
+        "at": "2026-11-06T16:13:25.865Z",
+        "http": 409,
+        "sqlstate": "PT409",
+        "elapsed_ms": 243.1,
+        "category": "sql-or-postgrest"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:26.109Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 548.4,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:26.659Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 220.2,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/rpc/delete_inspection_dossier",
+        "method": "POST",
+        "at": "2026-11-06T16:13:26.880Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 240.2,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:27.121Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 239.8,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:32.365Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 303,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T16:13:57.680Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 474.9,
+        "category": "success"
+      },
+      {
+        "profile": "ADMIN",
+        "path": "/auth/v1/logout",
+        "method": "POST",
+        "at": "2026-11-06T16:13:58.157Z",
+        "http": 204,
+        "sqlstate": null,
+        "elapsed_ms": 404.4,
+        "category": "success"
+      },
+      {
+        "profile": "AGENT_A",
+        "path": "/auth/v1/logout",
+        "method": "POST",
+        "at": "2026-11-06T16:13:58.563Z",
+        "http": 204,
+        "sqlstate": null,
+        "elapsed_ms": 210.4,
+        "category": "success"
+      }
+    ],
+    "checks": [
+      {
+        "label": "fixture_login_ADMIN",
+        "passed": true
+      },
+      {
+        "label": "fixture_identity_ADMIN",
+        "passed": true
+      },
+      {
+        "label": "fixture_membership_ADMIN",
+        "passed": true
+      },
+      {
+        "label": "fixture_login_AGENT_A",
+        "passed": true
+      },
+      {
+        "label": "fixture_identity_AGENT_A",
+        "passed": true
+      },
+      {
+        "label": "fixture_membership_AGENT_A",
+        "passed": true
+      },
+      {
+        "label": "distinct_verified_subjects",
+        "passed": true
+      },
+      {
+        "label": "synthetic_uuid_absent",
+        "passed": true
+      },
+      {
+        "label": "create_revision_1",
+        "passed": true
+      },
+      {
+        "label": "save_revision_2",
+        "passed": true
+      },
+      {
+        "label": "reload_exact_payload",
+        "passed": true
+      },
+      {
+        "label": "server_authors_verified",
+        "passed": true
+      },
+      {
+        "label": "agent_delete_denied",
+        "passed": true
+      },
+      {
+        "label": "stale_revision_http_409_pt409",
+        "passed": true
+      },
+      {
+        "label": "payload_preserved_after_conflict",
+        "passed": true
+      }
+    ],
+    "success": true,
+    "business_write_attempted": true,
+    "project_ref": "jijjjgsfdbrkvqvhyjwr",
+    "cleanup": [
+      {
+        "at": "2026-11-06T16:13:27.362Z",
+        "absent": true
+      },
+      {
+        "at": "2026-11-06T16:13:32.668Z",
+        "absent": true
+      },
+      {
+        "at": "2026-11-06T16:13:58.156Z",
+        "absent": true
+      }
+    ],
+    "sessions_closed": true,
+    "finished_at": "2026-11-06T16:13:58.775Z"
+  },
+  "limitations": {
+    "concurrent_cloud_saves_tested": false,
+    "remote_function_definitions_or_acls_inspected": false,
+    "vercel_configuration_modified": false,
+    "final_deployment_triggered": false,
+    "principal_admin_used": false,
+    "accounts_or_members_modified": false,
+    "remote_migration_executed": false
+  }
+}

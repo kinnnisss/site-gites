@@ -1,5 +1,15 @@
 # Diagnostic du conflit de révision — reprise du 6 novembre 2026
 
+> Actualisation à 16:13 UTC : après désignation explicite du projet comme
+> production et autorisation du propriétaire, le contrôle Cloud unique a réussi :
+> sauvegardes 1/2, refus obsolète **HTTP 409/PT409 en 243,1 ms**, contenu conservé
+> et nettoyage différé confirmé. Voir la
+> [preuve réelle](recette/2026-11-06-production-smoke.json) et le
+> [rapport d’activation](ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md).
+> Les sections ci-dessous conservent le diagnostic historique. Ne pas rejouer
+> une migration ni relancer les anciennes campagnes de développement sur ce
+> projet désormais destiné à la production.
+
 ## État
 
 > Complément ultérieur : le propriétaire indique **PostgREST 14.18** et fournit

@@ -47,3 +47,14 @@ Ne présente jamais des données d'exemple comme des informations réelles de l'
 - Ne jamais placer de clé secrète Supabase dans du code envoyé au navigateur ou dans Git.
 - Vérifier le résultat avec les commandes de contrôle du projet et signaler ce qui n'a pas pu être testé.
 - Ne pas inventer une règle métier lorsqu'elle manque : la noter comme décision à prendre.
+
+## Projet Supabase de production
+
+Le propriétaire a désigné explicitement `jijjjgsfdbrkvqvhyjwr` comme base de
+production le 6 novembre 2026. Son ancien nom `domaine-lo-carmalhon-dev` ne doit
+plus le faire traiter comme une base de développement. Ne pas y lancer les
+anciennes campagnes d’écriture de développement. Le contrôle unique de
+production autorisé a été réalisé et nettoyé ; cette autorisation ne couvre pas
+une nouvelle campagne. L’Administrateur principal reste exclu des tests.
+Voir `docs/ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md` pour les preuves et la procédure
+de publication, qui demande toujours une autorisation distincte.

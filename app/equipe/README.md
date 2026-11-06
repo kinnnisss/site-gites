@@ -21,14 +21,17 @@ métadonnées saisissables par l’utilisateur. Les identités doivent être vé
 par Supabase Auth. Une configuration manquante ou un service inaccessible
 refuse l’accès ; aucune authentification fictive n’existe.
 
-Les dossiers restent fermés par défaut avec `TEAM_INSPECTIONS_ENABLED=false`,
-jusqu’à la recette réelle Auth/RLS sur Supabase de développement. Le code refuse
-aussi les dossiers lorsque `VERCEL_ENV=production`. Le propriétaire indique avoir
-appliqué manuellement les deux migrations sur le projet de développement ; les
-tests authentifiés restent en attente. Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour Auth et
+Les dossiers restent fermés par défaut avec `TEAM_INSPECTIONS_ENABLED=false`.
+L’activation explicite `true` est désormais admise dans tous les environnements,
+y compris Production, après validation de la base cible. Elle ne remplace jamais
+la configuration Supabase, l’identité vérifiée, le membre actif, ses permissions
+ou les RLS. La préparation actuelle et les conditions avant publication sont dans
+`docs/ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md`. Aucune activation distante ou
+livraison de production n’est réalisée par le seul changement de code.
+Voir `docs/ESPACE_EQUIPE_PHASE_3.md` pour Auth et
 `docs/ESPACE_EQUIPE_PHASE_4.md` pour la migration préparée, le détail des permissions,
 les tests locaux et la recette manuelle restante. Aucune authentification de test
 ou route de démonstration n’est livrée. L’état actuel et la procédure autonome de
 recette/publication future sont dans `docs/ESPACE_EQUIPE_PHASE_5.md` et
-`docs/ESPACE_EQUIPE_HANDOFF.md`. Ne pas ouvrir le module ni retirer le verrou de
-production avant les décisions et preuves qui y sont décrites.
+`docs/ESPACE_EQUIPE_HANDOFF.md`. Ne pas ouvrir le module en production sans les
+décisions et preuves décrites dans le rapport d’activation.
