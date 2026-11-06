@@ -11,7 +11,7 @@ export default async function TeamPage() {
     <p>Domaine Lo Carmalhon</p><h1>Espace Équipe</h1>
     <p>Accès vérifié : {member.role === "admin" ? "administrateur" : "agent"}.</p>
     {inspectionsEnabled() ? <p><Link href="/equipe/etats-des-lieux">Ouvrir les états des lieux</Link></p> :
-      <p>L’accès aux dossiers attend la validation de sécurité du projet de développement.</p>}
+      <p>L’accès aux dossiers est désactivé sur ce déploiement.</p>}
     <form action={signOut}><button type="submit">Se déconnecter</button></form>
   </div></main>;
 }

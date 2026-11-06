@@ -5,7 +5,7 @@ import type { Permission } from "@/lib/auth/policy";
 import { inspectionFeatureEnabled } from "./feature";
 import { databaseError, DossierError, parseDossier, parsePayload, parseReceipt, validId, validRevision } from "@/modules/etats-des-lieux/persistence";
 
-/** Closed until the development Auth/RLS acceptance checklist has been completed. */
+/** Closed by default; enabling never bypasses configuration, verified Auth or permissions. */
 export function inspectionsEnabled() {
   return inspectionFeatureEnabled(process.env);
 }

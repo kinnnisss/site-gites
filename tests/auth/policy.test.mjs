@@ -89,6 +89,11 @@ test('inspection availability is closed by default and accepts only the exact op
   assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true' }), true);
   assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true', VERCEL_ENV: 'preview' }), true);
 });
-test('the production lock wins over an explicit inspection opt-in', () => {
-  assert.equal(inspectionFeatureEnabled({ TEAM_INSPECTIONS_ENABLED: 'true', VERCEL_ENV: 'production' }), false);
+test('production accepts the explicit opt-in and closes again when it is removed', () => {
+  const env = { TEAM_INSPECTIONS_ENABLED: 'true', VERCEL_ENV: 'production' };
+  assert.equal(inspectionFeatureEnabled(env), true);
+  env.TEAM_INSPECTIONS_ENABLED = 'false';
+  assert.equal(inspectionFeatureEnabled(env), false);
+  delete env.TEAM_INSPECTIONS_ENABLED;
+  assert.equal(inspectionFeatureEnabled(env), false);
 });
