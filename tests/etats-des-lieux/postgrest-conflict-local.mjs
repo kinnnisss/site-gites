@@ -1,4 +1,4 @@
-/** Real local PostgREST 13 + PostgreSQL. No Supabase connection or Auth simulation in the app. */
+/** Real local PostgREST + PostgreSQL. No Supabase connection or Auth simulation in the app. */
 import assert from 'node:assert/strict';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, writeFile, rm } from 'node:fs/promises';
@@ -7,11 +7,14 @@ import { promisify } from 'node:util';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const suffix = randomBytes(5).toString('hex');
+const version = process.argv.find(a => a.startsWith('--postgrest-version='))?.split('=')[1] ?? '13.0.7';
+assert.ok(['13.0.7', '14.18'].includes(version), 'Use an explicitly supported local PostgREST version');
+const restImage = 'postgrest/postgrest:v' + version;
 const network = 'recette-conflict-' + suffix, pg = network + '-pg', rest = network + '-rest';
 const folder = await mkdtemp('/tmp/site-gites-postgrest-lab-');
 const output = `/tmp/site-gites-recette/postgrest-lab-${Date.now()}.json`;
 await mkdir('/tmp/site-gites-recette', { recursive: true });
-const report = { mode: 'local-postgrest-not-supabase', started_at: new Date().toISOString(), postgres_image: 'postgres:17-alpine', postgrest_image: 'postgrest/postgrest:v13.0.7', tests: [], success: false };
+const report = { mode: 'local-postgrest-not-supabase', started_at: new Date().toISOString(), postgres_image: 'postgres:17-alpine', postgrest_image: restImage, tests: [], success: false };
 const env = { ...process.env };
 for (const key of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete env[key];
 const args = ['--host=unix:///var/run/docker.sock'];
@@ -59,7 +62,12 @@ try {
 language plpgsql security invoker set search_path='' as $$ begin
 if p_expected=0 then return query insert into public.revision_lab as d values(p_id,1,p_payload) on conflict do nothing returning d.id,d.revision,d.payload;
 else return query update public.revision_lab as d set payload=p_payload,revision=p_expected+1 where d.id=p_id and d.revision=p_expected returning d.id,d.revision,d.payload; end if;
-if not found then raise exception using errcode='${code}',message='Revision conflict'; end if; end; $$;`;
+if not found then
+if exists(select 1 from public.revision_lab d where d.id=p_id) then
+raise exception using errcode='${code}',message='Revision conflict';
+end if;
+raise exception using errcode='P0002',message='Dossier not found';
+end if; end; $$;`;
   stage = 'local-schema';
   await sql(`create role lab_actor nologin; grant usage on schema public to lab_actor;
 create table public.revision_lab(id uuid primary key,revision integer not null,payload text not null);
@@ -67,25 +75,24 @@ grant select,insert,update,delete on public.revision_lab to lab_actor;
 ${functionSql('legacy_save', '40001')}
 ${functionSql('fixed_save', 'PT409')}`);
   stage = 'postgrest-start';
-  await docker('run', '-d', '--name', rest, '--network', network, '--env-file', folder + '/postgrest.env', '-p', '127.0.0.1::3000', 'postgrest/postgrest:v13.0.7');
+  await docker('run', '-d', '--name', rest, '--network', network, '--env-file', folder + '/postgrest.env', '-p', '127.0.0.1::3000', restImage);
   const port = (await docker('inspect', '--format', '{{(index (index .NetworkSettings.Ports "3000/tcp") 0).HostPort}}', rest)).stdout.trim();
   base = 'http://127.0.0.1:' + port; stage = 'postgrest-ready'; await ready();
   const oldId = randomUUID(), duplicateId = randomUUID(), fixedId = randomUUID();
   const save = (name, id, revision, payload) => request('/rpc/' + name, { p_id: id, p_expected: revision, p_payload: payload });
   check('legacy_create', (await save('legacy_save', oldId, 0, 'A')).http === 200);
   check('legacy_update', (await save('legacy_save', oldId, 1, 'B')).data?.[0]?.revision === 2);
-  let settled = false;
-  const stale = save('legacy_save', oldId, 1, 'obsolete').then(r => { settled = true; return r; });
-  await delay(600); check('legacy_conflict_still_pending', !settled);
+  let settledCount = 0;
+  const stale = ['obsolete-A', 'obsolete-B'].map(payload => save('legacy_save', oldId, 1, payload).then(r => { settledCount++; return r; }));
+  await delay(600); check('both_legacy_conflicts_still_pending', settledCount === 0);
   const logs = await docker('logs', '--tail', '10000', pg);
   report.sql_40001_log_count = ((logs.stdout + logs.stderr).match(/40001/g) ?? []).length;
-  check('one_http_request_retried_in_postgres', report.sql_40001_log_count > 1);
-  await docker('stop', '--time', '1', rest); report.legacy_stale = await stale;
-  await docker('start', rest);
-  const restartedPort = (await docker('inspect', '--format', '{{(index (index .NetworkSettings.Ports "3000/tcp") 0).HostPort}}', rest)).stdout.trim();
-  base = 'http://127.0.0.1:' + restartedPort; await ready();
+  check('two_http_requests_retried_in_postgres', report.sql_40001_log_count > 2);
+  await sql(`delete from public.revision_lab where id='${oldId}';`);
+  report.legacy_stale_after_delete = await Promise.all(stale);
+  check('both_requests_finish_as_P0002_HTTP500_after_delete', report.legacy_stale_after_delete.every(r => r.http === 500 && r.sqlstate === 'P0002'));
   await save('legacy_save', duplicateId, 0, 'first');
-  settled = false;
+  let settled = false;
   const duplicate = save('legacy_save', duplicateId, 0, 'replayed').then(r => { settled = true; return r; });
   await delay(600); check('duplicate_legacy_creation_pending', !settled);
   await sql(`delete from public.revision_lab where id='${duplicateId}';`);

@@ -1,0 +1,154 @@
+{
+  "report": "/tmp/site-gites-recette/postgrest-lab-1793973315802.json",
+  "mode": "local-postgrest-not-supabase",
+  "started_at": "2026-11-06T13:55:15.802Z",
+  "postgres_image": "postgres:17-alpine",
+  "postgrest_image": "postgrest/postgrest:v14.18",
+  "tests": [
+    {
+      "name": "local_postgres_ready",
+      "passed": true
+    },
+    {
+      "name": "legacy_create",
+      "passed": true
+    },
+    {
+      "name": "legacy_update",
+      "passed": true
+    },
+    {
+      "name": "both_legacy_conflicts_still_pending",
+      "passed": true
+    },
+    {
+      "name": "two_http_requests_retried_in_postgres",
+      "passed": true
+    },
+    {
+      "name": "both_requests_finish_as_P0002_HTTP500_after_delete",
+      "passed": true
+    },
+    {
+      "name": "duplicate_legacy_creation_pending",
+      "passed": true
+    },
+    {
+      "name": "pending_create_recreates_after_delete",
+      "passed": true
+    },
+    {
+      "name": "fixed_create",
+      "passed": true
+    },
+    {
+      "name": "fixed_normal_update",
+      "passed": true
+    },
+    {
+      "name": "fixed_stale_delivered",
+      "passed": true
+    },
+    {
+      "name": "fixed_duplicate_delivered",
+      "passed": true
+    },
+    {
+      "name": "fixed_concurrent_one_winner",
+      "passed": true
+    },
+    {
+      "name": "fixed_winning_payload_preserved",
+      "passed": true
+    },
+    {
+      "name": "fixed_no_late_recreation",
+      "passed": true
+    }
+  ],
+  "success": true,
+  "sql_40001_log_count": 2748,
+  "legacy_stale_after_delete": [
+    {
+      "http": 500,
+      "sqlstate": "P0002",
+      "data": {
+        "code": "P0002",
+        "details": null,
+        "hint": null,
+        "message": "Dossier not found"
+      },
+      "elapsed_ms": 788.1
+    },
+    {
+      "http": 500,
+      "sqlstate": "P0002",
+      "data": {
+        "code": "P0002",
+        "details": null,
+        "hint": null,
+        "message": "Dossier not found"
+      },
+      "elapsed_ms": 785.5
+    }
+  ],
+  "legacy_duplicate_after_delete": {
+    "http": 200,
+    "sqlstate": null,
+    "data": [
+      {
+        "id": "9b7dd877-4b82-41f2-9e87-8adebff38009",
+        "revision": 1,
+        "payload": "replayed"
+      }
+    ],
+    "elapsed_ms": 678.9
+  },
+  "fixed_stale": {
+    "http": 409,
+    "sqlstate": "PT409",
+    "data": {
+      "code": "PT409",
+      "details": null,
+      "hint": null,
+      "message": "Revision conflict"
+    },
+    "elapsed_ms": 3
+  },
+  "fixed_duplicate": {
+    "http": 409,
+    "sqlstate": "PT409",
+    "data": {
+      "code": "PT409",
+      "details": null,
+      "hint": null,
+      "message": "Revision conflict"
+    },
+    "elapsed_ms": 3.3
+  },
+  "fixed_race": [
+    {
+      "http": 200,
+      "sqlstate": null,
+      "data": [
+        {
+          "id": "c6584737-6240-473e-88e0-d07c73a50baa",
+          "revision": 3,
+          "payload": "winner-A"
+        }
+      ],
+      "elapsed_ms": 4
+    },
+    {
+      "http": 409,
+      "sqlstate": "PT409",
+      "data": {
+        "code": "PT409",
+        "details": null,
+        "hint": null,
+        "message": "Revision conflict"
+      },
+      "elapsed_ms": 4.1
+    }
+  ]
+}

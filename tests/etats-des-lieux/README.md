@@ -14,7 +14,13 @@ Supabase transmise aux conteneurs (PostgreSQL 17 + PostgREST 13.0.7) :
 
 ```bash
 node tests/etats-des-lieux/postgrest-conflict-local.mjs
+# Version annoncée pour Supabase, laboratoire toujours exclusivement local :
+node tests/etats-des-lieux/postgrest-conflict-local.mjs --postgrest-version=14.18
 ```
+
+Le banc vérifie aussi que deux appels obsolètes en attente finissent tous deux
+en P0002/HTTP 500 après suppression locale du dossier. Cela ne remplace pas la
+lecture des statuts réellement émis dans les logs PostgREST/API Cloud.
 
 Reproduction **Cloud**, uniquement après autorisation explicite des dossiers
 synthétiques et vérification des cinq comptes. Le script génère/journalise un

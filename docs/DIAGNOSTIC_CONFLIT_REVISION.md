@@ -2,6 +2,12 @@
 
 ## État
 
+> Complément ultérieur : le propriétaire indique **PostgREST 14.18** et fournit
+> la capture des `40001` suivis de deux `P0002`. La source officielle 14.18 et
+> un laboratoire de cette version ont maintenant été vérifiés. Voir
+> [l’analyse des journaux](ANALYSE_JOURNAUX_POSTGREST_14_18.md), qui complète les
+> preuves et limites ci-dessous sans relancer d’écriture Cloud.
+
 **Défaut SQL identifié et correctif validé localement ; correctif non validé sur
 Supabase Cloud. Migration distante en attente d’autorisation supplémentaire.**
 La recette complète reste interrompue. Aucun timeout n’est compté comme un refus
@@ -139,9 +145,11 @@ démontrés sur PostgREST 13/Hasql.** Ils expliquent les symptômes Cloud observ
 la chronologie fournie. La qualification exacte de la chaîne déployée demeure
 limitée par les accès disponibles :
 
-- La lecture OpenAPI `/rest/v1/` a reçu HTTP 401 ; la version Cloud n’a pas été
-  obtenue. La branche officielle PostgREST actuelle utilise `transactionNoRetry` :
-  le comportement de 13 ne doit pas être attribué à toutes les versions.
+- La lecture OpenAPI `/rest/v1/` a reçu HTTP 401. Le propriétaire a ensuite
+  communiqué la version 14.18 : sa source officielle utilise également les
+  transactions réessayables et le nouveau laboratoire le confirme. La branche
+  de développement PostgREST plus récente utilisant `transactionNoRetry` ne
+  décrit pas le code de cette version publiée.
 - Aucune lecture des définitions SQL Cloud, des rôles DB, de `pg_stat_activity`
   ou de `pg_locks` n’est disponible avec les seuls JWT de membres. Aucune
   différence de définition locale/Cloud n’est donc affirmée.
@@ -151,8 +159,8 @@ limitée par les accès disponibles :
 - Aucun `statement timeout`, `lock timeout` ou deadlock n’a été observé dans les
   preuves disponibles ; leur absence dans les journaux complets n’est pas établie.
 - La comparaison depuis un second environnement autorisé reste non effectuée.
-  Les relevés de version et de répétition des `40001` ont été demandés au
-  propriétaire pour compléter l’attribution Cloud.
+  Les relevés de version et de répétition des `40001` ont été fournis par le
+  propriétaire. Les détails de corrélation et statuts PostgREST/API restent à lire.
 
 L’introspection préparée dans
 `supabase/manual/phase5-conflict-diagnostic.sql` est strictement en lecture seule

@@ -6,7 +6,7 @@
 
 Le défaut SQL identifié est l’utilisation de `40001`, code de sérialisation réessayable, pour un conflit métier permanent. PostgREST 13/Hasql recommence alors la transaction avec les mêmes paramètres. Une création ainsi bloquée peut recréer un dossier après suppression. Le mécanisme et le correctif `PT409` sont démontrés avec un véritable PostgreSQL/PostgREST local, sans simulation de serveur HTTP.
 
-La version et les définitions SQL exactes du déploiement Cloud restent non lisibles avec les seuls accès disponibles. Les preuves Cloud reproduisent le timeout ; elles ne valident pas encore le correctif. Le [diagnostic détaillé](DIAGNOSTIC_CONFLIT_REVISION.md) donne les sources, la corrélation des journaux, les limites, la migration et les actions manuelles.
+Le propriétaire a depuis communiqué la version **PostgREST 14.18** et une capture des erreurs répétées, suivies de deux `P0002`. La source officielle et un laboratoire de cette version confirment le même mécanisme. Les définitions SQL distantes et les statuts HTTP finaux restent à vérifier. [Analyse complémentaire](ANALYSE_JOURNAUX_POSTGREST_14_18.md). Les preuves Cloud ne valident pas encore le correctif ; aucune écriture distante n’a été relancée pour cette analyse. Le [diagnostic détaillé](DIAGNOSTIC_CONFLIT_REVISION.md) donne les sources, limites, migration et actions manuelles.
 
 L’ancien rapport reste consultable [au commit 4ab8615](https://github.com/kinnnisss/site-gites/blob/4ab8615e35c798ad5f85e94f4a8474b44db3df5a/docs/ESPACE_EQUIPE_RECETTE_FINALE.md).
 
@@ -73,6 +73,7 @@ La migration conserve les données d’un dossier existant, propriétaires/ACL/m
 | Garde-fous de cible/requêtes | **3 tests** réussis |
 | PostgreSQL/PGlite | **52 contrôles** réussis, dont migration d’un dossier existant et conservation des privilèges ; fixture Auth locale |
 | PostgreSQL + PostgREST 13 Docker | **14 contrôles** réussis : boucle 40001, recréation tardive, PT409, concurrence, conservation ; aucun accès Supabase |
+| Complément PostgreSQL + PostgREST 14.18 Docker | **15 contrôles** locaux réussis : deux appels obsolètes, erreurs réessayées, deux P0002/HTTP 500 après suppression, PT409 et concurrence ; aucune nouvelle écriture Cloud |
 | Comparaison formulaire/HTML | **46/46** comparaisons exactes ; interactions, JSON et impressions du banc de référence réussis |
 | Persistance navigateur locale | Réussie avec **transport intercepté** : sauvegarde, saisies en attente, conflit, rechargement, Effacer, JSON, impression, responsive et indisponibilité |
 | Vitrine comparée à `origin/main` | **6/6** paires exactes ; contenu/métadonnées, clavier, menu, ancres et responsive réussis |
