@@ -2,9 +2,52 @@
 
 ## Décision actuelle
 
-**Activation contrôlée préparée sur une nouvelle branche depuis le dernier main ; aucune ouverture distante réalisée. Le propriétaire confirme que la Production appelle encore le projet Supabase de développement. La désignation de la base de livraison et le contrôle réel de sauvegarde explicitement autorisé restent nécessaires avant publication. PT409 demeure non vérifié sur Cloud après la correction manuelle déclarée.**
+**Le propriétaire a désigné `jijjjgsfdbrkvqvhyjwr` comme base de production et autorisé le contrôle synthétique unique. Celui-ci a réussi : sauvegarde réelle, rechargement exact, refus Agent, HTTP 409/PT409 obsolète et données conservées, suppression Admin fictif et absence différée confirmées. La branche d’activation reste non fusionnée ; aucun déploiement ou changement Vercel effectué.**
 
-## Préparation de l’activation finale en Production
+## Contrôle Cloud unique approuvé et réussi — 6 novembre, 16:13 UTC
+
+Commit réellement testé : **`729d746b8ed26fb9c167f6f619ba39cc180112d3`**,
+branche `fix/activation-espace-equipe-production`. Le propriétaire a confirmé
+la qualification Production du projet précédemment réservé au développement,
+l’arrêt de cet usage de développement et le plan d’écriture synthétique unique.
+Cette confirmation n’autorise pas la fusion ou le déploiement final.
+
+| Scénario | Résultat réel | Durée |
+| --- | --- | ---: |
+| Auth ADMIN fictif / Agent A | Identités distinctes, rôles `admin` / `agent`, actifs vérifiés ; HTTP 200 | 1 411,9 / 760,5 ms |
+| Création du dossier synthétique | HTTP 200, révision 1, UUID conforme | **627,7 ms** |
+| Sauvegarde courante | HTTP 200, révision 2 | **239,7 ms** |
+| Rechargement | HTTP 200, payload exact et auteurs contrôlés | **263,6 ms** |
+| Suppression Agent | **HTTP 403 / SQLSTATE 42501**, refus attendu | **244,8 ms** |
+| Sauvegarde obsolète | **HTTP 409 / PT409**, aucune attente jusqu’au timeout | **243,1 ms** |
+| Conservation après conflit | HTTP 200, révision 2 et payload complet inchangés | **548,4 ms** |
+| Suppression Admin fictif | HTTP 200, reçu UUID exact | **240,2 ms** |
+| Absence immédiate / +5 / +30 s | HTTP 200, zéro ligne aux trois lectures | 239,8 / 303,0 / 474,9 ms |
+| Déconnexion locale des deux profils | HTTP 204 / 204, confirmée | 404,4 / 210,4 ms |
+
+**15 vérifications réussies**, 20 requêtes, de **16:13:20.277** à
+**16:13:58.775 UTC**. Aucun échec de transport ni timeout. Les refus SQL attendus
+sont reçus avec leurs vrais statuts HTTP ; le conflit n’est plus déduit de logs
+PostgreSQL ou d’un `status=0`. Le comportement de sauvegarde obsolète PT409 est
+donc maintenant confirmé sur Supabase Cloud.
+
+UUID unique : **`f9645eb5-5e4b-4d86-b504-325f4988c7c4`**, absent à
+**16:13:27.362**, **16:13:32.668** et **16:13:58.156 UTC**. Aucune ligne existante
+ou donnée personnelle modifiée ; l’Administrateur principal n’a pas été utilisé.
+Aucun compte, rôle, schéma, ACL ou RLS modifié ; aucune migration exécutée.
+
+[Preuve détaillée nettoyée](recette/2026-11-06-production-smoke.json).
+Le [rapport d’activation](ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md) est actualisé.
+Ce projet n’est plus une base de développement ; les anciennes campagnes
+d’écriture ne doivent plus y être lancées.
+
+Limites : contrôle Auth/PostgREST réel, pas un parcours navigateur Vercel. Aucun
+test Cloud de concurrence ou de création répétée ajouté à cette autorisation
+unique ; les trois corps SQL et ACL distants n’ont pas été introspectés. Le
+déploiement final et le contrôle du parcours client restent à autoriser.
+Les sections suivantes conservent les constats historiques avant cette validation.
+
+## Historique — préparation de l’activation avant confirmation et test réel
 
 Branche : **`fix/activation-espace-equipe-production`**, départ
 **`31cc4df77fca9d4468e6c3be9d1288b5ee28f086`** (`main` distant, PR nº 4 déjà

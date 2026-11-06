@@ -23,9 +23,14 @@ et déclenche le nettoyage limité à cet UUID et à son créateur vérifié. Le
 durées, HTTP et codes SQL sont séparés des erreurs de transport. Pas de retry
 POST, de membre modifié, de compte créé, d’e-mail ou de SQL administratif.
 
-Ce script **n’a pas été exécuté contre une base distante**. Il ne prouve pas
-le déploiement Vercel ou le fonctionnement du navigateur en Production. Voir
-`docs/ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md` pour le plan et les limites.
+Le contrôle unique a été **exécuté et réussi le 6 novembre 2026** après
+désignation explicite de `jijjjgsfdbrkvqvhyjwr` comme production et autorisation
+du propriétaire : `docs/recette/2026-11-06-production-smoke.json`. Le dossier est
+supprimé, absent immédiatement/+5/+30 s, et les deux sessions fictives sont fermées.
+Ce résultat Data API ne prouve pas un déploiement Vercel ou un parcours navigateur
+en Production. Ne pas relancer ce contrôle sans nouvelle autorisation ; ne plus
+utiliser cette base avec les anciennes campagnes de développement. Voir
+`docs/ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md` pour les preuves et limites.
 
 La finalisation et la recette navigateur Preview sont décrites dans
 `docs/FINALISATION_ESPACE_EQUIPE.md` et `docs/GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md`.

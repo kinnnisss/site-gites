@@ -23,7 +23,7 @@ Il ne prétend plus qu’une validation automatique du projet de développement 
 en attente. Le footer est déjà présent dans `main`, avec les deux textes demandés
 et `next/link` vers `/equipe/connexion` ; il n’est pas modifié.
 
-## Base actuellement utilisée et prérequis bloquant
+## Base de production désignée par le propriétaire
 
 Le propriétaire confirme que `NEXT_PUBLIC_SUPABASE_URL` en Vercel Production est
 la même que dans Codex : **`jijjjgsfdbrkvqvhyjwr`**, jusque-là nommé
@@ -34,19 +34,20 @@ ou à l’API Vercel n’est connecté ici. La clé et les valeurs distantes n�
 été lues ou modifiées par l’agent. L’accès HTTP au site officiel est refusé par
 le proxy Cloud ; aucune réussite navigateur sur ce domaine n’est revendiquée.
 
-**La base actuellement appelée par la Production est donc celle de développement.**
-Elle ne devient pas silencieusement une base de livraison par changement du
-drapeau. Le propriétaire doit désigner la base destinée à la production : un
-projet de production approprié, ou une qualification explicite du projet actuel.
-Dans ce second cas, cesser de l’utiliser pour le développement et isoler les
-futurs essais avant d’y accueillir des données de voyageurs. Aucun projet Vercel
-nouveau ou nouvelle campagne Preview n’est nécessaire pour ce changement de code.
+Le propriétaire a ensuite répondu **« oui je confirme »** à la désignation de
+**`jijjjgsfdbrkvqvhyjwr` comme base de production**, à l’arrêt de son usage de
+développement et au contrôle unique décrit ci-dessous. Cette confirmation ne
+couvre ni fusion ni déploiement final. Il s’agit d’une qualification d’usage :
+aucun renommage, paramètre ou ressource Supabase modifié par l’agent. Les futurs
+développements devront utiliser une base distincte ; les anciennes campagnes
+de développement ne doivent plus être lancées sur ce projet. Aucun nouveau
+projet Vercel ou nouvelle campagne Preview n’a été créé.
 
 Aucun compte n’est créé, aucun utilisateur Auth ou rôle modifié et aucune donnée
 personnelle copiée. L’Administrateur principal reste inchangé et n’est pas utilisé
-par l’agent. Aucun SQL administratif, migration, droit, RLS ou donnée métier
-distante n’est modifié. Un changement de cible ou transfert de données ne doit
-pas être improvisé pour contourner ce prérequis.
+par l’agent. Aucun SQL administratif, migration, droit ou RLS distant modifié.
+Les seules écritures métier ont concerné le dossier synthétique autorisé,
+désormais supprimé. Aucun dossier préexistant ou donnée personnelle touché.
 
 ## Vérifications Supabase disponibles
 
@@ -58,15 +59,17 @@ La session fictive est fermée avec HTTP 204. Les durées sont dans la preuve JS
 
 L’existence des tables et colonnes attendues ne prouve pas l’historique des
 migrations. Les corps SQL et ACL distants ne sont pas accessibles avec les seuls
-JWT de membres. PT409 est déclaré appliqué manuellement par le propriétaire et
-validé localement ; son HTTP 409 Cloud n’a pas encore été revérifié. Utiliser
+JWT de membres. Le comportement de sauvegarde obsolète **HTTP 409 / PT409 est
+maintenant vérifié sur Cloud** par le contrôle autorisé ci-dessous, sans timeout.
+Cela ne constitue pas une introspection des trois définitions et ACL distantes.
+Si leur comparaison exacte est nécessaire, utiliser
 [verify-inspection-pt409.sql](../supabase/manual/verify-inspection-pt409.sql) en
 lecture seule dans le SQL Editor de la base désignée, sans rejouer de migration.
 Comparer les corps, protections et droits avec les migrations versionnées ;
 signaler toute différence. Le propriétaire doit aussi confirmer les comptes
 réellement autorisés et les inscriptions publiques désactivées.
 
-## Test réel unique préparé — pas encore autorisé ni exécuté
+## Test réel unique autorisé et réussi — 6 novembre 2026
 
 Le script [production-smoke.mjs](../tests/etats-des-lieux/production-smoke.mjs)
 permet ce contrôle minimal avant publication, sans nouvelle Preview. Il exige
@@ -76,7 +79,7 @@ existants ADMIN et AGENT_A. Il n’utilise jamais le compte principal ou une cl�
 privilégiée et ne crée aucun compte. L’absence d’option d’autorisation bloque
 avant toute connexion distante.
 
-Plan soumis à autorisation explicite :
+Plan explicitement autorisé puis exécuté :
 
 1. Vérifier les deux identités, rôles actifs et le projet épinglé ; générer un
    seul UUID, le journaliser avant écriture et confirmer son absence.
@@ -94,24 +97,51 @@ suppression synthétique. Arrêt au premier échec, nettoyage ciblé dans `final
 aucun retry POST. Durées, statuts HTTP et codes SQL séparés des erreurs de transport.
 Un reçu perdu ou nettoyage non confirmé reste un échec avec UUID à recontrôler.
 
-Après désignation de la base et autorisation explicite seulement :
+Commande exécutée une seule fois, avec le Project Reference approuvé épinglé :
 
 ```bash
-NODE_USE_ENV_PROXY=1 node tests/etats-des-lieux/production-smoke.mjs --allow-production-synthetic-write
+NODE_USE_ENV_PROXY=1 TEAM_PRODUCTION_EXPECTED_PROJECT_REF=jijjjgsfdbrkvqvhyjwr node tests/etats-des-lieux/production-smoke.mjs --allow-production-synthetic-write
 ```
 
-Ce contrôle Data API réel ne sera pas présenté comme un parcours navigateur
-Vercel. Le lien final et un parcours court de sauvegarde/rechargement sur le site
-officiel resteront à contrôler après le déploiement autorisé. Aucun dossier
-Production n’a été créé ou supprimé dans cette préparation.
+Résultat : **15 vérifications réussies**, 20 requêtes Auth/Data API, de
+**16:13:20.277 à 16:13:58.775 UTC**, sur le commit
+**`729d746b8ed26fb9c167f6f619ba39cc180112d3`**. UUID synthétique unique :
+**`f9645eb5-5e4b-4d86-b504-325f4988c7c4`**.
+
+| Scénario réel | Résultat | Durée complète |
+| --- | --- | ---: |
+| Connexions ADMIN fictif / AGENT_A | HTTP 200, identités distinctes et rôles actifs vérifiés | 1 411,9 / 760,5 ms |
+| Création | HTTP 200, UUID conforme, révision 1 | **627,7 ms** |
+| Sauvegarde courante | HTTP 200, révision 2 | **239,7 ms** |
+| Rechargement par l’Admin fictif | HTTP 200, payload complet exact, auteurs vérifiés | **263,6 ms** |
+| Suppression par l’Agent | **HTTP 403 / 42501**, refus attendu | **244,8 ms** |
+| Révision obsolète 1 | **HTTP 409 / PT409**, refus reçu par le client | **243,1 ms** |
+| Conservation après refus | HTTP 200, révision 2 et payload sauvegardé intégralement inchangés | **548,4 ms** |
+| Suppression Admin fictif | HTTP 200, reçu UUID exact | **240,2 ms** |
+| Absence immédiate / +5 s / +30 s | HTTP 200, zéro ligne aux trois lectures | 239,8 / 303,0 / 474,9 ms |
+| Déconnexion locale des deux profils | HTTP 204 / 204 | 404,4 / 210,4 ms |
+
+Absence confirmée à **16:13:27.362**, **16:13:32.668** et **16:13:58.156 UTC**.
+Aucun timeout ou échec de transport. Les deux erreurs SQL attendues (42501 et
+PT409) sont reçues avec des statuts HTTP distincts et ne sont pas des erreurs
+réseau requalifiées. Aucun compte/fiche membre ou dossier autre que cet UUID
+modifié ; aucun secret journalisé.
+
+[Preuve complète nettoyée](recette/2026-11-06-production-smoke.json).
+Ce contrôle Data API réel n’est pas un parcours navigateur Vercel. Deux sauvegardes
+concurrentes Cloud, la création répétée et les longues sessions ne font pas partie
+de ce test unique. Le lien final et un parcours court de sauvegarde/rechargement
+sur le site officiel restent à contrôler après le déploiement autorisé. Ne pas
+relancer ce contrôle : l’autorisation accordée concernait cette exécution unique.
 
 ## Vérifications techniques et preuves
 
 Les résultats effectifs sont consignés dans
 [ESPACE_EQUIPE_RECETTE_FINALE.md](ESPACE_EQUIPE_RECETTE_FINALE.md) et
-`docs/recette/2026-11-06-activation-production.json`. Ils distinguent les contrôles
-locaux, la lecture réelle du projet actuel et les opérations Production non
-effectuées. Le formulaire, son CSS, son HTML, les migrations, Auth et RLS restent
+`docs/recette/2026-11-06-activation-production.json` (préparation), puis
+`docs/recette/2026-11-06-production-smoke.json` (contrôle réel approuvé). Ils
+distinguent les contrôles locaux, la lecture et le test réel Production. Le
+formulaire, son CSS, son HTML, les migrations, Auth et RLS restent
 inchangés ; aucune dépendance ajoutée. Les tests de stockage navigateur utilisent
 un transport intercepté, pas une base de production.
 
@@ -119,7 +149,8 @@ Résultats de cette préparation : lint, typegen, TypeScript et build Turbopack
 réussis ; **44 tests purs**, **54 contrôles PostgreSQL locaux**, **29 + 17 contrôles
 HTTP** avec le drapeau local actif, sauvegarde/rechargement/impression/JSON
 interceptés réussis, **6/6 comparaisons publiques intégrales exactes** avec le
-dernier `main`. Aucun test de sauvegarde Production n’est compté comme réussi.
+dernier `main`. Le contrôle minimal de sauvegarde sur la base de production est
+désormais réussi, dans les limites précisées ci-dessus.
 
 ## Réglages Vercel et procédure finale
 
@@ -138,17 +169,17 @@ Vercel. Ne pas modifier ou falsifier `VERCEL_ENV`/`NODE_ENV`. Vérifier Node 22.
 et conserver le projet et le domaine existants. Une variable modifiée nécessite
 un nouveau déploiement pour prendre effet.
 
-Les seules actions indispensables avant publication sont : désigner et valider
-la base de production (schéma/PT409, comptes et RLS), autoriser puis réussir le
-test synthétique unique, et approuver la livraison. Ensuite seulement : revoir
-la PR, autoriser sa fusion et le déploiement final, ouvrir le drapeau et vérifier
-le parcours client sur l’URL officielle. Aucun déploiement fermé ou ouvert ne
+La désignation de la base et le test synthétique unique sont confirmés et réussis.
+Il reste à revoir la PR et les preuves, confirmer les réglages Production, puis
+autoriser distinctement la fusion, le déploiement final et l’ouverture du drapeau.
+Vérifier ensuite le parcours client sur l’URL officielle. Aucun déploiement fermé ou ouvert ne
 doit être déclenché par l’agent sans cette autorisation. En cas d’échec, remettre
 le drapeau à `false` et redéployer après décision ; cela ferme l’application,
 pas les appels directs Data API déjà régis par leurs RLS, et ne restaure pas la base.
 
-La PR reste en brouillon tant que la base et le contrôle réel ne sont pas validés.
-Une préparation de code réussie ne vaut pas une activation réalisée en Production.
+Le code et le contrôle minimal sont prêts à revue de publication. Les décisions
+de fusion et de déploiement restent distinctes. Le test réussi ne vaut pas une
+activation déjà réalisée sur le site officiel.
 
 ## Livraison GitHub
 
