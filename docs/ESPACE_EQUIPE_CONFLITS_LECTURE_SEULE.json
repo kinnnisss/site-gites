@@ -1,0 +1,224 @@
+{
+  "checked_at": "2026-11-06T12:17:09.411Z",
+  "mode": "business-read-only",
+  "metrics": [
+    {
+      "profile": "PUBLIC",
+      "operation": "health",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:09.411Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 1002.1
+    },
+    {
+      "profile": "AGENT_A",
+      "operation": "login",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:10.414Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 441
+    },
+    {
+      "profile": "AGENT_A",
+      "operation": "verify_identity",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:10.855Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 257.9
+    },
+    {
+      "profile": "AGENT_A",
+      "operation": "own_membership",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:11.113Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 827.5
+    },
+    {
+      "profile": "AGENT_B",
+      "operation": "login",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:11.940Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 704.6
+    },
+    {
+      "profile": "AGENT_B",
+      "operation": "verify_identity",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:12.645Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 681
+    },
+    {
+      "profile": "AGENT_B",
+      "operation": "own_membership",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:13.326Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 597.3
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "login",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:13.924Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 323.1
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "verify_identity",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:14.247Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 667
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "own_membership",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:14.914Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 249.8
+    },
+    {
+      "profile": "AGENT_A",
+      "operation": "template_read",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:15.164Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 648
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "prior_fixture_absence",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:15.812Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 566.1
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "prior_fixture_absence",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:16.379Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 245
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "first_run_residual_search",
+      "method": "GET",
+      "started_at": "2026-11-06T12:17:16.624Z",
+      "http_status": 200,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 292.7
+    },
+    {
+      "profile": "AGENT_A",
+      "operation": "local_logout",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:16.916Z",
+      "http_status": 204,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 590.8
+    },
+    {
+      "profile": "AGENT_B",
+      "operation": "local_logout",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:17.507Z",
+      "http_status": 204,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 242.4
+    },
+    {
+      "profile": "ADMIN",
+      "operation": "local_logout",
+      "method": "POST",
+      "started_at": "2026-11-06T12:17:17.750Z",
+      "http_status": 204,
+      "sql_code": null,
+      "classification": "success",
+      "elapsed_ms": 235.3
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "AGENT_A",
+      "identity_verified": true,
+      "role": "agent",
+      "active": true
+    },
+    {
+      "profile": "AGENT_B",
+      "identity_verified": true,
+      "role": "agent",
+      "active": true
+    },
+    {
+      "profile": "ADMIN",
+      "identity_verified": true,
+      "role": "admin",
+      "active": true
+    }
+  ],
+  "cleanup": [
+    {
+      "synthetic_id": "473fb7b4-b987-4291-b359-15e753ad5628",
+      "rows": 0,
+      "absent": true
+    },
+    {
+      "synthetic_id": "cd51b563-94ac-412a-b93c-3fbd818ee779",
+      "rows": 0,
+      "absent": true
+    }
+  ],
+  "business_mutations": 0,
+  "success": true,
+  "variables_present": 13,
+  "variables_expected": 13,
+  "project_ref": "jijjjgsfdbrkvqvhyjwr",
+  "project_match": true,
+  "template_matches": true,
+  "first_run_residual_candidates": [],
+  "test_sessions_closed": true,
+  "success_scope": "read_only_preflight_only",
+  "revision_scenarios": {
+    "normal_save": "not_run_pending_explicit_authorization",
+    "obsolete_revision": "not_run_pending_explicit_authorization",
+    "concurrent_saves": "not_run_pending_explicit_authorization",
+    "data_preserved_after_conflict": "not_run_pending_explicit_authorization"
+  }
+}

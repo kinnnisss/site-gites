@@ -1,5 +1,24 @@
 # Validation Auth de phase 3
 
+## Navigation de session — finalisation du 6 novembre
+
+Le test ciblé suivant utilise les cinq comptes fictifs privés et un vrai serveur
+`next start` local configuré vers le projet de développement épinglé. Il vérifie
+les connexions/refus, les rôles, les cookies, la redirection d’une session active
+depuis la connexion et la déconnexion locale. Il ne crée aucun dossier, membre,
+compte ou e-mail et ne valide pas le renouvellement après expiration.
+
+```bash
+# Branche fix/recette-espace-equipe ; serveur local prêt, module dossiers fermé.
+TEAM_TEST_BASE_URL=http://127.0.0.1:3500 node tests/auth/session-navigation-manual.mjs --allow-development-auth
+```
+
+Les identifiants sont lus uniquement depuis l’environnement privé. Ne pas mettre
+les mots de passe dans une commande, Git ou Vercel. Le test s’arrête au premier
+échec et masque les détails susceptibles de contenir des secrets.
+
+## Contrôles historiques sans connexion valide
+
 La phase 5 conserve la matrice et ajoute deux tests du drapeau : 27 tests de
 politique/configuration au total. Ils n’établissent aucune session réelle. La
 procédure complète de recette distante est dans `docs/ESPACE_EQUIPE_HANDOFF.md`.

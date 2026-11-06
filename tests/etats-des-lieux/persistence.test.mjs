@@ -2,12 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadTs } from './load-typescript.mjs';
 const { createInitialPayload, copyPayload, inspectionReducer } = loadTs('modules/etats-des-lieux/state.ts');
-const { parsePayload, parseDossier, TEMPLATE_ID, validRevision } = loadTs('modules/etats-des-lieux/persistence.ts');
+const { parsePayload, parseDossier, TEMPLATE_ID, validRevision, databaseError } = loadTs('modules/etats-des-lieux/persistence.ts');
 const { createDossierStorage } = loadTs('modules/etats-des-lieux/dossier-storage.ts');
 const id = '00000000-0000-4000-8000-000000000001';
 const receipt = revision => ({ id, revision, updated_at: '2026-11-05T18:00:00Z' });
 const dossier = revision => ({ ...receipt(revision), template_id: TEMPLATE_ID, payload: createInitialPayload() });
 const respond = (value, status = 200) => new Response(JSON.stringify(value), { status });
+
+test('business conflict is HTTP 409 while transport failures remain unavailable', () => {
+  assert.equal(databaseError('PT409').status, 409);
+  assert.match(databaseError('PT409').message, /Vos saisies sont conservées/);
+  assert.equal(databaseError('40001').status, 409); // Mixed-version rollout remains readable.
+  assert.equal(databaseError('').status, 503);
+  assert.equal(databaseError(undefined).status, 503);
+});
 
 test('payload round-trip keeps empty drafts, local dates, strings, accents, newlines and array order', () => {
   const payload = createInitialPayload();

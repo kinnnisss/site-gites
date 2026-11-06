@@ -2,6 +2,8 @@ import { copyPayload } from "./state";
 import type { InspectionPayload } from "./types";
 
 export const TEMPLATE_ID = "68a4545f-6af4-4a79-bced-b46cfb367ec1";
+/** A permanent optimistic-lock conflict must not request a transaction retry. */
+export const REVISION_CONFLICT_SQLSTATE = "PT409";
 export type DossierReceipt = { id: string; revision: number; updated_at: string };
 export type InspectionDossier = DossierReceipt & { template_id: string; payload: InspectionPayload };
 
@@ -41,7 +43,7 @@ export function parseDossier(value: unknown): InspectionDossier {
   };
 }
 export function databaseError(code?: string): DossierError {
-  if (code === "40001" || code === "23505") return new DossierError(409,
+  if (code === REVISION_CONFLICT_SQLSTATE || code === "40001" || code === "23505") return new DossierError(409,
     "Conflit : une autre sauvegarde existe. Vos saisies sont conservées. Exportez-les avant de recharger le brouillon.");
   if (code === "P0002") return new DossierError(404, "Dossier introuvable ou supprimé. Vos saisies sont conservées.");
   if (code === "42501") return new DossierError(403, "Accès refusé. Vos saisies sont conservées.");

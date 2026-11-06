@@ -1,0 +1,237 @@
+{
+  "recorded_at": "2026-11-06T14:24:40.023Z",
+  "branch": "fix/recette-espace-equipe",
+  "source_commit": "6b8b7bce36209283309503eeda6ed8f4bdcbfd3e",
+  "remote_branch_commit": "6b8b7bce36209283309503eeda6ed8f4bdcbfd3e",
+  "remote_main_commit_read_only": "9035a2e0ed3ae641216d8045b10cccd400f97107",
+  "project_ref": "jijjjgsfdbrkvqvhyjwr",
+  "mode": "business-read-only",
+  "business_mutations": 0,
+  "auth": {
+    "completed_at": "2026-11-06T14:21:19.709Z",
+    "variables": [
+      {
+        "name": "NEXT_PUBLIC_SUPABASE_URL",
+        "present": true
+      },
+      {
+        "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_EXPECTED_PROJECT_REF",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_ADMIN_EMAIL",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_ADMIN_PASSWORD",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_AGENT_A_EMAIL",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_AGENT_A_PASSWORD",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_AGENT_B_EMAIL",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_AGENT_B_PASSWORD",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_INACTIVE_EMAIL",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_INACTIVE_PASSWORD",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_NO_MEMBER_EMAIL",
+        "present": true
+      },
+      {
+        "name": "TEAM_TEST_NO_MEMBER_PASSWORD",
+        "present": true
+      }
+    ],
+    "accounts": [
+      {
+        "account": "ADMIN",
+        "auth": true,
+        "identity_verified": true,
+        "own_membership_read_ok": true,
+        "own_membership_count": 1,
+        "role": "admin",
+        "active": true,
+        "expected_role_and_status": true
+      },
+      {
+        "account": "AGENT_A",
+        "auth": true,
+        "identity_verified": true,
+        "own_membership_read_ok": true,
+        "own_membership_count": 1,
+        "role": "agent",
+        "active": true,
+        "expected_role_and_status": true
+      },
+      {
+        "account": "AGENT_B",
+        "auth": true,
+        "identity_verified": true,
+        "own_membership_read_ok": true,
+        "own_membership_count": 1,
+        "role": "agent",
+        "active": true,
+        "expected_role_and_status": true
+      },
+      {
+        "account": "INACTIVE",
+        "auth": true,
+        "identity_verified": true,
+        "own_membership_read_ok": true,
+        "own_membership_count": 0,
+        "role": "agent",
+        "active": false,
+        "expected_role_and_status": true
+      },
+      {
+        "account": "NO_MEMBER",
+        "auth": true,
+        "identity_verified": true,
+        "own_membership_read_ok": true,
+        "own_membership_count": 0,
+        "role": null,
+        "active": null,
+        "expected_role_and_status": true
+      }
+    ],
+    "anonymous": [
+      {
+        "table": "team_members",
+        "status": 401,
+        "denied": true,
+        "code": "42501"
+      },
+      {
+        "table": "inspection_dossiers",
+        "status": 401,
+        "denied": true,
+        "code": "42501"
+      }
+    ],
+    "project_match": true,
+    "health_status": 200
+  },
+  "cleanup": {
+    "checked_at": "2026-11-06T14:22:58.471Z",
+    "mode": "business-read-only",
+    "metrics": [
+      {
+        "path": "/auth/v1/token",
+        "method": "POST",
+        "at": "2026-11-06T14:22:58.477Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 983.5,
+        "category": "success"
+      },
+      {
+        "path": "/auth/v1/user",
+        "method": "GET",
+        "at": "2026-11-06T14:22:59.462Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 584.8,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/team_members",
+        "method": "GET",
+        "at": "2026-11-06T14:23:00.048Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 550.9,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T14:23:00.602Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 729.7,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T14:23:01.333Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 271.2,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "at": "2026-11-06T14:23:01.604Z",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 290.6,
+        "category": "success"
+      },
+      {
+        "path": "/auth/v1/logout",
+        "method": "POST",
+        "at": "2026-11-06T14:23:01.896Z",
+        "http": 204,
+        "sqlstate": null,
+        "elapsed_ms": 637.5,
+        "category": "success"
+      }
+    ],
+    "cleanup": [
+      {
+        "synthetic_id": "1a901e90-3974-4026-8cd9-676e96529bd2",
+        "rows": 0,
+        "absent": true
+      },
+      {
+        "synthetic_id": "473fb7b4-b987-4291-b359-15e753ad5628",
+        "rows": 0,
+        "absent": true
+      },
+      {
+        "synthetic_id": "cd51b563-94ac-412a-b93c-3fbd818ee779",
+        "rows": 0,
+        "absent": true
+      }
+    ],
+    "business_mutations": 0,
+    "success": true,
+    "session_closed": true,
+    "profile": "ADMIN_TEST",
+    "identity_and_role_verified": true
+  },
+  "remote_migration": {
+    "file": "20261106000100_inspection_business_conflicts.sql",
+    "sha256": "3d83a18f828c2785ab871ae323d1552b9384e03b88cc9352ea70fd1bda008af8",
+    "owner_confirmed_not_applied": true,
+    "executed_by_agent": false,
+    "remote_function_definitions_verified": false
+  },
+  "post_fix_cloud_conflict_tests": "not_run_pending_remote_migration",
+  "full_next_cloud_storage_tests": "not_run_pending_conflict_and_rls_validation",
+  "public_footer_link_added": false,
+  "production_modified": false
+}

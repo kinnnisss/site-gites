@@ -11,6 +11,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright')
 const currentRoot = resolve(import.meta.dirname, '../..');
 assert.ok(process.env.PUBLIC_BASELINE_ROOT, 'PUBLIC_BASELINE_ROOT must identify the phase-4 checkout with dependencies installed.');
 const baselineRoot = resolve(process.env.PUBLIC_BASELINE_ROOT);
+const allowTeamFooter = process.argv.includes('--allow-team-footer');
 assert.notEqual(baselineRoot, currentRoot, 'Use a separate baseline checkout.');
 const roots = [baselineRoot, currentRoot];
 for (const root of roots) await access(resolve(root, 'node_modules/next/dist/bin/next'));
@@ -42,6 +43,27 @@ try {
         const response = await page.goto(`http://127.0.0.1:${3310 + i}${path}`, { waitUntil: 'networkidle' });
         assert.equal(response.status(), 200);
         await page.addStyleTag({ content: 'nextjs-portal {display:none!important}' });
+        if (allowTeamFooter) {
+          const access = page.locator('.site-footer .footer-team-access');
+          assert.equal(await access.count(), i === 1 ? 1 : 0);
+          if (i === 1) {
+            const link = access.getByRole('link', { name: "Accès à l'Espace Équipe", exact: true });
+            assert.equal(await link.getAttribute('href'), '/equipe/connexion');
+            assert.match(await access.innerText(), /Vous gérez le domaine \?/);
+            assert.equal(await page.locator('#main-navigation a[href="/equipe/connexion"]').count(), 0);
+            assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+            // Preserve the actual changed page and footer before isolating this one addition.
+            await page.screenshot({ path: `${artifacts}/full-${name}-${width}.png`, fullPage: true, animations: 'disabled' });
+            await page.locator('.site-footer').screenshot({ path: `${artifacts}/footer-${name}-${width}.png`, animations: 'disabled' });
+            await access.evaluate(e => e.remove());
+          }
+        }
+        // Element screenshots scroll to the footer. Restore the identical viewport
+        // before comparing the complete page, including its fixed public header.
+        await page.evaluate(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); });
+        await page.waitForFunction(() => scrollY === 0 && document.querySelector('.site-header').getBoundingClientRect().top === 0);
+        await page.mouse.move(0, 0);
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
         await page.screenshot({ path: `${artifacts}/${i}-${name}-${width}.png`, fullPage: true, animations: 'disabled' });
         snapshots.push(await page.evaluate(() => ({
           text: document.querySelector('.public-site').innerText, title: document.title,
@@ -80,6 +102,31 @@ try {
   const href = await anchor.getAttribute('href'); await anchor.click();
   await page.waitForURL(url => url.hash === href);
   assert.equal(new URL(page.url()).hash, href);
+  let footerChecks;
+  if (allowTeamFooter) {
+    await page.goto('http://127.0.0.1:3311/', { waitUntil: 'networkidle' });
+    const link = page.getByRole('link', { name: "Accès à l'Espace Équipe", exact: true });
+    const contrast = async () => link.evaluate(e => {
+      const parse = s => s.match(/[\d.]+/g).slice(0, 3).map(Number).map(c => { const v = c / 255; return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; });
+      const luma = c => c[0] * .2126 + c[1] * .7152 + c[2] * .0722;
+      const a = luma(parse(getComputedStyle(e).color));
+      const b = luma(parse(getComputedStyle(e.closest('footer')).backgroundColor));
+      return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+    });
+    const normalContrast = await contrast(); assert.ok(normalContrast >= 4.5);
+    await link.hover();
+    const hoverContrast = await contrast(); assert.ok(hoverContrast >= 4.5);
+    await page.locator('.site-footer a[href="/confidentialite"]').focus();
+    await page.keyboard.press('Tab');
+    assert.equal(await link.evaluate(e => e === document.activeElement && e.matches(':focus-visible')), true);
+    assert.equal(await link.evaluate(e => getComputedStyle(e).outlineStyle), 'solid');
+    await link.screenshot({ path: `${artifacts}/footer-keyboard-focus.png` });
+    await page.keyboard.press('Enter');
+    await page.waitForURL('**/equipe/connexion');
+    await page.getByRole('heading', { name: 'Connexion à l’Espace Équipe' }).waitFor();
+    assert.equal(await page.locator('.public-site').count(), 0);
+    footerChecks = { pagesAndWidths: 6, keyboardAndLoginNavigation: 'passed', normalContrast, hoverContrast };
+  }
   assert.deepEqual(errors, []);
   const result = spawnSync('python3', ['-c', `import sys
 from pathlib import Path
@@ -95,6 +142,8 @@ print('6/6 public page pairs identical pixel by pixel')`, artifacts], { encoding
   await writeFile(resolve(artifacts, 'results.json'), JSON.stringify({
     baselineRoot, pixelPairs: 6, contentMetadataLinks: 'identical', responsiveChecks: 9,
     keyboardMenuAnchors: 'passed', pageErrors: errors,
+    intentionalExclusion: allowTeamFooter ? '.site-footer .footer-team-access only; actual screenshots also retained' : null,
+    footerChecks,
   }, null, 2));
   console.log('Public content, keyboard, menu, anchors and responsive PASS. Artifacts: ' + artifacts);
 } finally {

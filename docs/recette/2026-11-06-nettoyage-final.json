@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-06T13:22:03.677Z",
+  "mode": "read-only-final-cleanup",
+  "rows": [
+    {
+      "synthetic_id": "1a901e90-3974-4026-8cd9-676e96529bd2",
+      "http": 200,
+      "sqlstate": null,
+      "count": 0,
+      "elapsed_ms": 642.3
+    },
+    {
+      "synthetic_id": "473fb7b4-b987-4291-b359-15e753ad5628",
+      "http": 200,
+      "sqlstate": null,
+      "count": 0,
+      "elapsed_ms": 584.7
+    },
+    {
+      "synthetic_id": "cd51b563-94ac-412a-b93c-3fbd818ee779",
+      "http": 200,
+      "sqlstate": null,
+      "count": 0,
+      "elapsed_ms": 613.4
+    }
+  ],
+  "success": true,
+  "logout_confirmed": true
+}

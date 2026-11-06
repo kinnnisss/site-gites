@@ -59,6 +59,12 @@ export function SiteFooter() {
           <span>
             {domain.name} · {domain.location}
           </span>
+          <div className="footer-team-access">
+            <span>Vous gérez le domaine ?</span>
+            <Link className="footer-link" href="/equipe/connexion">
+              Accès à l&apos;Espace Équipe
+            </Link>
+          </div>
           <Link
             href="/#accueil"
             className="inline-flex min-h-11 items-center gap-3 hover:text-accent"

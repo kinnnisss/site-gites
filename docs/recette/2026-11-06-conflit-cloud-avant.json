@@ -1,0 +1,488 @@
+{
+  "started_at": "2026-11-06T12:42:26.572Z",
+  "project_ref": "jijjjgsfdbrkvqvhyjwr",
+  "synthetic_id": "1a901e90-3974-4026-8cd9-676e96529bd2",
+  "branch": "fix/recette-espace-equipe",
+  "metrics": [
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "at": "2026-11-06T12:42:26.579Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 1035.5,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "at": "2026-11-06T12:42:27.616Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 578.1,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "at": "2026-11-06T12:42:28.195Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 604.2,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "at": "2026-11-06T12:42:28.799Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 216.7,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_B",
+      "channel": "node-sdk",
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "at": "2026-11-06T12:42:29.017Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 644.1,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_B",
+      "channel": "node-sdk",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "at": "2026-11-06T12:42:29.662Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 230.6,
+      "category": "success"
+    },
+    {
+      "profile": "INACTIVE",
+      "channel": "node-sdk",
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "at": "2026-11-06T12:42:29.893Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 616.4,
+      "category": "success"
+    },
+    {
+      "profile": "INACTIVE",
+      "channel": "node-sdk",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "at": "2026-11-06T12:42:30.510Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 215.6,
+      "category": "success"
+    },
+    {
+      "profile": "NO_MEMBER",
+      "channel": "node-sdk",
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "at": "2026-11-06T12:42:30.726Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 329.8,
+      "category": "success"
+    },
+    {
+      "profile": "NO_MEMBER",
+      "channel": "node-sdk",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "at": "2026-11-06T12:42:31.057Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 216,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/team_members",
+      "method": "GET",
+      "at": "2026-11-06T12:42:31.275Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 543.4,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/team_members",
+      "method": "GET",
+      "at": "2026-11-06T12:42:31.819Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 323.5,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/team_members",
+      "method": "GET",
+      "at": "2026-11-06T12:42:32.143Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 229.1,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/team_members",
+      "method": "GET",
+      "at": "2026-11-06T12:42:32.373Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 625.6,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/team_members",
+      "method": "GET",
+      "at": "2026-11-06T12:42:32.999Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 237.6,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/rest/v1/",
+      "method": "GET",
+      "at": "2026-11-06T12:42:33.237Z",
+      "http": 401,
+      "sqlstate": null,
+      "elapsed_ms": 66.4,
+      "category": "http"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:42:34.073Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 220.4,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/rest/v1/rpc/save_inspection_dossier",
+      "method": "POST",
+      "at": "2026-11-06T12:42:34.297Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 265.5,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_B",
+      "channel": "node-sdk",
+      "path": "/rest/v1/rpc/save_inspection_dossier",
+      "method": "POST",
+      "at": "2026-11-06T12:42:34.563Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 225.6,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/rest/v1/rpc/save_inspection_dossier",
+      "method": "POST",
+      "at": "2026-11-06T12:42:34.789Z",
+      "http": null,
+      "sqlstate": null,
+      "elapsed_ms": 15001.7,
+      "category": "transport-timeout"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:42:49.793Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 268.4,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "curl-same-proxy",
+      "method": "POST",
+      "path": "/rest/v1/rpc/save_inspection_dossier",
+      "at": "2026-11-06T12:42:50.063Z",
+      "http": 0,
+      "sqlstate": null,
+      "elapsed_ms": 15019.3,
+      "curl_exit": 28,
+      "category": "transport"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:43:05.083Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 291.5,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/rpc/delete_inspection_dossier",
+      "method": "POST",
+      "at": "2026-11-06T12:43:05.375Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 234.9,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:43:05.611Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 229.9,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:43:10.843Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 646.5,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/rest/v1/inspection_dossiers",
+      "method": "GET",
+      "at": "2026-11-06T12:43:36.502Z",
+      "http": 200,
+      "sqlstate": null,
+      "elapsed_ms": 352.9,
+      "category": "success"
+    },
+    {
+      "profile": "ADMIN",
+      "channel": "node-sdk",
+      "path": "/auth/v1/logout",
+      "method": "POST",
+      "at": "2026-11-06T12:43:36.857Z",
+      "http": 204,
+      "sqlstate": null,
+      "elapsed_ms": 558.3,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_A",
+      "channel": "node-sdk",
+      "path": "/auth/v1/logout",
+      "method": "POST",
+      "at": "2026-11-06T12:43:37.416Z",
+      "http": 204,
+      "sqlstate": null,
+      "elapsed_ms": 264.7,
+      "category": "success"
+    },
+    {
+      "profile": "AGENT_B",
+      "channel": "node-sdk",
+      "path": "/auth/v1/logout",
+      "method": "POST",
+      "at": "2026-11-06T12:43:37.681Z",
+      "http": 204,
+      "sqlstate": null,
+      "elapsed_ms": 229.9,
+      "category": "success"
+    },
+    {
+      "profile": "INACTIVE",
+      "channel": "node-sdk",
+      "path": "/auth/v1/logout",
+      "method": "POST",
+      "at": "2026-11-06T12:43:37.911Z",
+      "http": 204,
+      "sqlstate": null,
+      "elapsed_ms": 249.4,
+      "category": "success"
+    },
+    {
+      "profile": "NO_MEMBER",
+      "channel": "node-sdk",
+      "path": "/auth/v1/logout",
+      "method": "POST",
+      "at": "2026-11-06T12:43:38.161Z",
+      "http": 204,
+      "sqlstate": null,
+      "elapsed_ms": 227,
+      "category": "success"
+    }
+  ],
+  "checks": [
+    {
+      "name": "login_ADMIN",
+      "passed": true
+    },
+    {
+      "name": "identity_ADMIN",
+      "passed": true
+    },
+    {
+      "name": "login_AGENT_A",
+      "passed": true
+    },
+    {
+      "name": "identity_AGENT_A",
+      "passed": true
+    },
+    {
+      "name": "login_AGENT_B",
+      "passed": true
+    },
+    {
+      "name": "identity_AGENT_B",
+      "passed": true
+    },
+    {
+      "name": "login_INACTIVE",
+      "passed": true
+    },
+    {
+      "name": "identity_INACTIVE",
+      "passed": true
+    },
+    {
+      "name": "login_NO_MEMBER",
+      "passed": true
+    },
+    {
+      "name": "identity_NO_MEMBER",
+      "passed": true
+    },
+    {
+      "name": "distinct_subjects",
+      "passed": true
+    },
+    {
+      "name": "membership_ADMIN",
+      "passed": true
+    },
+    {
+      "name": "membership_AGENT_A",
+      "passed": true
+    },
+    {
+      "name": "membership_AGENT_B",
+      "passed": true
+    },
+    {
+      "name": "membership_INACTIVE",
+      "passed": true
+    },
+    {
+      "name": "membership_NO_MEMBER",
+      "passed": true
+    },
+    {
+      "name": "prior_absent_473fb7b4-b987-4291-b359-15e753ad5628",
+      "passed": true
+    },
+    {
+      "name": "prior_absent_cd51b563-94ac-412a-b93c-3fbd818ee779",
+      "passed": true
+    },
+    {
+      "name": "new_uuid_absent",
+      "passed": true
+    },
+    {
+      "name": "creation_revision_1",
+      "passed": true
+    },
+    {
+      "name": "normal_save_revision_2",
+      "passed": true
+    },
+    {
+      "name": "revision_2_and_B_payload_preserved",
+      "passed": true
+    },
+    {
+      "name": "stale_sdk_40001",
+      "passed": false
+    }
+  ],
+  "success": false,
+  "stale_sdk": {
+    "http": 0,
+    "sqlstate": null,
+    "category": "transport-or-protocol"
+  },
+  "stale_curl": {
+    "profile": "AGENT_A",
+    "channel": "curl-same-proxy",
+    "method": "POST",
+    "path": "/rest/v1/rpc/save_inspection_dossier",
+    "at": "2026-11-06T12:42:50.063Z",
+    "http": 0,
+    "sqlstate": null,
+    "elapsed_ms": 15019.3,
+    "curl_exit": 28,
+    "category": "transport"
+  },
+  "failure": "stale_sdk_40001",
+  "cleanup": [
+    {
+      "at": "2026-11-06T12:43:05.841Z",
+      "absent": true
+    },
+    {
+      "at": "2026-11-06T12:43:11.490Z",
+      "absent": true
+    },
+    {
+      "at": "2026-11-06T12:43:36.855Z",
+      "absent": true
+    }
+  ]
+}
