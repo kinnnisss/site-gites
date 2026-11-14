@@ -8,8 +8,11 @@ export type DomainPhoto = {
 
 export type ContactDetails = {
   phone: string;
+  phoneDisplay: string;
   whatsapp: string;
   email: string;
+  facebook: string;
+  instagram: string;
 };
 
 const house = { area: 100, bedrooms: 3, bathrooms: 2, toilets: 2 };
@@ -139,7 +142,14 @@ export const domain = {
     arrival: "Samedi à partir de 16 h",
     departure: "Samedi avant 10 h",
   },
-  contact: { phone: "", whatsapp: "", email: "" } satisfies ContactDetails,
+  contact: {
+    phone: "+33783586312",
+    phoneDisplay: "07.83.58.63.12",
+    whatsapp: "",
+    email: "domaine.locarmalhon24@gmail.com",
+    facebook: "https://www.facebook.com/share/1EEQ8N3NnE/?mibextid=wwXIfr",
+    instagram: "https://www.instagram.com/domaine.locarmalhon?dlrf=YjJ5dzYzaDNiZWJo&utm_source=qr",
+  } satisfies ContactDetails,
   seo: {
     title: `${name} | Gîte à ${town}`,
     description: `Découvrez le ${name}, une maison entièrement rénovée avec piscine et grand jardin à ${town}, en Dordogne.`,

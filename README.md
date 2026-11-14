@@ -70,13 +70,13 @@ Ce chemin est un exemple technique, aucun fichier photo de maison n’est encore
 
 ## Contacts
 
-Renseigner `domain.contact.phone`, `whatsapp` et `email`. Utiliser le format international pour les numéros (avec indicatif pays). Les liens `tel:`, WhatsApp et `mailto:` apparaissent uniquement pour les champs non vides. Sans coordonnées, un message d’attente est affiché. Aucun faux bouton d’envoi.
+Les coordonnées sont centralisées dans `domain.contact` : `phone` au format international pour appeler, `phoneDisplay` pour le numéro affiché, `email`, `facebook`, `instagram` et `whatsapp` lorsqu’il sera confirmé. Les valeurs fournies le 14 novembre 2026 sont intégrées avec les icônes téléphone, Gmail, Facebook et Instagram. Les liens sociaux s’ouvrent dans un nouvel onglet annoncé aux lecteurs d’écran. Les SVG de marque proviennent de [Simple Icons](https://github.com/simple-icons/simple-icons), sous CC0, et sont intégrés localement sans dépendance ni requête tierce au chargement. Les liens ne sont affichés que lorsque leur coordonnée est renseignée.
 
 Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni carte embarquée.
 
 ## Informations encore attendues
 
-- Téléphone, WhatsApp et e-mail.
+- Numéro WhatsApp, s’il doit être proposé.
 - Photos définitives et descriptions alternatives.
 - Tarifs, capacité maximale officielle et politique d’annulation.
 - Règles concernant les animaux, Wi-Fi et parking.
