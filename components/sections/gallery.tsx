@@ -3,7 +3,9 @@ import { DomainPhoto } from "@/components/domain-photo";
 import { SectionHeading } from "@/components/section-heading";
 
 export function Gallery() {
-  const waitingForPhotos = !gallery.some((photo) => photo.src && photo.alt);
+  const availablePhotos = gallery.filter((photo) => photo.src && photo.alt);
+  const waitingForPhotos = availablePhotos.length === 0;
+  const displayedPhotos = waitingForPhotos ? gallery : availablePhotos;
   return (
     <section
       id="galerie"
@@ -21,15 +23,17 @@ export function Gallery() {
       <p className="section-intro">
         {waitingForPhotos
           ? "Les photographies du domaine seront bientôt disponibles. En attendant, découvrez les espaces qui seront présentés ici."
-          : "Découvrez les espaces de la maison et les extérieurs du domaine en images."}
+          : "Découvrez le domaine au fil des photographies partagées par le propriétaire."}
       </p>
-      <div className="gallery-grid">
-        {gallery.map((photo) => (
+      <div className={`gallery-grid ${waitingForPhotos ? "" : "has-photos"}`}>
+        {displayedPhotos.map((photo) => (
           <DomainPhoto
             key={photo.id}
             photo={photo}
             variant="gallery"
-            sizes="(max-width: 767px) calc((100vw - 56px) / 2), (max-width: 1199px) calc((100vw - 88px) / 4), 275px"
+            sizes={waitingForPhotos
+              ? "(max-width: 767px) calc((100vw - 56px) / 2), (max-width: 1199px) calc((100vw - 88px) / 4), 275px"
+              : "(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) calc((100vw - 56px) / 2), (max-width: 1199px) calc((100vw - 72px) / 3), 376px"}
           />
         ))}
       </div>

@@ -211,9 +211,9 @@ export function LegalNotice() {
           </LegalCard>
           <LegalCard section={sections[3]}>
             <p>
-              Les photographies définitives du domaine ne sont pas encore
-              disponibles. Les emplacements prévus pour les accueillir sont
-              identifiés sur le site.
+              Des photographies du jardin fournies par le propriétaire sont
+              présentées sur le site. Les espaces dont les photographies sont
+              encore attendues restent identifiés par un emplacement temporaire.
             </p>
             <ul className={styles.list}>
               <li>
