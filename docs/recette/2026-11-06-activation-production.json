@@ -1,0 +1,142 @@
+{
+  "recorded_at": "2026-11-06T16:03:56.108Z",
+  "branch": "fix/activation-espace-equipe-production",
+  "source_main_commit": "31cc4df77fca9d4468e6c3be9d1288b5ee28f086",
+  "previous_fix_commit": "5b9db5525bf0e5c2e7bcf739833c7ffd17fb6cde",
+  "production_configuration": {
+    "source": "owner_statement_not_vercel_api",
+    "supabase_project_ref": "jijjjgsfdbrkvqvhyjwr",
+    "project_previously_designated": "development",
+    "production_database_designation_pending": true,
+    "team_inspections_enabled": "absent_or_false",
+    "vercel_configuration_modified": false
+  },
+  "read_only_current_project": {
+    "at": "2026-11-06T15:51:20.576Z",
+    "project_ref": "jijjjgsfdbrkvqvhyjwr",
+    "mode": "read-only-current-development-project",
+    "business_mutations": 0,
+    "metrics": [
+      {
+        "path": "/auth/v1/token",
+        "method": "POST",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 1338.3,
+        "category": "success"
+      },
+      {
+        "path": "/auth/v1/user",
+        "method": "GET",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 267.8,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/team_members",
+        "method": "GET",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 984.6,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_templates",
+        "method": "GET",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 679.8,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "http": 200,
+        "sqlstate": null,
+        "elapsed_ms": 290,
+        "category": "success"
+      },
+      {
+        "path": "/rest/v1/inspection_dossiers",
+        "method": "GET",
+        "http": 401,
+        "sqlstate": "42501",
+        "elapsed_ms": 623.5,
+        "category": "sql-or-postgrest"
+      },
+      {
+        "path": "/auth/v1/logout",
+        "method": "POST",
+        "http": 204,
+        "sqlstate": null,
+        "elapsed_ms": 309.6,
+        "category": "success"
+      }
+    ],
+    "success": true,
+    "auth_fixture": "AGENT_A",
+    "identity_verified": true,
+    "member": {
+      "role": "agent",
+      "active": true
+    },
+    "template_matches_reference": true,
+    "dossier_columns_readable_without_records": true,
+    "anonymous_dossiers": {
+      "http": 401,
+      "sqlstate": "42501"
+    },
+    "fixture_local_logout_confirmed": true
+  },
+  "local_validation": {
+    "node": "22.23.4",
+    "next": "16.4.5",
+    "lint": "passed",
+    "typegen": "passed",
+    "typescript": "passed",
+    "build": "passed_turbopack",
+    "auth_policy_tests": 27,
+    "persistence_tests": 10,
+    "request_body_tests": 4,
+    "target_guard_tests": 3,
+    "postgres_pglite_checks": 54,
+    "public_comparison": {
+      "baselineRoot": "/workspace/site-gites-activation-baseline",
+      "pixelPairs": 6,
+      "contentMetadataLinks": "identical",
+      "responsiveChecks": 9,
+      "keyboardMenuAnchors": "passed",
+      "pageErrors": [],
+      "intentionalExclusion": null
+    },
+    "browser_persistence": {
+      "passed": true,
+      "transport": "intercepted",
+      "coverage": [
+        "save",
+        "reload",
+        "conflict",
+        "preserved_inputs",
+        "reset_without_deletion",
+        "print",
+        "json_export"
+      ]
+    },
+    "http_auth_checks": 29,
+    "http_dossier_checks": 17,
+    "http_server_flag": "true",
+    "production_opt_in_unit_test": "passed_true_then_false_then_absent",
+    "smoke_script_syntax": "passed",
+    "smoke_script_default_guard": "refused_before_remote_auth"
+  },
+  "cloud_dossier_writes": 0,
+  "production_save_test": {
+    "executed": false,
+    "reason": "requires_designated_production_database_and_explicit_synthetic_write_authorization"
+  },
+  "cloud_pt409_behavior_verified": false,
+  "cloud_function_definitions_verified": false,
+  "main_modified": false,
+  "final_deployment_triggered": false
+}

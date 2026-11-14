@@ -86,6 +86,15 @@ Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni ca
 
 ## Avant publication
 
+La préparation actuelle de livraison client est décrite dans
+[ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md](docs/ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md).
+Le module est fermé par défaut ; l’activation explicite est désormais possible
+en Production avec les contrôles Auth/RLS conservés. Le propriétaire a désigné
+`jijjjgsfdbrkvqvhyjwr` comme base de production ; le contrôle unique autorisé de
+sauvegarde, PT409 et nettoyage Cloud a réussi. Ce projet cesse d’être utilisé
+pour le développement. La fusion, l’ouverture et le déploiement restent à
+autoriser. Les sections de phases ci-dessous conservent l’historique du projet.
+
 Pour la livraison Vercel avec les états des lieux fermés et leur recette réelle
 reportée, suivre [le guide de déploiement contrôlé](docs/DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md).
 La PR reste en brouillon ; aucune fusion, promotion ou ouverture du module automatique.

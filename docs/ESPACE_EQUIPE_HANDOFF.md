@@ -1,5 +1,12 @@
 # Domaine Lo Carmalhon — document de reprise
 
+Actualisation : la préparation d’activation finale remplace le verrou permanent
+Production par le drapeau explicite, fermé par défaut, tout en conservant
+Auth, membre actif, permissions et RLS. Suivre désormais
+[ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md](ACTIVATION_PRODUCTION_ESPACE_EQUIPE.md)
+pour la livraison client. Aucun déploiement final n’est autorisé par ce document.
+Les rapports de phases conservent leurs constats historiques.
+
 La préparation ultérieure de Vercel est décrite dans
 [DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md](DEPLOIEMENT_VERCEL_ESPACE_EQUIPE.md).
 À la demande du propriétaire, elle permet de préparer l’intégration et une PR
@@ -98,7 +105,7 @@ docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé publishable du même projet | Aucun JWT/service_role/clé secrète à cet emplacement |
 | `TEAM_APP_ORIGIN` | Origine de confiance de la récupération | Origine seule, HTTPS en Preview/Production ; HTTP accepté seulement sur loopback local |
 | `TEAM_INSPECTIONS_ENABLED` | Disponibilité applicative | Absente ou `false` maintenant ; `true` uniquement lors d’une activation future autorisée |
-| `VERCEL_ENV` | Contexte Vercel fourni par la plateforme | Ne pas le falsifier ; la valeur `production` ferme actuellement le module même avec le drapeau actif |
+| `VERCEL_ENV` | Contexte Vercel fourni par la plateforme | Ne pas le falsifier ; l’ouverture Production dépend désormais du drapeau et des contrôles d’accès, pas d’un refus permanent de ce contexte |
 | `NODE_ENV` | Contexte Next/Node | Géré par les commandes Next ; conditionne notamment le cookie Secure |
 
 Ne configurer aucun secret Supabase, mot de passe de base, SMTP ou `service_role`
@@ -486,12 +493,13 @@ la délivrance SMTP réelle avant production ; une réponse générique réussie
 l’action ne prouve pas l’envoi. [Flux mot de passe](https://supabase.com/docs/guides/auth/passwords)
 et [redirections Supabase](https://supabase.com/docs/guides/auth/redirect-urls).
 
-### F. Ouverture de la seule recette applicative — décision future
+### F. Activation applicative contrôlée
 
-Après réussite documentée de A à C et autorisation du propriétaire, activer le
-drapeau **uniquement en Development/Preview**, puis redémarrer/reconstruire le
-déploiement de recette. Ce changement n’est pas réalisé pendant la phase 5.
-La valeur `true` ne contourne ni Auth ni RLS ; en production le verrou demeure.
+Après validation de la base explicitement destinée à l’environnement et
+autorisation du propriétaire, activer le drapeau puis créer un déploiement qui
+reçoit cette configuration. La préparation finale n’impose pas de nouvelle
+Preview. Le premier déploiement de livraison doit rester fermé avant l’ouverture
+autorisée. La valeur `true` ne contourne ni configuration, ni Auth, ni RLS.
 
 ### G. Formulaire, stockage et concurrence — indispensables
 
@@ -614,11 +622,11 @@ doit servir de sauvegarde durable. Choisir une région cohérente avec la base.
    remplacer le UUID placeholder d’une copie privée de `bootstrap-admin.sql`,
    examiner puis exécuter une seule fois après autorisation. Le script refuse un
    second bootstrap si un admin existe. Garder inscriptions publiques désactivées.
-8. **Décision d’activation** : le verrou actuel rend l’ouverture de production
-   impossible avec la seule variable. Préparer une modification distincte, revue
-   et testée, qui permet le déploiement de production tout en gardant le drapeau
-   fermé par défaut. **Ne pas retirer le verrou dans la phase 5.** Le premier
-   déploiement prévu reste fermé ; l’activation nécessite une décision ultérieure.
+8. **Décision d’activation** : la modification finale autorise le drapeau explicite
+   en Production, en conservant les contrôles serveur et RLS et la fermeture par
+   défaut. Vérifier la base destinée à la production et le test synthétique
+   autorisé avant l’ouverture. Aucun déploiement final automatique ; suivre le
+   rapport d’activation pour la décision du propriétaire.
 9. **Pull Request vers `main`** : préparer alors seulement la PR, avec preuve de
    recette, diff sans routes temporaires, audit, tests, revue et plan de retour.
    La fusion est une décision distincte ; aucune PR/fusion de ce type dans cette mission.
