@@ -51,8 +51,9 @@ remonter le composant avec une nouvelle `key` ou utiliser le handle typé
 complète, indépendante de l’état interne. Les dates et le nombre de voyageurs
 restent des chaînes ; les brouillons incomplets sont autorisés.
 
-Le portage conserve tous les textes et libellés de référence, y compris les
-mentions de maquette et les cinq boutons. Deux adaptations provisoires :
+Le portage conserve les textes et libellés de référence, à l’exception du bloc
+de signatures décrit plus bas. Les cinq boutons restent présents. Deux adaptations
+provisoires dans le mode sans stockage :
 
 - « Sauvegarder sur cet appareil » affiche « Sauvegarde indisponible : aucun
   stockage n’est connecté. » ; aucun `localStorage` n’est écrit.
@@ -64,9 +65,21 @@ En phase 4, l’adaptateur Supabase raccordé révise le libellé de
 sauvegarde pour décrire le stockage partagé. « Effacer » confirme puis
 réinitialise uniquement la mémoire ; aucune suppression persistée n’existe.
 
-Les lignes de signature sont destinées au papier. Les mentions de photos et de
-signatures dans le texte historique de la maquette ne constituent pas une
-implémentation ou une extension du périmètre. L’impression utilise `window.print`.
+Depuis la demande du 14 novembre 2026, les deux lignes de signature sont des
+champs texte : prénom et nom du responsable et du voyageur, saisis séparément
+des informations du séjour. Aucun préremplissage, obligation de signature ou
+statut de finalisation n’est ajouté. Il ne s’agit pas d’une signature certifiée.
+L’impression utilise toujours `window.print`, avec retour à la ligne des noms longs.
+
+Les chaînes facultatives `data["agent-signature"]` et `data["client-signature"]`
+complètent le payload v1. Un ancien dossier sans ces clés reste inchangé jusqu’à
+la saisie ; les valeurs présentes sont validées comme chaînes et conservées
+dans la sauvegarde, le rechargement et l’export. Effacer les réinitialise en mémoire.
+Le propriétaire déclare avoir appliqué manuellement la migration
+`20261114000100_inspection_typed_signatures.sql` le 14 novembre 2026. Ne pas la
+rejouer automatiquement ; la sauvegarde distante reste à vérifier. Elle ne réécrit
+aucun dossier et ne change pas les droits, RLS ou révisions.
+Voir `docs/ESPACE_EQUIPE_SIGNATURES_SAISIES.md`.
 
 ## Tests et suite
 
@@ -78,9 +91,9 @@ dans le build livré. Aucun écran de démonstration n’est déployé.
 Pour les étapes suivantes :
 
 - Préserver le payload JSON version 1, avec entrée et sortie dans un même dossier.
-- Garder les signatures papier existantes, sans signature électronique ni photo.
+- Conserver les signatures saisies au clavier, sans certification ni photo.
 - Conserver l’impression native, sans ajouter de générateur PDF serveur.
-- N’ajouter ni dashboard, ni finalisation, ni autosauvegarde ou champ nouveau.
+- N’ajouter ni dashboard, ni finalisation, ni autosauvegarde ou autre champ nouveau.
 - Limiter les adaptations à l’authentification, au chargement et à la persistance
   sécurisés, ainsi qu’aux messages exacts remplaçant les mentions de démonstration.
 - Valider les permissions opérationnelles et la portée d’« Effacer » avant les

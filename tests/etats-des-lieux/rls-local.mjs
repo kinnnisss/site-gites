@@ -44,7 +44,7 @@ try {
   await db.exec('reset role');
   const privileges = () => db.query(`select n.nspname,p.proname,p.proacl,p.proowner,p.prosecdef,p.provolatile,p.proconfig
     from pg_proc p join pg_namespace n on n.oid=p.pronamespace
-    where p.proname in ('stamp_inspection_dossier','save_inspection_dossier','delete_inspection_dossier') order by p.proname`);
+    where p.proname in ('stamp_inspection_dossier','save_inspection_dossier','delete_inspection_dossier','inspection_payload_valid') order by p.proname`);
   const policies = () => db.query('select polname,polcmd,polroles,polqual::text,polwithcheck::text from pg_policy order by polname');
   const tablePrivileges = () => db.query(`select c.relname,c.relacl,c.relrowsecurity,c.relforcerowsecurity,a.attname,a.attacl
     from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_attribute a on a.attrelid=c.oid
@@ -57,6 +57,7 @@ try {
   assert.equal(legacyVerification.length, 3);
   assert.ok(legacyVerification.every(r => r.function_exists && !r.body_matches_versioned_pt409 && !r.has_pt409 && r.has_legacy_40001)); checks++;
   await db.exec(await readFile('supabase/migrations/20261106000100_inspection_business_conflicts.sql', 'utf8'));
+  await db.exec(await readFile('supabase/migrations/20261114000100_inspection_typed_signatures.sql', 'utf8'));
   const fixedVerification = (await db.exec(verificationSql))[0].rows;
   assert.equal(fixedVerification.length, 3);
   assert.ok(fixedVerification.every(r => r.function_exists && r.body_matches_versioned_pt409 && r.has_pt409 && !r.has_legacy_40001 && !r.security_definer)); checks++;
@@ -65,13 +66,23 @@ try {
   assert.deepEqual((await policies()).rows, beforePolicies); checks++;
   assert.deepEqual((await tablePrivileges()).rows, beforeTablePrivileges); checks++;
   await actor(admin); await remove(1);
+  // Optional signatures allow legacy, empty and partially signed drafts.
+  for (const signatures of [{}, { 'agent-signature': '' }, { 'client-signature': 'Voyageur test' },
+    { 'agent-signature': '  Élodie Test  ', 'client-signature': 'Voyageur test <texte> & accents' }]) {
+    const p = { ...payload, data: { ...payload.data, ...signatures } };
+    assert.deepEqual(parsePayload(p), p);
+    assert.equal((await db.query('select public.inspection_payload_valid($1::jsonb) as valid', [JSON.stringify(p)])).rows[0].valid, true); checks++;
+  }
   // SQL and TypeScript must reject the same malformed payloads, preserving drafts.
   const invalid = [null, [], {}, { ...payload, extra: true }, { ...payload, version: 2 },
     { ...payload, data: { ...payload.data, guests: 6 } },
     { ...payload, checks: { ...payload.checks, entree: [] } },
     { ...payload, checks: { ...payload.checks, sortie: Array(13).fill('yes') } },
     { ...payload, steps: { ...payload.steps, sortie: Array(7).fill('false') } },
-    { ...payload, accepted: null }];
+    { ...payload, accepted: null },
+    { ...payload, data: { ...payload.data, signature: 'Unexpected' } },
+    ...['agent-signature', 'client-signature'].flatMap(field => [null, 123, false, {}, []].map(value =>
+      ({ ...payload, data: { ...payload.data, [field]: value } })))];
   for (const p of invalid) {
     assert.throws(() => parsePayload(p));
     assert.equal((await db.query('select public.inspection_payload_valid($1::jsonb) as valid', [JSON.stringify(p)])).rows[0].valid, false); checks++;
@@ -93,6 +104,7 @@ try {
   await actor(agentB); // Everyone can edit another agent's dossier.
   assert.equal((await db.query('select * from public.inspection_dossiers')).rows.length, 1); checks++;
   const changed = structuredClone(payload); changed.data.reference = 'B';
+  changed.data['agent-signature'] = '  Élodie Test  '; changed.data['client-signature'] = 'Voyageur test';
   assert.equal((await save(1, changed)).rows[0].revision, 2); checks++;
   row = (await db.query('select * from public.inspection_dossiers')).rows[0];
   assert.equal(row.created_by, agentA); assert.equal(row.updated_by, agentB);
@@ -116,6 +128,7 @@ try {
   assert.equal((await db.query('select * from public.inspection_dossiers')).rows.length, 1); checks++;
   assert.equal((await db.query('delete from public.inspection_dossiers returning id')).rows.length, 0); checks++;
   await denied(save(3, { ...payload, accepted: 'true' }), '23514');
+  await denied(save(3, { ...payload, data: { ...payload.data, 'client-signature': null } }), '23514');
   assert.equal((await save(3)).rows[0].revision, 4); checks++;
   await denied(remove(4, agentA), '22023'); await denied(remove(3), 'PT409');
   assert.equal((await remove(4)).rows[0].delete_inspection_dossier, dossierId); checks++;

@@ -1,5 +1,31 @@
 # Comparaison locale de fidélité
 
+## Signatures saisies — 14 novembre 2026
+
+`persistence.test.mjs`, `rls-local.mjs` et `persistence-browser.mjs` couvrent les
+deux champs texte : anciens dossiers, validation TS/SQL, sauvegarde/rechargement,
+export, conflits, erreurs, Effacer, clavier, responsive et noms longs à l’impression.
+Le SQL est exécuté uniquement dans PGlite ; le transport navigateur est intercepté.
+Ces tests ne valident pas Supabase distant. Le propriétaire déclare avoir appliqué
+manuellement la migration de signatures le 14 novembre 2026 ; ne pas la rejouer
+automatiquement. La recette réelle de sauvegarde reste à confirmer.
+
+Le HTML historique reste intact. Pour vérifier le reste du formulaire, lancer
+`fidelity.mjs --allow-typed-signatures` : seules la zone de signature et son
+explication sont masquées dans les deux vues comparées. Sans cette option, les
+différences demandées avec les anciennes lignes papier sont attendues.
+L’option `--screens-only` compare exactement les 34 captures PNG sans Pillow ni
+Poppler ; les PDF A4 sont produits mais leurs pages ne sont pas comparées.
+Le banc accepte les fins de ligne CRLF de Git Windows pour vérifier l’empreinte
+canonique LF, sans modifier la référence.
+
+Sous Windows, utiliser `npm.cmd` / `npx.cmd` si PowerShell bloque les scripts.
+Les deux bancs navigateur arrêtent uniquement leur processus Next et retirent
+leur route temporaire avant la compilation finale. Les outils de test restent
+hors des dépendances du projet ; renseigner `PLAYWRIGHT_MODULE_PATH`,
+`CHROMIUM_PATH` et `PGLITE_MODULE_PATH` avec leurs chemins locaux.
+`PHASE4_ARTIFACTS` permet de conserver les captures de signatures et le PDF.
+
 La finalisation et la recette navigateur Preview sont décrites dans
 `docs/FINALISATION_ESPACE_EQUIPE.md` et `docs/GUIDE_TESTS_MANUELS_ESPACE_EQUIPE.md`.
 Le propriétaire déclare avoir appliqué manuellement PT409. Le script
@@ -78,7 +104,7 @@ Lancer les suites Next dev successivement, puis `npx next typegen`, TypeScript e
 le build sans routes temporaires. Les outils restent hors des dépendances de l’application.
 
 ```bash
-node tests/etats-des-lieux/fidelity.mjs
+node tests/etats-des-lieux/fidelity.mjs --allow-typed-signatures
 ```
 
 Prérequis déjà présents dans l’environnement cloud utilisé : Node.js 22,

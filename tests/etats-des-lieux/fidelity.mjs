@@ -4,8 +4,8 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { readFile, writeFile, mkdir, rm, access } from 'node:fs/promises';
-import { spawn, spawnSync } from 'node:child_process';
-import { resolve } from 'node:path';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
+import { resolve, sep } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
 if (process.env.NODE_ENV === 'production') throw new Error('Local tests only.');
@@ -15,7 +15,12 @@ const root = resolve(import.meta.dirname, '../..');
 const artifacts = resolve(process.env.PHASE2_ARTIFACTS || '/tmp/site-gites-phase2', `run-${Date.now()}`);
 console.log('Artifacts: '+artifacts);
 const route = resolve(root, 'app/phase2-local-test');
-const reference = await readFile(resolve(root, 'docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html'));
+const devCache = resolve(root, '.next/dev');
+for (const target of [route, devCache]) assert.ok(target.startsWith(root + sep), 'Cleanup must remain in the workspace');
+const allowTypedSignatures = process.argv.includes('--allow-typed-signatures');
+const screensOnly = process.argv.includes('--screens-only');
+// Git checks out CRLF on Windows; compare the canonical LF reference hash.
+const reference = Buffer.from((await readFile(resolve(root, 'docs/references/Domaine_Lo_Carmalhon_Demo_Etat_des_lieux.html'), 'utf8')).replace(/\r\n/g, '\n'));
 assert.equal(createHash('sha256').update(reference).digest('hex'), '9b368972d39ac663deb4ae88a9c29c767e956032b8603ac061dae875e30b10f0');
 await mkdir(artifacts, { recursive: true });
 await access(route).then(() => { throw new Error('Temporary route already exists; refusing to overwrite.'); }, () => {});
@@ -42,14 +47,14 @@ try {
   await mkdir(route); await writeFile(resolve(route, 'page.tsx'), harness);
   server = createServer((req,res)=>{res.setHeader('Content-Type','text/html; charset=utf-8');res.end(reference)});
   await new Promise((yes,no)=>{server.once('error',no);server.listen(3101,'127.0.0.1',yes)});
-  child=spawn(process.execPath,[resolve(root,'node_modules/next/dist/bin/next'),'dev','--hostname','127.0.0.1','--port','3100'],{cwd:root,detached:true,stdio:['ignore','pipe','pipe']});
+  child=spawn(process.execPath,[resolve(root,'node_modules/next/dist/bin/next'),'dev','--hostname','127.0.0.1','--port','3100'],{cwd:root,detached:process.platform!=='win32',windowsHide:true,stdio:['ignore','pipe','pipe']});
   let logs=''; for(const stream of [child.stdout,child.stderr])stream.on('data',d=>{logs+=d;});
   for(let i=0;;i++){
     if(child.exitCode!==null)throw new Error(logs);
     try {const r=await fetch('http://127.0.0.1:3100/phase2-local-test');if(r.ok)break;}catch{}
     if(i===120)throw new Error('Local dev server not ready: '+logs);await delay(500);
   }
-  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-gpu']});
   const context=await browser.newContext({viewport:{width:1080,height:900},deviceScaleFactor:1,locale:'fr-FR',colorScheme:'light'});
   const original=await context.newPage(), react=await context.newPage();
   for(const page of [original,react])page.on('pageerror',e=>failures.push(e.message));
@@ -57,6 +62,18 @@ try {
   await react.goto('http://127.0.0.1:3100/phase2-local-test',{waitUntil:'networkidle'});
   await react.waitForFunction(()=>!!window.inspectionTest);
   await react.addStyleTag({content:'nextjs-portal { display:none !important; }'});
+  if (allowTypedSignatures) {
+    // Only the explicitly changed signature block and its explanation are excluded.
+    // Their real rendering and interactions are covered by persistence-browser.mjs.
+    for (const page of [original, react]) {
+      // Stable class selectors also cover a later remount of the React form.
+      const selectors = await page.locator('section').last().evaluate(section =>
+        [section.children[2], section.querySelector(':scope > p')]
+          .map(e => '.' + CSS.escape(e.className)).join(','));
+      await page.addStyleTag({content:selectors + ' { display:none !important; }'});
+    }
+    console.log('Comparing the reference outside the requested typed signatures and their explanation.');
+  }
   const readOriginal=()=>original.evaluate(()=>window.payload());
   const readReact=()=>react.evaluate(()=>window.inspectionTest.getPayload());
   const initial=await readOriginal();assert.deepEqual(await readReact(),initial);
@@ -75,7 +92,7 @@ try {
         await page.screenshot({path:resolve(artifacts,`${label}-${width}-${state}.png`),fullPage:true,animations:'disabled'});
       }
       await compare();
-      const snapshot=page=>page.evaluate(()=>({text:document.querySelector('main').innerText.replace(/\s+/g,' ').trim(),fields:[...document.querySelectorAll('input:not([type=checkbox]),textarea')].map(e=>[e.id,e.value,e.getAttribute('placeholder')]),labels:[...document.querySelectorAll('button[aria-label]')].map(e=>[e.getAttribute('aria-label'),e.getAttribute('aria-pressed')]),logo:document.querySelector('header img').getAttribute('src')}));
+      const snapshot=page=>page.evaluate(excludeSignatures=>({text:document.querySelector('main').innerText.replace(/\s+/g,' ').trim(),fields:[...document.querySelectorAll('input:not([type=checkbox]),textarea')].filter(e=>!excludeSignatures || !['agent-signature','client-signature'].includes(e.id)).map(e=>[e.id,e.value,e.getAttribute('placeholder')]),labels:[...document.querySelectorAll('button[aria-label]')].map(e=>[e.getAttribute('aria-label'),e.getAttribute('aria-pressed')]),logo:document.querySelector('header img').getAttribute('src')}),allowTypedSignatures);
       assert.deepEqual(await snapshot(react),await snapshot(original));
     }
     console.log(`Visual fixtures captured: ${width}px, 4 states`);
@@ -167,15 +184,27 @@ try {
     }
   }
   assert.deepEqual(failures,[]);
-  const comparison=spawnSync('python',[resolve(root,'tests/etats-des-lieux/compare-images.py'),artifacts],{stdio:'inherit'});
-  assert.equal(comparison.status,0,'Unexplained visual differences');
-  await writeFile(resolve(artifacts,'results.json'),JSON.stringify({widths:[320,375,500,501,780,781,1080,1440],visualPairs:32,printPairs:2,functional:'passed',referenceSHA256:createHash('sha256').update(reference).digest('hex')},null,2));
+  if (screensOnly) {
+    const names = [320,375,500,501,780,781,1080,1440].flatMap(width =>
+      ['initial-entree','initial-sortie','filled-entree','filled-sortie'].map(state => `${width}-${state}.png`));
+    names.push('print-entree.png', 'print-sortie.png');
+    for (const name of names) assert.ok((await readFile(resolve(artifacts, 'html-' + name))).equals(await readFile(resolve(artifacts, 'react-' + name))), `Capture differs: ${name}`);
+    console.log('34/34 PNG captures identical. A4 PDFs generated but NOT raster-compared (--screens-only).');
+  } else {
+    const comparison=spawnSync('python',[resolve(root,'tests/etats-des-lieux/compare-images.py'),artifacts],{stdio:'inherit'});
+    assert.equal(comparison.status,0,'Unexplained visual differences');
+  }
+  await writeFile(resolve(artifacts,'results.json'),JSON.stringify({widths:[320,375,500,501,780,781,1080,1440],visualPairs:32,printPairs:2,functional:'passed',allowTypedSignatures,pdfRasterCompared:!screensOnly,referenceSHA256:createHash('sha256').update(reference).digest('hex')},null,2));
   console.log('Payload, interactions, all safety cases, procedures, JSON, reset, unavailable storage and print: PASS');
 } finally {
   if(browser)await browser.close();
-  if(child?.pid){try{process.kill(-child.pid,'SIGTERM')}catch{}await new Promise(yes=>{if(child.exitCode!==null)return yes();child.once('exit',yes)})}
+  if(child?.pid && child.exitCode===null){
+    if(process.platform==='win32')execFileSync('taskkill',['/pid',String(child.pid),'/T','/F'],{windowsHide:true,stdio:'ignore'});
+    else process.kill(-child.pid,'SIGTERM');
+    await new Promise(yes=>{if(child.exitCode!==null)return yes();child.once('exit',yes)});
+  }
   if(server)await new Promise(yes=>server.close(yes));
   await rm(route,{recursive:true,force:true});
   // Discard only generated dev types, which refer to the temporary route.
-  await rm(resolve(root,'.next/dev'),{recursive:true,force:true});
+  await rm(devCache,{recursive:true,force:true});
 }

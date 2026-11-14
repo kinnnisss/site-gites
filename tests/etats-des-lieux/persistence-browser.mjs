@@ -2,8 +2,8 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { access, mkdir, rm, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import { spawn } from 'node:child_process';
+import { resolve, sep } from 'node:path';
+import { spawn, execFileSync } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { loadTs } from './load-typescript.mjs';
 const require = createRequire(import.meta.url);
@@ -13,6 +13,9 @@ const { TEMPLATE_ID } = loadTs('modules/etats-des-lieux/persistence.ts');
 if (process.env.NODE_ENV === 'production') throw new Error('Local tests only');
 const root = resolve(import.meta.dirname, '../..');
 const route = resolve(root, 'app/phase4-local-test');
+const devCache = resolve(root, '.next/dev');
+for (const target of [route, devCache]) assert.ok(target.startsWith(root + sep), 'Cleanup must remain in the workspace');
+const artifacts = process.env.PHASE4_ARTIFACTS;
 await access(route).then(() => { throw new Error('Temporary route already exists'); }, () => {});
 const fixture = createInitialPayload();
 fixture.data = { reference: 'LC-TEST', client: 'Test éàç', arriving: '2026-11-05', leaving: '2026-11-08', guests: '', agent: 'Test',
@@ -35,7 +38,7 @@ export default function LocalTest(){
  useEffect(()=>{window.phase4Test={getPayload:()=>ref.current!.getPayload(),replacePayload:p=>ref.current!.replacePayload(p)}},[]);
  return <InspectionForm ref={ref} storage={storage}/>;
 }`);
-  child = spawn(process.execPath, [resolve(root, 'node_modules/next/dist/bin/next'), 'dev', '--hostname', '127.0.0.1', '--port', '3104'], { cwd: root, detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  child = spawn(process.execPath, [resolve(root, 'node_modules/next/dist/bin/next'), 'dev', '--hostname', '127.0.0.1', '--port', '3104'], { cwd: root, detached: process.platform !== 'win32', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
   let logs = ''; for (const stream of [child.stdout, child.stderr]) stream.on('data', d => { logs += d; });
   for (let i = 0;; i++) {
     if (child.exitCode !== null) throw new Error(logs);
@@ -68,6 +71,14 @@ export default function LocalTest(){
   const feedback = text => page.locator('#feedback').filter({ hasText: text }).waitFor();
   await page.locator('#load').click(); await feedback('Aucun brouillon trouvé'); assert.equal(requests.length, 0);
   await page.evaluate(p => window.phase4Test.replacePayload(p), fixture);
+  assert.equal(await page.getByLabel('Signature du responsable', { exact: true }).inputValue(), '');
+  assert.equal(await page.getByLabel('Signature du voyageur', { exact: true }).inputValue(), '');
+  await page.getByLabel('Signature du responsable', { exact: true }).fill('Élodie Responsable test');
+  await page.keyboard.press('Tab');
+  assert.equal(await page.locator('#client-signature').evaluate(e => e === document.activeElement), true);
+  await page.keyboard.insertText('Camille Voyageur test');
+  fixture.data['agent-signature'] = 'Élodie Responsable test'; fixture.data['client-signature'] = 'Camille Voyageur test';
+  assert.deepEqual(await payload(), fixture);
   assert.equal(requests.length, 0); // Filling does not autosave.
   mode = 'defer'; await page.locator('#save').evaluate(e => { e.click(); e.click(); });
   await page.waitForFunction(() => document.querySelector('#save').disabled);
@@ -75,10 +86,13 @@ export default function LocalTest(){
   assert.ok(pendingRoute); assert.equal(requests.length, 1);
   assert.match(await page.locator('#feedback').textContent(), /en cours/);
   await page.locator('#client').fill('Saisie pendant la sauvegarde');
+  await page.locator('#client-signature').fill('Signature modifiée pendant la sauvegarde');
   const request = requests[0]; id = request.body.id; saved = request.body.payload; revision = 1;
   await pendingRoute.fulfill({ status: 201, json: receipt() }); mode = 'normal';
   await feedback('restent à sauvegarder');
   assert.equal(await page.locator('#client').inputValue(), 'Saisie pendant la sauvegarde');
+  assert.equal(await page.locator('#client-signature').inputValue(), 'Signature modifiée pendant la sauvegarde');
+  assert.equal(saved.data['client-signature'], fixture.data['client-signature']);
   assert.ok(page.url().endsWith('/equipe/etats-des-lieux/' + id));
   await page.locator('#save').click(); await feedback('révision 2');
   assert.equal(requests.at(-1).body.revision, 1); assert.deepEqual(saved, await payload());
@@ -94,36 +108,66 @@ export default function LocalTest(){
   assert.deepEqual(JSON.parse(json), local); assert.equal(json, JSON.stringify(local, null, 2));
   page.once('dialog', d => d.accept()); await page.locator('#load').click(); await feedback('restauré');
   assert.deepEqual(await payload(), saved);
+  assert.equal(await page.locator('#agent-signature').inputValue(), saved.data['agent-signature']);
+  assert.equal(await page.locator('#client-signature').inputValue(), saved.data['client-signature']);
   await page.locator('#save').click(); await feedback('révision 4'); assert.equal(requests.at(-1).body.revision, 3);
   const count = requests.length;
   page.once('dialog', d => d.dismiss()); await page.locator('#reset').click(); assert.deepEqual(await payload(), saved);
   page.once('dialog', d => d.accept()); await page.locator('#reset').click(); await feedback('réinitialisé');
   assert.deepEqual(await payload(), createInitialPayload()); assert.equal(requests.length, count);
+  assert.equal(await page.locator('#agent-signature').inputValue(), '');
+  assert.equal(await page.locator('#client-signature').inputValue(), '');
   page.once('dialog', d => d.accept()); await page.locator('#load').click(); await feedback('restauré'); assert.deepEqual(await payload(), saved);
   page.once('dialog', d => d.accept()); await page.locator('#reset').click();
   await page.locator('#save').click(); await feedback('révision 5'); assert.deepEqual(saved, createInitialPayload());
   await page.locator('#client').fill('À conserver');
+  await page.locator('#client-signature').fill('Signature à conserver');
   for (const failure of ['unauthorized', 'offline']) {
     mode = failure; await page.locator('#save').click(); await feedback(failure === 'unauthorized' ? 'Session expirée' : 'Connexion interrompue');
     assert.equal(await page.locator('#client').inputValue(), 'À conserver');
+    assert.equal(await page.locator('#client-signature').inputValue(), 'Signature à conserver');
   }
   await page.evaluate(() => { window.print = () => { document.body.dataset.printed = document.querySelector('#feedback').hidden ? 'yes' : 'status-printed'; }; });
   mode = 'unauthorized'; await page.locator('#print').click(); await feedback('Session expirée');
   assert.equal(await page.locator('body').getAttribute('data-printed'), null);
   mode = 'normal'; await page.locator('#print').click(); await page.waitForFunction(() => document.body.dataset.printed === 'yes');
+  const longSignature = 'Élodie Responsable test avec un nom long ' + 'Composé'.repeat(15);
+  await page.locator('#agent-signature').fill(longSignature);
   await page.emulateMedia({ media: 'print' });
   for (const phase of ['entree', 'sortie']) assert.equal(await page.locator('#phase-' + phase).isVisible(), true);
+  assert.equal(await page.locator('#agent-signature').isVisible(), false);
+  const printedSignature = page.locator('span').filter({ hasText: longSignature });
+  assert.equal(await printedSignature.isVisible(), true);
+  assert.equal(await printedSignature.evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  if (artifacts) {
+    await mkdir(artifacts, { recursive: true });
+    await page.pdf({ path: resolve(artifacts, 'signatures.pdf'), format: 'A4', printBackground: true });
+    await page.locator('section').last().screenshot({ path: resolve(artifacts, 'signatures-print.png') });
+  }
   await page.emulateMedia({ media: 'screen' });
+  assert.equal(await printedSignature.isVisible(), false);
+  await page.locator('#agent-signature').fill('Élodie Responsable test');
   for (const width of [320, 375, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    if (artifacts) await page.locator('section').last().screenshot({ path: resolve(artifacts, `signatures-${width}.png`) });
   }
   assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
   assert.deepEqual(errors, []);
-  console.log('Local browser persistence: confirmed save, pending edits, duplicate clicks, conflict, reload cancellation/acceptance, reset without deletion, unchanged export, session/network failure, print and responsive PASS. API intercepted; Supabase NOT tested.');
+  console.log('Local browser persistence: typed signatures, legacy draft, keyboard, confirmed save, pending edits, duplicate clicks, conflict, reload cancellation/acceptance, reset without deletion, JSON export, session/network failure, print and responsive PASS. API intercepted; Supabase NOT tested.');
+} catch (error) {
+  console.error(error);
+  throw error;
 } finally {
   if (browser) await browser.close();
-  if (child?.pid) { try { process.kill(-child.pid, 'SIGTERM'); } catch {} await new Promise(yes => { if (child.exitCode !== null) return yes(); child.once('exit', yes); }); }
-  await rm(route, { recursive: true, force: true });
-  await rm(resolve(root, '.next/dev'), { recursive: true, force: true });
+  try {
+    if (child?.pid && child.exitCode === null) {
+      if (process.platform === 'win32') execFileSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
+      else process.kill(-child.pid, 'SIGTERM');
+      await new Promise(yes => { if (child.exitCode !== null) return yes(); child.once('exit', yes); });
+    }
+  } finally {
+    await rm(route, { recursive: true, force: true });
+    await rm(devCache, { recursive: true, force: true });
+  }
 }

@@ -44,7 +44,10 @@ export function copyPayload(value: InspectionPayload): InspectionPayload {
     keys.every(k => Object.hasOwn(v, k));
   if (!sameKeys(value, ["version", "data", "checks", "steps", "accepted"]) ||
     value.version !== 1 || typeof value.accepted !== "boolean" ||
-    !sameKeys(value.data, Object.keys(sample.data)) ||
+    !isRecord(value.data) ||
+    !Object.keys(sample.data).every(k => Object.hasOwn(value.data, k)) ||
+    !Object.keys(value.data).every(k => Object.hasOwn(sample.data, k) ||
+      k === "agent-signature" || k === "client-signature") ||
     !Object.values(value.data).every(v => typeof v === "string") ||
     !sameKeys(value.checks, ["entree", "sortie"]) ||
     !sameKeys(value.steps, ["entree", "sortie", "consignes"])) {
@@ -66,9 +69,14 @@ export function copyPayload(value: InspectionPayload): InspectionPayload {
   }
   // jsonb reorders object keys. Restore the original export order on rehydration,
   // preserving all strings and the position of every array element.
+  const { "agent-signature": agentSignature, "client-signature": clientSignature, ...data } = value.data;
   return {
     version: 1,
-    data: { ...sample.data, ...value.data },
+    data: {
+      ...sample.data, ...data,
+      ...(Object.hasOwn(value.data, "agent-signature") ? { "agent-signature": agentSignature } : {}),
+      ...(Object.hasOwn(value.data, "client-signature") ? { "client-signature": clientSignature } : {}),
+    },
     checks: { entree: [...value.checks.entree], sortie: [...value.checks.sortie] },
     steps: { entree: [...value.steps.entree], sortie: [...value.steps.sortie], consignes: [...value.steps.consignes] },
     accepted: value.accepted,
