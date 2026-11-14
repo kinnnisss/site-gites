@@ -18,8 +18,8 @@ export function House() {
           Une maison de {domain.house.area} m² entièrement rénovée
         </SectionHeading>
         <p className="body-copy mt-5">
-          Une grande pièce de vie, une cuisine entièrement équipée et{" "}
-          {domain.house.bedrooms} chambres composent les espaces de la maison.
+          La maison comprend une grande pièce de vie, une cuisine entièrement
+          équipée, {domain.house.sleepingAreas.toLowerCase()}.
         </p>
         <div className="mt-6 space-y-3">
           {domain.houseDetails.map((item, index) => (
