@@ -23,7 +23,7 @@ export function DomainPhoto({
   const loading = hasPhoto && loadedSrc !== photo.src;
   return (
     <figure
-      className={`domain-photo media-${variant} ${hasPhoto ? "has-photo" : "is-placeholder"} ${className}`}
+      className={`domain-photo media-${variant} ${photo.orientation === "portrait" ? "media-portrait" : ""} ${hasPhoto ? "has-photo" : "is-placeholder"} ${className}`}
     >
       <div className="media-frame" aria-busy={loading}>
         {hasPhoto && (
@@ -34,6 +34,7 @@ export function DomainPhoto({
             sizes={sizes}
             preload={variant === "hero"}
             className="object-cover"
+            style={{ objectPosition: photo.objectPosition }}
             onLoad={() => setLoadedSrc(photo.src)}
             onError={() => setFailedSrc(photo.src)}
           />

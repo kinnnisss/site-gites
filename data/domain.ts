@@ -4,6 +4,8 @@ export type DomainPhoto = {
   label: string;
   src: string;
   alt: string;
+  orientation?: "portrait" | "landscape";
+  objectPosition?: string;
 };
 
 export type ContactDetails = {
@@ -15,7 +17,14 @@ export type ContactDetails = {
   instagram: string;
 };
 
-const house = { area: 100, bedrooms: 3, bathrooms: 2, toilets: 2 };
+const house = {
+  area: 100,
+  suites: 1,
+  bedrooms: 2,
+  bathrooms: 2,
+  toilets: 2,
+  sleepingAreas: "Une suite et deux chambres",
+};
 const gardenArea = 10000;
 const number = (value: number): string => value.toLocaleString("fr-FR");
 const name = "Domaine Lo Carmalhon";
@@ -46,10 +55,10 @@ export const domain = {
         "Un intérieur rénové avec une grande pièce de vie et une cuisine équipée.",
     },
     {
-      value: String(house.bedrooms),
-      label: "Chambres",
+      value: `${house.suites} suite`,
+      label: `et ${house.bedrooms} chambres`,
       title: "Les espaces de repos",
-      description: "Trois chambres composent la partie nuit de la maison.",
+      description: `${house.sleepingAreas} composent la partie nuit de la maison.`,
     },
     {
       value: String(house.bathrooms),
@@ -67,7 +76,7 @@ export const domain = {
     },
   ],
   houseFeatures: [
-    `${house.bedrooms} chambres`,
+    house.sleepingAreas,
     `${house.bathrooms} salles de bain`,
     `${house.toilets} toilettes`,
     "Grande pièce de vie",
@@ -83,8 +92,8 @@ export const domain = {
         "Réfrigérateur, congélateur, lave-vaisselle, four et micro-ondes.",
     },
     {
-      title: `${house.bedrooms} chambres`,
-      description: "Les espaces de repos de la maison.",
+      title: house.sleepingAreas,
+      description: "Suite Kyoto, Chambre Double et Chambre Azur.",
     },
     {
       title: `${house.bathrooms} salles de bain & ${house.toilets} toilettes`,
@@ -139,8 +148,8 @@ export const domain = {
   ],
   equestrian: ["Écurie", "2 boxes", "Carrière", "Paddock"],
   schedule: {
-    arrival: "Samedi à partir de 16 h",
-    departure: "Samedi avant 10 h",
+    arrival: "À partir de 16 h",
+    departure: "Avant 10 h",
   },
   contact: {
     phone: "+33783586312",
@@ -160,11 +169,32 @@ export const domain = {
 export const photos = {
   hero: { id: "hero", label: "Le domaine", src: "", alt: "" },
   house: { id: "house", label: "La maison", src: "", alt: "" },
-  bedrooms: { id: "bedrooms", label: "Les chambres", src: "", alt: "" },
+  bedrooms: { id: "bedrooms", label: "La suite et les chambres", src: "", alt: "" },
   living: { id: "living", label: "Les pièces de vie", src: "", alt: "" },
   kitchen: { id: "kitchen", label: "La cuisine", src: "", alt: "" },
   terrace: { id: "terrace", label: "La terrasse", src: "", alt: "" },
-  garden: { id: "garden", label: "Le jardin", src: "", alt: "" },
+  garden: {
+    id: "garden",
+    label: "Le jardin",
+    src: "/images/outdoors/jardin-vue-ensemble.webp",
+    alt: "Vue du jardin arboré, avec une allée courbe et les marches de la terrasse au premier plan.",
+    orientation: "portrait",
+    objectPosition: "50% 75%",
+  },
+  gardenAutumn: {
+    id: "garden-autumn",
+    label: "Les couleurs d’automne",
+    src: "/images/outdoors/jardin-arbre-automne.webp",
+    alt: "Arbre au feuillage doré au milieu de la pelouse, près d’un lampadaire et d’une allée.",
+    orientation: "portrait",
+  },
+  gardenPath: {
+    id: "garden-path",
+    label: "Sous les arbres",
+    src: "/images/outdoors/jardin-allee-arboree.webp",
+    alt: "Soleil filtrant entre les arbres du jardin, au-dessus d’une allée bordée de pelouse.",
+    orientation: "portrait",
+  },
   pool: { id: "pool", label: "La piscine", src: "", alt: "" },
   equestrian: {
     id: "equestrian",
@@ -181,6 +211,8 @@ export const gallery: readonly DomainPhoto[] = [
   photos.kitchen,
   photos.terrace,
   photos.garden,
+  photos.gardenAutumn,
+  photos.gardenPath,
   photos.pool,
   photos.equestrian,
 ];

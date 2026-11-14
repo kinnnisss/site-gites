@@ -37,7 +37,7 @@ export function Hero() {
           </a>
         </div>
         <ul className="hero-features" aria-label="Les espaces du domaine">
-          <li><Icon name="bed" />{domain.house.bedrooms} chambres</li>
+          <li><Icon name="bed" />{domain.house.sleepingAreas}</li>
           <li><Icon name="leaf" />Jardin</li>
           <li><Icon name="water" />Piscine</li>
         </ul>

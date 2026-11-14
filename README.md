@@ -68,6 +68,8 @@ house: {
 
 Ce chemin est un exemple technique, aucun fichier photo de maison n’est encore fourni. Tant que `src` ou `alt` est vide, un emplacement explicite est affiché. Une même entrée alimente sa section et la galerie. Pour ajouter une vue, créer une entrée dans `photos`, puis l’ajouter au tableau `gallery` ; aucun JSX à modifier. La photo principale utilise `photos.hero`.
 
+Les trois photographies du jardin fournies le 14 novembre 2026 sont intégrées dans `public/images/outdoors/`, au format WebP (1086 × 1448 px). La vue d’ensemble alimente la section Extérieurs. La galerie affiche uniquement les vues renseignées dès qu’il y en a ; sinon, elle conserve les emplacements d’attente. `orientation: "portrait"` y préserve le cadrage vertical complet et `objectPosition` permet de régler le cadrage dans les autres emplacements. Les fichiers sont servis localement par `next/image`, sans stockage Supabase ni nouvelle dépendance.
+
 ## Contacts
 
 Les coordonnées sont centralisées dans `domain.contact` : `phone` au format international pour appeler, `phoneDisplay` pour le numéro affiché, `email`, `facebook`, `instagram` et `whatsapp` lorsqu’il sera confirmé. Les valeurs fournies le 14 novembre 2026 sont intégrées avec les icônes téléphone, Gmail, Facebook et Instagram. Les liens sociaux s’ouvrent dans un nouvel onglet annoncé aux lecteurs d’écran. Les SVG de marque proviennent de [Simple Icons](https://github.com/simple-icons/simple-icons), sous CC0, et sont intégrés localement sans dépendance ni requête tierce au chargement. Les liens ne sont affichés que lorsque leur coordonnée est renseignée.
@@ -77,7 +79,7 @@ Le lien de cartographie est calculé depuis l’adresse centrale, sans API ni ca
 ## Informations encore attendues
 
 - Numéro WhatsApp, s’il doit être proposé.
-- Photos définitives et descriptions alternatives.
+- Photos de la maison, des pièces, de la terrasse, de la piscine et des installations équestres ; photo principale du domaine.
 - Tarifs, capacité maximale officielle et politique d’annulation.
 - Règles concernant les animaux, Wi-Fi et parking.
 - Modalités d’utilisation des installations équestres et accueil éventuel des chevaux.
