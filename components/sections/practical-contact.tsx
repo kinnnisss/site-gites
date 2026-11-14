@@ -1,6 +1,6 @@
 import { domain, mapUrl } from "@/data/domain";
 import { SectionHeading } from "@/components/section-heading";
-import { Icon } from "@/components/icon";
+import { Icon, type IconName } from "@/components/icon";
 
 function Address() {
   return (
@@ -95,19 +95,31 @@ export function PracticalInfo() {
   );
 }
 
+type ContactLink = {
+  label: string;
+  value?: string;
+  href: string;
+  icon: IconName;
+  external?: boolean;
+};
+
 export function Contact() {
   const phone = domain.contact.phone.trim();
   const whatsapp = domain.contact.whatsapp.trim();
   const email = domain.contact.email.trim();
-  const links = [
+  const links: ContactLink[] = [
     ...(phone
       ? [
           {
             label: "Téléphone",
-            value: phone,
+            value: domain.contact.phoneDisplay.trim() || phone,
             href: `tel:${phone.replace(/[\s().-]/g, "")}`,
+            icon: "phone" as const,
           },
         ]
+      : []),
+    ...(email
+      ? [{ label: "E-mail", value: email, href: `mailto:${email}`, icon: "gmail" as const }]
       : []),
     ...(whatsapp
       ? [
@@ -115,11 +127,16 @@ export function Contact() {
             label: "WhatsApp",
             value: whatsapp,
             href: `https://wa.me/${whatsapp.replace(/\D/g, "")}`,
+            icon: "phone" as const,
+            external: true,
           },
         ]
       : []),
-    ...(email
-      ? [{ label: "E-mail", value: email, href: `mailto:${email}` }]
+    ...(domain.contact.facebook
+      ? [{ label: "Facebook", href: domain.contact.facebook, icon: "facebook" as const, external: true }]
+      : []),
+    ...(domain.contact.instagram
+      ? [{ label: "Instagram", href: domain.contact.instagram, icon: "instagram" as const, external: true }]
       : []),
   ];
   return (
@@ -136,12 +153,22 @@ export function Contact() {
             Parlons de votre séjour
           </h2>
           {links.length > 0 ? (
-            <ul className="mt-7 flex flex-wrap gap-4">
+            <ul className="contact-methods">
               {links.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="contact-method">
-                    <span className="font-semibold">{link.label}</span>
-                    <span className="mt-1 break-all">{link.value}</span>
+                <li key={link.label} className={link.value ? "contact-direct" : undefined}>
+                  <a
+                    href={link.href}
+                    className="contact-method"
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    <span className="contact-icon"><Icon name={link.icon} /></span>
+                    <span className="contact-text">
+                      <span className={link.value ? "contact-label" : "contact-social-label"}>{link.label}</span>
+                      {link.value && <span className="contact-value">{link.value}</span>}
+                      {link.external && <span className="sr-only"> (nouvel onglet)</span>}
+                    </span>
+                    {link.external && <span className="contact-external" aria-hidden="true">↗</span>}
                   </a>
                 </li>
               ))}
