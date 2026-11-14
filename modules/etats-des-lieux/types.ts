@@ -13,9 +13,11 @@ export type InspectionData = {
   "exit-date": string;
   "entry-notes": string;
   "exit-notes": string;
+  "agent-signature"?: string;
+  "client-signature"?: string;
 };
 
-/** Exact version-1 export contract. Dates and the guest count remain strings. */
+/** Version-1 contract with optional typed signatures; legacy drafts remain valid. */
 export type InspectionPayload = {
   version: 1;
   data: InspectionData;

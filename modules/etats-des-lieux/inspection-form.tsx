@@ -109,7 +109,7 @@ export default function InspectionForm({ initialPayload, onPayloadChange, storag
       <StayInformation data={payload.data} dispatch={dispatch} />
       <HousingInspection phase={phase} setPhase={setPhase} payload={payload} dispatch={dispatch} />
       <HouseRules payload={payload} dispatch={dispatch} />
-      <SummaryAndPrint payload={payload} feedback={feedback} pending={pending} connected={Boolean(storage)} actions={{ print: () => exportOrPrint(() => window.print()), save, load, json: () => exportOrPrint(exportJson), reset }} />
+      <SummaryAndPrint payload={payload} dispatch={dispatch} feedback={feedback} pending={pending} connected={Boolean(storage)} actions={{ print: () => exportOrPrint(() => window.print()), save, load, json: () => exportOrPrint(exportJson), reset }} />
       <footer className={styles.footer}><span>Domaine Lo Carmalhon • 8 rue Jean Jaurès, 24410 Saint-Aulaye-Puymangou</span><span>{storage ? "Espace Équipe • sauvegarde manuelle partagée" : "Maquette de validation • sans stockage serveur"}</span></footer>
     </div>
   </main>;

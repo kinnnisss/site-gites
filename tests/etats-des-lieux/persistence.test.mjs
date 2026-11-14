@@ -42,8 +42,36 @@ test('malformed and additional transport fields are rejected, with no completion
 });
 test('Effacer resets memory without mutating the saved payload', () => {
   const saved = createInitialPayload(); saved.data.client = 'Test';
+  saved.data['agent-signature'] = 'Responsable test'; saved.data['client-signature'] = 'Voyageur test';
   assert.deepEqual(inspectionReducer(saved, { type: 'reset' }), createInitialPayload());
   assert.equal(saved.data.client, 'Test');
+  assert.equal(saved.data['client-signature'], 'Voyageur test');
+});
+
+test('optional typed signatures survive transport and JSONB ordering without changing legacy drafts', () => {
+  const legacy = createInitialPayload();
+  assert.deepEqual(parsePayload(legacy), legacy);
+  for (const signatures of [
+    { 'agent-signature': '' }, { 'client-signature': 'Voyageur test' },
+    { 'agent-signature': '  Élodie Test  ', 'client-signature': "Jean Test <texte> & l’accent" },
+  ]) {
+    const p = { ...legacy, data: { ...legacy.data, ...signatures } };
+    const reordered = { ...p, data: Object.fromEntries(Object.entries(p.data).reverse()) };
+    assert.equal(JSON.stringify(parsePayload(reordered)), JSON.stringify(p));
+    assert.deepEqual(parsePayload(JSON.parse(JSON.stringify(p))), p);
+    assert.deepEqual(inspectionReducer(legacy, { type: 'replace', payload: p }), p);
+  }
+});
+
+test('signatures reject non-string values and unknown fields', () => {
+  for (const field of ['agent-signature', 'client-signature']) {
+    for (const value of [null, undefined, 123, false, {}, []]) {
+      const p = createInitialPayload(); p.data[field] = value;
+      assert.throws(() => parsePayload(p), e => e.status === 400);
+    }
+  }
+  const p = createInitialPayload(); p.data.signature = 'Unknown field';
+  assert.throws(() => parsePayload(p), e => e.status === 400);
 });
 test('unsupported template is rejected rather than reinterpreting its arrays', () => {
   assert.throws(() => parseDossier({ ...dossier(3), template_id: 'another-version' }));
